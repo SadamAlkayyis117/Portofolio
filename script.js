@@ -222,6 +222,9 @@ if (typeof THREE === "undefined") {
         // =============================================
 
         const collisionObjects = [];
+        const npcCollisionObjects = [];
+        const PLAYER_RADIUS = 0.45;
+        const NPC_RADIUS = 0.55;
 
 
         function addCollisionBox(
@@ -239,13 +242,12 @@ if (typeof THREE === "undefined") {
             });
 
         }
-
-
-        // =============================================
-        // PLAYER COLLISION SIZE
-        // =============================================
-
-        const PLAYER_RADIUS = 0.45;
+        function addNPCCollider(npc) {
+            npcCollisionObjects.push({
+                npc: npc,
+                radius: NPC_RADIUS
+            });
+        }
 
 
         // =============================================
@@ -410,109 +412,423 @@ if (typeof THREE === "undefined") {
 
         }
 
+        // =============================================
+        // RESOLVE PLAYER VS NPC
+        // =============================================
+        function resolvePlayerVsNPC() {
+            for (const collider of npcCollisionObjects) {
+                const npc = collider.npc;
+                const dx =
+                    player.position.x -
+                    npc.position.x;
+                const dz =
+                    player.position.z -
+                    npc.position.z;
+                let distance =
+                    Math.sqrt(
+                        dx * dx +
+                        dz * dz
+                    );
+                
+                const minimumDistance =
+                    PLAYER_RADIUS +
+                    collider.radius;
+                if (distance < minimumDistance) {
+                    if (distance < 0.001) {
+                        player.position.x +=
+                            minimumDistance;
+                        continue;
+                    }
+                    const push =
+                        minimumDistance -
+                        distance;
+                    const normalX =
+                        dx / distance;
+                    const normalZ =
+                        dz / distance;
+                    player.position.x +=
+                        normalX * push;
+                    player.position.z +=
+                        normalZ * push;
+                }
+            }
+        }
 
         // =============================================
         // BOX FUNCTION
         // =============================================
 
-        function createBox(
-            width,
-            height,
-            depth,
-            color,
+        function createHouse(
             x,
-            y,
             z,
-            collision = true
+            width,
+            depth,
+            wallColor,
+            roofColor
         ) {
-
-            const geometry =
-                new THREE.BoxGeometry(
-                    width,
-                    height,
-                    depth
-                );
-
-            const material =
-                new THREE.MeshStandardMaterial({
-                    color: color
-                });
-
-            const mesh =
-                new THREE.Mesh(
-                    geometry,
-                    material
-                );
-
-            mesh.position.set(
+            const house =
+                new THREE.Group();
+            house.position.set(
                 x,
-                y,
+                0,
                 z
             );
-
-            mesh.castShadow = true;
-
-            mesh.receiveShadow = true;
-
             scene.add(
-                mesh
+                house
+            );
+            const wallHeight = 2.8;
+            const wallThickness = 0.3;
+            const wallMaterial =
+                new THREE.MeshStandardMaterial({
+                    color: wallColor
+                });
+            const roofMaterial =
+                new THREE.MeshStandardMaterial({
+                    color: roofColor
+                });
+            const frameMaterial =
+                new THREE.MeshStandardMaterial({
+                    color: 0x5b3824
+                });
+            const backWall =
+                new THREE.Mesh(
+                    new THREE.BoxGeometry(
+                        width,
+                        wallHeight,
+                        wallThickness
+                    ),
+                    wallMaterial
+                );
+            backWall.position.set(
+                0,
+                wallHeight / 2,
+                -depth / 2
+            );
+            backWall.castShadow = true;
+            house.add(
+                backWall
+            );
+            const leftWall =
+                new THREE.Mesh(
+                    new THREE.BoxGeometry(
+                        wallThickness,
+                        wallHeight,
+                        depth
+                    ),
+                    wallMaterial
+                );
+            leftWall.position.set(
+                -width / 2,
+                wallHeight / 2,
+                0
+            );
+            leftWall.castShadow = true;
+            house.add(
+                leftWall
+            );
+            const rightWall =
+                new THREE.Mesh(
+                    new THREE.BoxGeometry(
+                        wallThickness,
+                        wallHeight,
+                        depth
+                    ),
+                    wallMaterial
+                );
+            rightWall.position.set(
+                width / 2,
+                wallHeight / 2,
+                0
+            );
+            rightWall.castShadow = true;
+            house.add(
+                rightWall
+            );
+            const frontWall =
+                new THREE.Mesh(
+                    new THREE.BoxGeometry(
+                        width,
+                        wallHeight,
+                        wallThickness
+                    ),
+                    wallMaterial
+                );
+            frontWall.position.set(
+                0,
+                wallHeight / 2,
+                depth / 2
+            );
+            frontWall.castShadow = true;
+            house.add(
+                frontWall
+            );
+            const roofLeft =
+                new THREE.Mesh(
+                    new THREE.BoxGeometry(
+                        width + 0.8,
+                        0.35,
+                        depth + 0.8
+                    ),
+                    roofMaterial
+                );
+            roofLeft.position.set(
+                -width * 0.23,
+                wallHeight + 0.75,
+                0
+            );
+            roofLeft.rotation.z =
+                -Math.PI / 6;
+            roofLeft.castShadow = true;
+            house.add(
+                roofLeft
+            );
+            const roofRight =
+                new THREE.Mesh(
+                    new THREE.BoxGeometry(
+                        width + 0.8,
+                        0.35,
+                        depth + 0.8
+                    ),
+                    roofMaterial
+                );
+            roofRight.position.set(
+                width * 0.23,
+                wallHeight + 0.75,
+                0
+            );
+            roofRight.rotation.z =
+                Math.PI / 6;
+            roofRight.castShadow = true;
+            house.add(
+                roofRight
+            );
+            const door =
+                new THREE.Mesh(
+                    new THREE.BoxGeometry(
+                        0.9,
+                        1.8,
+                        0.08
+                    ),
+                    new THREE.MeshStandardMaterial({
+                        color: 0x4a2b1b
+                    })
+                );
+            door.position.set(
+                0,
+                0.9,
+                depth / 2 + 0.05
+            );
+            door.castShadow = true;
+            house.add(
+                door
+            );
+            const doorFrameLeft =
+                new THREE.Mesh(
+                    new THREE.BoxGeometry(
+                        0.12,
+                        2,
+                        0.12
+                    ),
+                    frameMaterial
+                );
+            doorFrameLeft.position.set(
+                -0.52,
+                1,
+                depth / 2 + 0.1
+            );
+            house.add(
+                doorFrameLeft
+            );
+            const doorFrameRight =
+                doorFrameLeft.clone();
+            doorFrameRight.position.x =
+                0.52;
+            house.add(
+                doorFrameRight
+            );
+            function addWindow(
+                windowX,
+                windowZ,
+                rotationY
+            ) {
+                const windowFrame =
+                    new THREE.Mesh(
+                        new THREE.BoxGeometry(
+                            1.1,
+                            0.9,
+                            0.12
+                        ),
+                        new THREE.MeshStandardMaterial({
+                            color: 0x6b4423
+                        })
+                    );
+                windowFrame.position.set(
+                    windowX,
+                    1.6,
+                    windowZ
+                );
+                windowFrame.rotation.y =
+                    rotationY;
+                house.add(
+                    windowFrame
+                );
+                const glass =
+                    new THREE.Mesh(
+                        new THREE.BoxGeometry(
+                            0.8,
+                            0.6,
+                            0.04
+                        ),
+                        new THREE.MeshStandardMaterial({
+                            color: 0x8fd3ff,
+                            metalness: 0.1,
+                            roughness: 0.2
+                        })
+                    );
+                glass.position.set(
+                    windowX,
+                    1.6,
+                    windowZ
+                );
+                glass.rotation.y =
+                    rotationY;
+                house.add(
+                    glass
+                );
+            }
+            addWindow(
+                -width / 2 - 0.05,
+                0,
+                Math.PI / 2
+            );
+            addWindow(
+                width / 2 + 0.05,
+                0,
+                Math.PI / 2
+            );
+            addWindow(
+                -1.4,
+                depth / 2 + 0.05,
+                0
+            );
+            addWindow(
+                1.4,
+                depth / 2 + 0.05,
+                0
             );
 
-
-            if (collision) {
-
-                addCollisionBox(
-                    x,
-                    z,
-                    width,
-                    depth
+    const terrace =
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                width + 1.2,
+                0.2,
+                1.5
+            ),
+            new THREE.MeshStandardMaterial({
+                color: 0xa98258
+            })
+        );
+            terrace.position.set(
+                0,
+                0.1,
+                depth / 2 + 0.75
+            );
+            terrace.castShadow = true;
+            house.add(
+                terrace
+            );
+            for (
+                const px of [
+                    -width / 2,
+                    width / 2
+                ]
+            ) {
+                const post =
+                    new THREE.Mesh(
+                        new THREE.BoxGeometry(
+                            0.15,
+                            1.4,
+                            0.15
+                        ),
+                        frameMaterial
+                    );
+                post.position.set(
+                    px,
+                    0.8,
+                    depth / 2 + 1.2
                 );
-
+                house.add(
+                    post
+                );
             }
-
-
-            return mesh;
-
+            addCollisionBox(
+                x,
+                z - depth / 2,
+                width,
+                wallThickness
+            );
+            addCollisionBox(
+                x - width / 2,
+                z,
+                wallThickness,
+                depth
+            );
+            addCollisionBox(
+                x + width / 2,
+                z,
+                wallThickness,
+                depth
+            );
+            addCollisionBox(
+                x - width * 0.32,
+                z + depth / 2,
+                width * 0.35,
+                wallThickness
+            );
+            addCollisionBox(
+                x + width * 0.32,
+                z + depth / 2,
+                width * 0.35,
+                wallThickness
+            );
+            
+            return house;
         }
+
+        
 
 
         // =============================================
         // ENVIRONMENT
         // =============================================
 
-        createBox(
-            4,
-            2,
-            4,
-            0x8b6f47,
-            -6,
-            1,
+        createHouse(
+            -7,
             -8,
-            true
-        );
-
-
-        createBox(
-            3,
-            3,
-            3,
-            0x6d8f52,
             6,
-            1.5,
-            -12,
-            true
+            6,
+            0xc08b5c,
+            0x7a3328
         );
 
 
-        createBox(
-            5,
-            1,
-            5,
-            0x77624a,
-            0,
-            0.5,
-            -18,
-            true
+        createHouse(
+            7,
+            -15,
+            6,
+            7,
+            0x9eaf78,
+            0x4d5c38
+        );
+
+
+        createHouse(
+            -7,
+            -28,
+            7,
+            6,
+            0xd1a06b,
+            0x65402c
         );
 
 
@@ -1236,6 +1552,8 @@ if (typeof THREE === "undefined") {
                     player.position
                 );
 
+                resolvePlayerVsNPC();
+
 
                 // =====================================
                 // ROTATION
@@ -1723,7 +2041,7 @@ if (typeof THREE === "undefined") {
 
 
             post.position.y =
-                1.1;
+                1.0;
 
 
             post.castShadow = true;
@@ -1757,7 +2075,7 @@ if (typeof THREE === "undefined") {
 
 
             board.position.y =
-                2.2;
+                2.5;
 
 
             board.castShadow = true;
@@ -2329,7 +2647,8 @@ if (typeof THREE === "undefined") {
             x,
             z,
             color,
-            pathLength
+            pathLength,
+            activity = "WALK"
         ) {
 
             const npc =
@@ -2355,10 +2674,10 @@ if (typeof THREE === "undefined") {
             const npcBody =
                 new THREE.Mesh(
                     new THREE.BoxGeometry(
-                        0.75,
-                        1.1,
-                        0.45
-                    ),
+                        0.25,
+                        2.0,
+                        0.25
+                    )
                     new THREE.MeshStandardMaterial({
                         color: color
                     })
@@ -2574,14 +2893,139 @@ if (typeof THREE === "undefined") {
 
             npc.userData.rightArm =
                 npcRightArm;
-
-
+            const activities = [
+                "WALK",
+                "IDLE",
+                "SWEEP",
+                "WATER"
+            ];
+            npc.userData.activity =
+                activity;
+            npc.userData.activityTime =
+                Math.random() * 10;
+            npc.userData.baseX =
+                x;
+            npc.userData.baseZ =
+                z;
+            npc.userData.activityDuration =
+                6 +
+                Math.random() * 5;
+            npc.userData.body =
+                npcBody;
+            npc.userData.head =
+                npcHead;
             npc.rotation.y =
                 Math.PI / 2;
-
-
+            npc.userData.broom = null;
+            npc.userData.wateringCan = null;
+            if (
+                activity === "SWEEP"
+            ) {
+                const broom =
+                    new THREE.Group();
+                const broomStick =
+                    new THREE.Mesh(
+                        new THREE.CylinderGeometry(
+                            0.035,
+                            0.035,
+                            1.5,
+                            8
+                        ),
+                        new THREE.MeshStandardMaterial({
+                            color: 0x70452a
+                        })
+                    );
+                broomStick.rotation.z =
+                    -0.35;
+                broomStick.position.y =
+                    0.65;
+                broom.add(
+                    broomStick
+                );
+                const broomHead =
+                    new THREE.Mesh(
+                        new THREE.BoxGeometry(
+                            0.45,
+                            0.15,
+                            0.15
+                        ),
+                        new THREE.MeshStandardMaterial({
+                            color: 0xc9a66b
+                        })
+                    );
+                broomHead.position.set(
+                    0.25,
+                    -0.08,
+                    0
+                );
+                broom.add(
+                    broomHead
+                );
+                broom.position.set(
+                    0.55,
+                    1.05,
+                    0.15
+                );
+                npc.add(
+                    broom
+                );
+                npc.userData.broom =
+                    broom;
+                if (
+                    activity === "WATER"
+                ) {
+                    const wateringCan =
+                        new THREE.Group();
+                    const canBody =
+                        new THREE.Mesh(
+                            new THREE.CylinderGeometry(
+                                0.22,
+                                0.18,
+                                0.35,
+                                12
+                            ),
+                            new THREE.MeshStandardMaterial({
+                                color: 0x4f9ed8
+                            })
+                        );
+                    canBody.rotation.z =
+                        -Math.PI / 2;
+                    wateringCan.add(
+                        canBody
+                    );
+                    const handle =
+                        new THREE.Mesh(
+                            new THREE.TorusGeometry(
+                                0.22,
+                                0.035,
+                                8,
+                                16,
+                                Math.PI
+                            ),
+                            new THREE.MeshStandardMaterial({
+                                color: 0x4f9ed8
+                            })
+                        );
+                    handle.rotation.z =
+                        Math.PI / 2;
+                    handle.position.y =
+                        0.15;
+                    wateringCan.add(
+                        handle
+                    );
+                    wateringCan.position.set(
+                        0.55,
+                        1.15,
+                        0
+                    );
+                    npc.add(
+                        wateringCan
+                    );
+                    npc.userData.wateringCan =
+                        wateringCan;
+                }
+            }
             return npc;
-
         }
 
 
@@ -2594,7 +3038,8 @@ if (typeof THREE === "undefined") {
                 -5,
                 -10,
                 0xd94c4c,
-                5
+                5,
+                "WALK"
             );
 
 
@@ -2603,7 +3048,8 @@ if (typeof THREE === "undefined") {
                 5,
                 -17,
                 0xf0a83c,
-                4
+                4,
+                "SWEEP"
             );
 
 
@@ -2612,7 +3058,8 @@ if (typeof THREE === "undefined") {
                 -4,
                 -25,
                 0x8e5bd9,
-                6
+                6,
+                "WATER"
             );
 
 
@@ -2621,7 +3068,65 @@ if (typeof THREE === "undefined") {
             npc2,
             npc3
         ];
+        npcs.forEach(function(npc) {
+            addNPCCollider(npc);
+        });
 
+        function resolveNPCVsNPC() {
+            for (
+                let i = 0;
+                i < npcs.length;
+                i++
+            ) {
+                for (
+                    let j = i + 1;
+                    j < npcs.length;
+                    j++
+                ) {
+                    const a = npcs[i];
+                    const b = npcs[j];
+                    const dx =
+                        a.position.x -
+                        b.position.x;
+                    const dz =
+                        a.position.z -
+                        b.position.z;
+                    let distance =
+                        Math.sqrt(
+                            dx * dx +
+                            dz * dz
+                        );
+                    const minimumDistance =
+                        NPC_RADIUS * 2;
+                    if (
+                        distance < minimumDistance
+                    ) {
+                        if (
+                            distance < 0.001
+                        ) {
+                            distance = 0.001;
+                        }
+                        const push =
+                            (
+                                minimumDistance -
+                                distance
+                            ) / 2;
+                        const normalX =
+                            dx / distance;
+                        const normalZ =
+                            dz / distance;
+                        a.position.x +=
+                            normalX * push;
+                        a.position.z +=
+                            normalZ * push;
+                        b.position.x -=
+                            normalX * push;
+                        b.position.z -=
+                            normalZ * push;
+                    }
+                }
+            }
+        }
 
         // =============================================
         // NPC UPDATE
@@ -2630,81 +3135,123 @@ if (typeof THREE === "undefined") {
         function updateNPCs(
             delta
         ) {
-
             npcs.forEach(
                 function(npc) {
-
-                    npc.userData.walkTime +=
-                        delta *
-                        8;
-
-
-                    const offset =
-                        npc.userData.direction *
-                        npc.userData.speed *
+                    const activity =
+                        npc.userData.activity;
+                    npc.userData.activityTime +=
                         delta;
-
-
-                    npc.position.x +=
-                        offset;
-
-
-                    const distance =
-                        npc.position.x -
-                        npc.userData.startX;
-
-
-                    // =================================
-                    // TURN AROUND
-                    // =================================
-
                     if (
-                        Math.abs(distance) >
-                        npc.userData.pathLength
+                        activity === "WALK"
                     ) {
-
-                        npc.userData.direction *=
-                            -1;
-
-
-                        npc.rotation.y =
-                            npc.userData.direction > 0
+                        npc.userData.walkTime +=
+                            delta * 8;
+                        const offset =
+                            npc.userData.direction *
+                            npc.userData.speed *
+                            delta;
+                        npc.position.x +=
+                            offset;
+                        const distance =
+                            npc.position.x -
+                            npc.userData.startX;
+                        if (
+                            Math.abs(distance) >
+                            npc.userData.pathLength
+                        ) {
+                            npc.userData.direction *=
+                                -1;
+                            npc.rotation.y =
+                                npc.userData.direction > 0
                                 ? Math.PI / 2
                                 : -Math.PI / 2;
-
+                        }
+                        const swing =
+                            Math.sin(
+                                npc.userData.walkTime
+                            ) * 0.45;
+                        npc.userData.leftLeg.rotation.x =
+                            swing;
+                        npc.userData.rightLeg.rotation.x =
+                            -swing;
+                        npc.userData.leftArm.rotation.x =
+                            -swing;
+                        npc.userData.rightArm.rotation.x =
+                            swing;
                     }
+                    
 
-
-                    // =================================
-                    // WALK ANIMATION
-                    // =================================
-
-                    const swing =
-                        Math.sin(
-                            npc.userData.walkTime
-                        ) *
-                        0.45;
-
-
-                    npc.userData.leftLeg.rotation.x =
-                        swing;
-
-
-                    npc.userData.rightLeg.rotation.x =
-                        -swing;
-
-
-                    // Arms opposite legs
-                    npc.userData.leftArm.rotation.x =
-                        -swing;
-
-
-                    npc.userData.rightArm.rotation.x =
-                        swing;
-
+                    else if (
+                        activity === "IDLE"
+                    ) {
+                        const idleTime =
+                            npc.userData.activityTime;
+                        npc.userData.body.rotation.z =
+                            Math.sin(
+                                idleTime * 2
+                            ) * 0.025;
+                        npc.userData.head.rotation.y =
+                            Math.sin(
+                                idleTime * 0.8
+                            ) * 0.15;
+                        npc.userData.leftArm.rotation.x =
+                            Math.sin(
+                                idleTime * 1.5
+                            ) * 0.04;
+                        npc.userData.rightArm.rotation.x =
+                            Math.sin(
+                                idleTime * 1.5
+                            ) * -0.04;
+                    }
+                    else if (
+                        activity === "SWEEP"
+                    ) {
+                        const t =
+                            npc.userData.activityTime;
+                        const sweepMotion =
+                            Math.sin(
+                                t * 5
+                            );
+                        npc.userData.body.rotation.z =
+                            sweepMotion * 0.06;
+                        npc.userData.leftArm.rotation.x =
+                            -0.45 +
+                            sweepMotion * 0.25;
+                        npc.userData.rightArm.rotation.x =
+                            -0.55 +
+                            sweepMotion * 0.25;
+                        npc.position.y =
+                            Math.abs(
+                                Math.sin(
+                                    t * 5
+                                )
+                            ) * 0.025;
+                    }
+                    else if (
+                        activity === "WATER"
+                    ) {
+                        const t =
+                            npc.userData.activityTime;
+                        const wateringMotion =
+                            Math.sin(
+                                t * 2
+                            );
+                        npc.userData.rightArm.rotation.x =
+                            -0.9 +
+                            wateringMotion * 0.25;
+                        npc.userData.leftArm.rotation.x =
+                            -0.35;
+                        if (
+                            npc.userData.wateringCan
+                        ) {
+                            npc.userData.wateringCan.rotation.z =
+                                -0.25 +
+                                wateringMotion * 0.12;
+                        }
+                    }
                 }
             );
-
+            resolveNPCVsNPC();
         }
 
 
@@ -2810,7 +3357,7 @@ if (typeof THREE === "undefined") {
             updateNPCs(
                 delta
             );
-
+            resolvePlayerVsNPC();
 
             // =========================================
             // PROJECT DETECTION
