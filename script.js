@@ -53,6 +53,82 @@ if (typeof THREE === "undefined") {
         sunLight.shadow.camera.bottom = -50;
         scene.add(sunLight);
 
+        let isNight = false;
+        const daySkyColor = new THREE.Color(0x87ceeb);
+        const nightSkyColor = new THREE.Color(0x071426);
+        
+        const dayFogColor = new THREE.Color(0x87ceeb);
+        const nightFogColor = new THREE.Color(0x071426);
+        // Moon light
+        const moonLight = new THREE.DirectionalLight(0x9db7ff, 0);
+        moonLight.position.set(-20, 35, -15);
+        moonLight.castShadow = true;
+        moonLight.shadow.mapSize.width = 1024;
+        moonLight.shadow.mapSize.height = 1024;
+        scene.add(moonLight);
+        // Ambient malam
+        const nightAmbient = new THREE.HemisphereLight(0x506080, 0x10151f, 0);
+        scene.add(nightAmbient);
+        
+        function setDayMode() {
+            isNight = false;
+            scene.background.copy(daySkyColor);
+            scene.fog.color.copy(dayFogColor);
+            sunLight.intensity = 3.0;
+            hemisphereLight.intensity = 2.0;
+            moonLight.intensity = 0;
+            nightAmbient.intensity = 0;
+            sunVisual.visible = true;
+            moonVisual.visible = false;
+            stars.visible = false;
+            updateNightObjects();
+        }
+        function setNightMode() {
+            isNight = true;
+            scene.background.copy(nightSkyColor);
+            scene.fog.color.copy(nightFogColor);
+            sunLight.intensity = 0.25;
+            hemisphereLight.intensity = 0.35;
+            moonLight.intensity = 1.4;
+            nightAmbient.intensity = 0.8;
+            sunVisual.visible = false;
+            moonVisual.visible = true;
+            stars.visible = true;
+            updateNightObjects();
+        }
+        function toggleDayNight() {
+            if (isNight) {
+                setDayMode();
+            } else {
+                setNightMode();
+            }
+            console.log(isNight ? "🌙 NIGHT MODE" : "☀️ DAY MODE");
+        }
+        const starGeometry = new THREE.BufferGeometry();
+        const starPositions = [];
+        for (let i = 0; i < 250; i++) {
+            const x = (Math.random() - 0.5) * 160;
+            const y = 20 + Math.random() * 50;
+            const z = (Math.random() - 0.5) * 160;
+            starPositions.push(x, y, z);
+        }
+        starGeometry.setAttribute(
+            "position",
+            new THREE.Float32BufferAttribute(starPositions, 3)
+        );
+        const starMaterial = new THREE.PointsMaterial({
+            color: 0xffffff,
+            size: 0.18,
+            sizeAttenuation: true
+        });
+        const stars = new THREE.Points(
+            starGeometry,
+            starMaterial
+        );
+        stars.visible = false;
+        scene.add(stars);
+        // Default awal
+        setDayMode();
         // GROUND
         const ground = new THREE.Mesh(
             new THREE.PlaneGeometry(100, 100),
@@ -71,7 +147,172 @@ if (typeof THREE === "undefined") {
         path.position.set(0, 0.02, -20);
         path.receiveShadow = true;
         scene.add(path);
+        const clouds = [];
+        function createCloud(x, y, z, scale = 1) {
+            const cloud = new THREE.Group();
+            const cloudMaterial = new THREE.MeshStandardMaterial({
+                color: 0xffffff,
+                roughness: 1
+            });
+            const parts = [
+                [-1.5, 0, 0, 1.0],
+                [-0.5, 0.3, 0, 1.3],
+                [0.6, 0.15, 0, 1.15],
+                [1.5, 0, 0, 0.9],
+                [0, -0.05, 0.15, 1.0]
+            ];
+            parts.forEach(([px, py, pz, size]) => {
+                const puff = new THREE.Mesh(
+                    new THREE.SphereGeometry(size, 12, 10),
+                    cloudMaterial
+                );
+                puff.position.set(px, py, pz);
+                puff.castShadow = false;
+                puff.receiveShadow = false;
+                cloud.add(puff);
+            });
+            cloud.position.set(x, y, z);
+            cloud.scale.setScalar(scale);
+            scene.add(cloud);
+            clouds.push({
+                object: cloud,
+                speed: 0.3 + Math.random() * 0.25
+            });
+        }
+        createCloud(-25, 18, -20, 1.5);
+        createCloud(5, 21, -35, 1.2);
+        createCloud(28, 17, -10, 1.7);
+        createCloud(-5, 24, 5, 0.9);
 
+        function updateClouds(delta) {
+            clouds.forEach((cloudData) => {
+                cloudData.object.position.x += cloudData.speed * delta;
+                if (cloudData.object.position.x > 45) {
+                    cloudData.object.position.x = -45;
+                }
+            });
+        }
+        const sunVisual = new THREE.Mesh(
+            new THREE.SphereGeometry(2.5, 24, 24),
+            new THREE.MeshBasicMaterial({
+                color: 0xffdd66
+            })
+        );
+        sunVisual.position.set(25, 35, -30);
+        scene.add(sunVisual);
+        const moonVisual = new THREE.Mesh(
+            new THREE.SphereGeometry(2.2, 24, 24),
+            new THREE.MeshBasicMaterial({
+                color: 0xdde7ff
+            })
+        );
+        moonVisual.position.set(-25, 30, -25);
+        moonVisual.visible = false;
+        scene.add(moonVisual);
+
+        const birds = [];
+        function createBird(x, y, z) {
+            const bird = new THREE.Group();
+            const birdMaterial = new THREE.MeshStandardMaterial({
+                color: 0x222222
+            });
+            const body = new THREE.Mesh(
+                new THREE.SphereGeometry(0.15, 8, 8),
+                birdMaterial
+            );
+            bird.add(body);
+            const leftWing = new THREE.Mesh(
+                new THREE.BoxGeometry(0.6, 0.05, 0.18),
+                birdMaterial
+            );
+            const rightWing = new THREE.Mesh(
+                new THREE.BoxGeometry(0.6, 0.05, 0.18),
+                birdMaterial
+            );
+            leftWing.position.x = -0.3;
+            rightWing.position.x = 0.3;
+            bird.add(leftWing);
+            bird.add(rightWing);
+            bird.position.set(x, y, z);
+            scene.add(bird);
+            birds.push({
+                object: bird,
+                leftWing,
+                rightWing,
+                speed: 2 + Math.random(),
+                phase: Math.random() * Math.PI * 2
+            });
+        }
+        createBird(-25, 15, -15);
+        createBird(-35, 18, -30);
+        createBird(-15, 20, -5);
+
+        function updateBirds(delta) {
+            birds.forEach((bird) => {
+                bird.object.position.x += bird.speed * delta;
+                bird.object.position.z +=
+                    Math.sin(clock.elapsedTime * 1.5 + bird.phase) *
+                    delta *
+                    0.8;
+                const flap =
+                    Math.sin(clock.elapsedTime * 8 + bird.phase) * 0.35;
+                bird.leftWing.rotation.z = flap;
+                bird.rightWing.rotation.z = -flap;
+                if (bird.object.position.x > 40) {
+                    bird.object.position.x = -40;
+                }
+            });
+        }
+
+        const butterflies = [];
+        function createButterfly(x, y, z) {
+            const butterfly = new THREE.Group();
+            const wingMaterial = new THREE.MeshStandardMaterial({
+                color: 0xffd34d,
+                side: THREE.DoubleSide
+            });
+            const leftWing = new THREE.Mesh(
+                new THREE.PlaneGeometry(0.25, 0.35),
+                wingMaterial
+            );
+            const rightWing = new THREE.Mesh(
+                new THREE.PlaneGeometry(0.25, 0.35),
+                wingMaterial
+            );
+            leftWing.position.x = -0.15;
+            rightWing.position.x = 0.15;
+            butterfly.add(leftWing);
+            butterfly.add(rightWing);
+            butterfly.position.set(x, y, z);
+            scene.add(butterfly);
+            butterflies.push({
+                object: butterfly,
+                leftWing,
+                rightWing,
+                origin: new THREE.Vector3(x, y, z),
+                phase: Math.random() * 10,
+                speed: 0.5 + Math.random() * 0.5
+            });
+        }
+        createButterfly(-8, 1.8, -7);
+        createButterfly(8, 1.5, -14);
+        createButterfly(-9, 1.7, -27);
+        createButterfly(6, 1.6, -25);
+
+        function updateButterflies(delta) {
+            butterflies.forEach((butterfly) => {
+                const t = clock.elapsedTime * butterfly.speed + butterfly.phase;
+                butterfly.object.position.x =
+                    butterfly.origin.x + Math.sin(t) * 2;
+                butterfly.object.position.z =
+                    butterfly.origin.z + Math.cos(t * 0.8) * 2;
+                butterfly.object.position.y =
+                    butterfly.origin.y + Math.sin(t * 2) * 0.4;
+                const flap = Math.sin(t * 12) * 0.7;
+                butterfly.leftWing.rotation.y = flap;
+                butterfly.rightWing.rotation.y = -flap;
+            });
+        }
         // COLLISION SYSTEM
         const collisionObjects = [];
         const npcCollisionObjects = [];
@@ -834,7 +1075,9 @@ if (typeof THREE === "undefined") {
             resolvePlayerVsNPC();
             updateProjectDetection();
             updateCamera(delta);
-
+            updateClouds(delta);
+            updateBirds(delta);
+            updateButterflies(delta);
             renderer.render(scene, camera);
         }
 
