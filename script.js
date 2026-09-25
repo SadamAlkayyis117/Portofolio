@@ -84,6 +84,57 @@ if (typeof THREE === "undefined") {
                 color: 0xdde7ff
             })
         );
+        const starGeometry = new THREE.BufferGeometry();
+        const starPositions = [];
+        for (let i = 0; i < 250; i++) {
+            const x = (Math.random() - 0.5) * 160;
+            const y = 20 + Math.random() * 50;
+            const z = (Math.random() - 0.5) * 160;
+            starPositions.push(x, y, z);
+        }
+        starGeometry.setAttribute(
+            "position",
+            new THREE.Float32BufferAttribute(starPositions, 3)
+        );
+        const starMaterial = new THREE.PointsMaterial({
+            color: 0xffffff,
+            size: 0.18,
+            sizeAttenuation: true
+        });
+        const stars = new THREE.Points(
+            starGeometry,
+            starMaterial
+        );
+        stars.visible = false;
+        scene.add(stars);
+        const fireflies = [];
+        function createFireflies() {
+            for (let i = 0; i < 45; i++) {
+                const material = new THREE.MeshBasicMaterial({
+                    color: 0xbaff80
+                });
+                const firefly = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.045, 6, 6),
+                    material
+                );
+                firefly.position.set(
+                    (Math.random() - 0.5) * 60,
+                    0.8 + Math.random() * 3,
+                    -Math.random() * 45
+                );
+                firefly.userData.phase = Math.random() * Math.PI * 2;
+                firefly.userData.speed = 0.5 + Math.random();
+                firefly.visible = false;
+                scene.add(firefly);
+                fireflies.push(firefly);
+            }
+        }
+        const timeModeUI = document.getElementById("time-mode");
+        function updateTimeModeUI() {
+            if (!timeModeUI) return;
+            timeModeUI.textContent =
+                isNight ? "🌙 NIGHT" : "☀️ DAY";
+        }
         function setDayMode() {
             isNight = false;
             scene.background.copy(daySkyColor);
@@ -117,12 +168,6 @@ if (typeof THREE === "undefined") {
                 firefly.visible = isNight;
             });
         }
-        const timeModeUI = document.getElementById("time-mode");
-        function updateTimeModeUI() {
-            if (!timeModeUI) return;
-            timeModeUI.textContent =
-                isNight ? "🌙 NIGHT" : "☀️ DAY";
-        }
         function toggleDayNight() {
             if (isNight) {
                 setDayMode();
@@ -131,29 +176,6 @@ if (typeof THREE === "undefined") {
             }
             console.log(isNight ? "🌙 NIGHT MODE" : "☀️ DAY MODE");
         }
-        const starGeometry = new THREE.BufferGeometry();
-        const starPositions = [];
-        for (let i = 0; i < 250; i++) {
-            const x = (Math.random() - 0.5) * 160;
-            const y = 20 + Math.random() * 50;
-            const z = (Math.random() - 0.5) * 160;
-            starPositions.push(x, y, z);
-        }
-        starGeometry.setAttribute(
-            "position",
-            new THREE.Float32BufferAttribute(starPositions, 3)
-        );
-        const starMaterial = new THREE.PointsMaterial({
-            color: 0xffffff,
-            size: 0.18,
-            sizeAttenuation: true
-        });
-        const stars = new THREE.Points(
-            starGeometry,
-            starMaterial
-        );
-        stars.visible = false;
-        scene.add(stars);
         // Default awal
         setDayMode();
         // GROUND
@@ -325,29 +347,6 @@ if (typeof THREE === "undefined") {
                 butterfly.leftWing.rotation.y = flap;
                 butterfly.rightWing.rotation.y = -flap;
             });
-        }
-
-        const fireflies = [];
-        function createFireflies() {
-            for (let i = 0; i < 45; i++) {
-                const material = new THREE.MeshBasicMaterial({
-                    color: 0xbaff80
-                });
-                const firefly = new THREE.Mesh(
-                    new THREE.SphereGeometry(0.045, 6, 6),
-                    material
-                );
-                firefly.position.set(
-                    (Math.random() - 0.5) * 60,
-                    0.8 + Math.random() * 3,
-                    -Math.random() * 45
-                );
-                firefly.userData.phase = Math.random() * Math.PI * 2;
-                firefly.userData.speed = 0.5 + Math.random();
-                firefly.visible = false;
-                scene.add(firefly);
-                fireflies.push(firefly);
-            }
         }
         function updateFireflies() {
             fireflies.forEach((firefly) => {
