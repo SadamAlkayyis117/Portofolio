@@ -179,13 +179,13 @@ if (typeof THREE === "undefined") {
 
             // Atap Segitiga
             const roofLeft = new THREE.Mesh(new THREE.BoxGeometry(width + 0.8, 0.35, depth + 0.8), roofMat);
-            roofLeft.position.set(-width * 0.005, wallHeight + 0.75, 0);
+            roofLeft.position.set(-width * 0.0001, wallHeight + 0.75, 0);
             roofLeft.rotation.z = -Math.PI / 6;
             roofLeft.castShadow = true;
             house.add(roofLeft);
 
             const roofRight = new THREE.Mesh(new THREE.BoxGeometry(width + 0.8, 0.35, depth + 0.8), roofMat);
-            roofRight.position.set(width * 0.005, wallHeight + 0.75, 0);
+            roofRight.position.set(width * 0.0001, wallHeight + 0.75, 0);
             roofRight.rotation.z = Math.PI / 6;
             roofRight.castShadow = true;
             house.add(roofRight);
