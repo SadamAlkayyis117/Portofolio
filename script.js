@@ -741,7 +741,7 @@ if (typeof THREE === "undefined") {
 
         // Tiga NPC dengan Peran & Animasi Masing-masing
         const npc1 = createNPC(1, -7, 0xd94c4c, 4, "WALK");  // Alex: Jalan Patroli
-        const npc2 = createNPC(-1, -12, 0xf0a83c, 0, "SWEEP");  // Maya: Menyapu Halaman
+        const npc2 = createNPC(1, -12, 0xf0a83c, 0, "SWEEP");  // Maya: Menyapu Halaman
         const npc3 = createNPC(-4, -24, 0x8e5bd9, 0, "WATER"); // Jordan: Menyiram Tanaman
 
         const npcs = [npc1, npc2, npc3];
