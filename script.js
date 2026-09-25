@@ -2,7 +2,6 @@
 // SADAM ALKAYYIS - INTERACTIVE 3D PORTFOLIO
 // STEP 4 - THREE.JS WORLD
 // =====================================================
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js";
 console.log("=== PORTFOLIO SCRIPT START ===");
 
 
