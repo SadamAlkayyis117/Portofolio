@@ -1,9 +1,12 @@
 // =====================================================
 // SADAM ALKAYYIS - INTERACTIVE 3D PORTFOLIO
-// THIRD PERSON CONTROLLER - SMARTVOC STYLE
+// STEP 6
+// THIRD PERSON + COLLISION + PROJECT SIGN + E INTERACTION
+// NPC FULL BODY
 // =====================================================
 
 console.log("=== PORTFOLIO SCRIPT START ===");
+
 
 if (typeof THREE === "undefined") {
 
@@ -16,15 +19,23 @@ if (typeof THREE === "undefined") {
         THREE.REVISION
     );
 
+
     // =================================================
     // CANVAS
     // =================================================
 
-    const canvas = document.getElementById("game-canvas");
+    const canvas =
+        document.getElementById("game-canvas");
+
 
     if (!canvas) {
-        console.error("Canvas #game-canvas tidak ditemukan.");
+
+        console.error(
+            "Canvas #game-canvas tidak ditemukan."
+        );
+
         return;
+
     }
 
 
@@ -32,40 +43,49 @@ if (typeof THREE === "undefined") {
     // SCENE
     // =================================================
 
-    const scene = new THREE.Scene();
+    const scene =
+        new THREE.Scene();
 
-    scene.background = new THREE.Color(0x87ceeb);
+    scene.background =
+        new THREE.Color(0x87ceeb);
 
-    scene.fog = new THREE.Fog(
-        0x87ceeb,
-        30,
-        100
-    );
+    scene.fog =
+        new THREE.Fog(
+            0x87ceeb,
+            30,
+            100
+        );
 
 
     // =================================================
     // CAMERA
     // =================================================
 
-    const camera = new THREE.PerspectiveCamera(
-        65,
-        window.innerWidth / window.innerHeight,
-        0.1,
-        1000
-    );
+    const camera =
+        new THREE.PerspectiveCamera(
+            65,
+            window.innerWidth /
+            window.innerHeight,
+            0.1,
+            1000
+        );
 
 
     // =================================================
     // RENDERER
     // =================================================
 
-    const renderer = new THREE.WebGLRenderer({
-        canvas: canvas,
-        antialias: true
-    });
+    const renderer =
+        new THREE.WebGLRenderer({
+            canvas: canvas,
+            antialias: true
+        });
 
     renderer.setPixelRatio(
-        Math.min(window.devicePixelRatio, 2)
+        Math.min(
+            window.devicePixelRatio,
+            2
+        )
     );
 
     renderer.setSize(
@@ -74,6 +94,7 @@ if (typeof THREE === "undefined") {
     );
 
     renderer.shadowMap.enabled = true;
+
     renderer.shadowMap.type =
         THREE.PCFSoftShadowMap;
 
@@ -89,7 +110,9 @@ if (typeof THREE === "undefined") {
             2
         );
 
-    scene.add(hemisphereLight);
+    scene.add(
+        hemisphereLight
+    );
 
 
     const sunLight =
@@ -106,15 +129,27 @@ if (typeof THREE === "undefined") {
 
     sunLight.castShadow = true;
 
-    sunLight.shadow.mapSize.width = 2048;
-    sunLight.shadow.mapSize.height = 2048;
+    sunLight.shadow.mapSize.width =
+        2048;
 
-    sunLight.shadow.camera.left = -50;
-    sunLight.shadow.camera.right = 50;
-    sunLight.shadow.camera.top = 50;
-    sunLight.shadow.camera.bottom = -50;
+    sunLight.shadow.mapSize.height =
+        2048;
 
-    scene.add(sunLight);
+    sunLight.shadow.camera.left =
+        -50;
+
+    sunLight.shadow.camera.right =
+        50;
+
+    sunLight.shadow.camera.top =
+        50;
+
+    sunLight.shadow.camera.bottom =
+        -50;
+
+    scene.add(
+        sunLight
+    );
 
 
     // =================================================
@@ -143,7 +178,9 @@ if (typeof THREE === "undefined") {
 
     ground.receiveShadow = true;
 
-    scene.add(ground);
+    scene.add(
+        ground
+    );
 
 
     // =================================================
@@ -178,7 +215,203 @@ if (typeof THREE === "undefined") {
 
     path.receiveShadow = true;
 
-    scene.add(path);
+    scene.add(
+        path
+    );
+
+
+    // =================================================
+    // COLLISION SYSTEM
+    // =================================================
+
+    const collisionObjects = [];
+
+
+    function addCollisionBox(
+        x,
+        z,
+        width,
+        depth
+    ) {
+
+        collisionObjects.push({
+            x: x,
+            z: z,
+            halfWidth: width / 2,
+            halfDepth: depth / 2
+        });
+
+    }
+
+
+    // =================================================
+    // PLAYER COLLISION SIZE
+    // =================================================
+
+    const PLAYER_RADIUS = 0.45;
+
+
+    // =================================================
+    // CHECK COLLISION
+    // =================================================
+
+    function resolvePlayerCollision(
+        position
+    ) {
+
+        for (
+            const collider
+            of collisionObjects
+        ) {
+
+            const closestX =
+                THREE.MathUtils.clamp(
+                    position.x,
+                    collider.x -
+                    collider.halfWidth,
+                    collider.x +
+                    collider.halfWidth
+                );
+
+            const closestZ =
+                THREE.MathUtils.clamp(
+                    position.z,
+                    collider.z -
+                    collider.halfDepth,
+                    collider.z +
+                    collider.halfDepth
+                );
+
+
+            let dx =
+                position.x -
+                closestX;
+
+            let dz =
+                position.z -
+                closestZ;
+
+
+            const distanceSq =
+                dx * dx +
+                dz * dz;
+
+
+            if (
+                distanceSq <
+                PLAYER_RADIUS *
+                PLAYER_RADIUS
+            ) {
+
+                let distance =
+                    Math.sqrt(
+                        distanceSq
+                    );
+
+
+                // =====================================
+                // PLAYER INSIDE CENTER
+                // =====================================
+
+                if (
+                    distance === 0
+                ) {
+
+                    const pushX =
+                        Math.min(
+                            Math.abs(
+                                position.x -
+                                (
+                                    collider.x -
+                                    collider.halfWidth
+                                )
+                            ),
+                            Math.abs(
+                                position.x -
+                                (
+                                    collider.x +
+                                    collider.halfWidth
+                                )
+                            )
+                        );
+
+                    const pushZ =
+                        Math.min(
+                            Math.abs(
+                                position.z -
+                                (
+                                    collider.z -
+                                    collider.halfDepth
+                                )
+                            ),
+                            Math.abs(
+                                position.z -
+                                (
+                                    collider.z +
+                                    collider.halfDepth
+                                )
+                            )
+                        );
+
+
+                    if (
+                        pushX <
+                        pushZ
+                    ) {
+
+                        position.x =
+                            position.x <
+                            collider.x
+                                ? collider.x -
+                                  collider.halfWidth -
+                                  PLAYER_RADIUS
+                                : collider.x +
+                                  collider.halfWidth +
+                                  PLAYER_RADIUS;
+
+                    } else {
+
+                        position.z =
+                            position.z <
+                            collider.z
+                                ? collider.z -
+                                  collider.halfDepth -
+                                  PLAYER_RADIUS
+                                : collider.z +
+                                  collider.halfDepth +
+                                  PLAYER_RADIUS;
+
+                    }
+
+                    continue;
+
+                }
+
+
+                // =====================================
+                // PUSH PLAYER OUT
+                // =====================================
+
+                const penetration =
+                    PLAYER_RADIUS -
+                    distance;
+
+
+                dx /= distance;
+                dz /= distance;
+
+
+                position.x +=
+                    dx * penetration;
+
+                position.z +=
+                    dz * penetration;
+
+            }
+
+        }
+
+    }
 
 
     // =================================================
@@ -192,7 +425,8 @@ if (typeof THREE === "undefined") {
         color,
         x,
         y,
-        z
+        z,
+        collision = true
     ) {
 
         const geometry =
@@ -220,11 +454,28 @@ if (typeof THREE === "undefined") {
         );
 
         mesh.castShadow = true;
+
         mesh.receiveShadow = true;
 
-        scene.add(mesh);
+        scene.add(
+            mesh
+        );
+
+
+        if (collision) {
+
+            addCollisionBox(
+                x,
+                z,
+                width,
+                depth
+            );
+
+        }
+
 
         return mesh;
+
     }
 
 
@@ -239,8 +490,10 @@ if (typeof THREE === "undefined") {
         0x8b6f47,
         -6,
         1,
-        -8
+        -8,
+        true
     );
+
 
     createBox(
         3,
@@ -249,8 +502,10 @@ if (typeof THREE === "undefined") {
         0x6d8f52,
         6,
         1.5,
-        -12
+        -12,
+        true
     );
+
 
     createBox(
         5,
@@ -259,7 +514,8 @@ if (typeof THREE === "undefined") {
         0x77624a,
         0,
         0.5,
-        -18
+        -18,
+        true
     );
 
 
@@ -271,6 +527,10 @@ if (typeof THREE === "undefined") {
         x,
         z
     ) {
+
+        // =============================================
+        // TRUNK
+        // =============================================
 
         const trunkGeometry =
             new THREE.CylinderGeometry(
@@ -299,8 +559,14 @@ if (typeof THREE === "undefined") {
 
         trunk.castShadow = true;
 
-        scene.add(trunk);
+        scene.add(
+            trunk
+        );
 
+
+        // =============================================
+        // LEAVES
+        // =============================================
 
         const leavesGeometry =
             new THREE.SphereGeometry(
@@ -328,15 +594,49 @@ if (typeof THREE === "undefined") {
 
         leaves.castShadow = true;
 
-        scene.add(leaves);
+        scene.add(
+            leaves
+        );
+
+
+        // =============================================
+        // TREE COLLISION
+        // =============================================
+
+        addCollisionBox(
+            x,
+            z,
+            1.2,
+            1.2
+        );
+
     }
 
 
-    createTree(-10, -5);
-    createTree(10, -7);
-    createTree(-12, -18);
-    createTree(12, -22);
-    createTree(4, -25);
+    createTree(
+        -10,
+        -5
+    );
+
+    createTree(
+        10,
+        -7
+    );
+
+    createTree(
+        -12,
+        -18
+    );
+
+    createTree(
+        12,
+        -22
+    );
+
+    createTree(
+        4,
+        -25
+    );
 
 
     // =================================================
@@ -346,13 +646,17 @@ if (typeof THREE === "undefined") {
     const player =
         new THREE.Group();
 
+
     player.position.set(
         0,
         0,
         6
     );
 
-    scene.add(player);
+
+    scene.add(
+        player
+    );
 
 
     // =================================================
@@ -377,11 +681,14 @@ if (typeof THREE === "undefined") {
             bodyMaterial
         );
 
-    body.position.y = 1.15;
+    body.position.y =
+        1.15;
 
     body.castShadow = true;
 
-    player.add(body);
+    player.add(
+        body
+    );
 
 
     // =================================================
@@ -406,11 +713,14 @@ if (typeof THREE === "undefined") {
             headMaterial
         );
 
-    head.position.y = 2.0;
+    head.position.y =
+        2.0;
 
     head.castShadow = true;
 
-    player.add(head);
+    player.add(
+        head
+    );
 
 
     // =================================================
@@ -444,7 +754,9 @@ if (typeof THREE === "undefined") {
 
     leftLeg.castShadow = true;
 
-    player.add(leftLeg);
+    player.add(
+        leftLeg
+    );
 
 
     const rightLeg =
@@ -461,7 +773,9 @@ if (typeof THREE === "undefined") {
 
     rightLeg.castShadow = true;
 
-    player.add(rightLeg);
+    player.add(
+        rightLeg
+    );
 
 
     // =================================================
@@ -490,7 +804,9 @@ if (typeof THREE === "undefined") {
 
     leftArm.castShadow = true;
 
-    player.add(leftArm);
+    player.add(
+        leftArm
+    );
 
 
     const rightArm =
@@ -507,25 +823,34 @@ if (typeof THREE === "undefined") {
 
     rightArm.castShadow = true;
 
-    player.add(rightArm);
+    player.add(
+        rightArm
+    );
 
 
     // =================================================
     // THIRD PERSON CAMERA
-    // SMARTVOC STYLE
     // =================================================
 
     let cameraYaw = 0;
+
     let cameraPitch = 0.18;
 
     let cameraDistance = 6.0;
 
-    const CAMERA_MIN_DISTANCE = 3.5;
-    const CAMERA_MAX_DISTANCE = 9.0;
 
-    const CAMERA_HEIGHT = 2.8;
+    const CAMERA_MIN_DISTANCE =
+        3.5;
 
-    const CAMERA_LOOK_HEIGHT = 1.15;
+    const CAMERA_MAX_DISTANCE =
+        9.0;
+
+    const CAMERA_HEIGHT =
+        2.8;
+
+    const CAMERA_LOOK_HEIGHT =
+        1.15;
+
 
     const cameraTarget =
         new THREE.Vector3();
@@ -533,17 +858,9 @@ if (typeof THREE === "undefined") {
     const cameraDesiredPosition =
         new THREE.Vector3();
 
-    const cameraOffset =
-        new THREE.Vector3();
 
-
-    // =================================================
-    // CAMERA SMOOTHING
-    // =================================================
-
-    const cameraFollowSpeed = 12;
-
-    const cameraLookSpeed = 14;
+    const cameraFollowSpeed =
+        12;
 
 
     // =================================================
@@ -558,6 +875,19 @@ if (typeof THREE === "undefined") {
         function(event) {
 
             keys[event.code] = true;
+
+
+            // =========================================
+            // E INTERACTION
+            // =========================================
+
+            if (
+                event.code === "KeyE"
+            ) {
+
+                interactWithProject();
+
+            }
 
         }
     );
@@ -579,12 +909,14 @@ if (typeof THREE === "undefined") {
 
     let mouseLocked = false;
 
+
     document.addEventListener(
         "pointerlockchange",
         function() {
 
             mouseLocked =
-                document.pointerLockElement === canvas;
+                document.pointerLockElement ===
+                canvas;
 
         }
     );
@@ -594,16 +926,18 @@ if (typeof THREE === "undefined") {
         "mousemove",
         function(event) {
 
-            if (!mouseLocked) {
+            if (
+                !mouseLocked ||
+                projectOpen
+            ) {
+
                 return;
+
             }
 
 
-            // =========================================
-            // CAMERA ORBIT
-            // =========================================
-
-            const sensitivity = 0.0025;
+            const sensitivity =
+                0.0025;
 
 
             cameraYaw -=
@@ -615,10 +949,6 @@ if (typeof THREE === "undefined") {
                 event.movementY *
                 sensitivity;
 
-
-            // =========================================
-            // SMARTVOC-LIKE CAMERA LIMIT
-            // =========================================
 
             cameraPitch =
                 THREE.MathUtils.clamp(
@@ -639,10 +969,22 @@ if (typeof THREE === "undefined") {
         "wheel",
         function(event) {
 
+            if (
+                projectOpen
+            ) {
+
+                return;
+
+            }
+
+
             event.preventDefault();
 
+
             cameraDistance +=
-                event.deltaY * 0.005;
+                event.deltaY *
+                0.005;
+
 
             cameraDistance =
                 THREE.MathUtils.clamp(
@@ -688,19 +1030,11 @@ if (typeof THREE === "undefined") {
                 }
 
 
-                // =====================================
-                // POINTER LOCK
-                // =====================================
-
                 canvas.requestPointerLock();
 
 
                 console.log(
                     "Portfolio started."
-                );
-
-                console.log(
-                    "Third-person SmartVoc-style controller active."
                 );
 
             }
@@ -710,7 +1044,7 @@ if (typeof THREE === "undefined") {
 
 
     // =================================================
-    // PLAYER MOVEMENT
+    // MOVEMENT
     // =================================================
 
     const moveDirection =
@@ -733,10 +1067,26 @@ if (typeof THREE === "undefined") {
 
     // =================================================
     // PLAYER MOVEMENT
-    // SMARTVOC STYLE
     // =================================================
 
-    function updatePlayer(delta) {
+    function updatePlayer(
+        delta
+    ) {
+
+        if (
+            projectOpen
+        ) {
+
+            moveDirection.set(
+                0,
+                0,
+                0
+            );
+
+            return;
+
+        }
+
 
         moveDirection.set(
             0,
@@ -745,16 +1095,9 @@ if (typeof THREE === "undefined") {
         );
 
 
-        // =================================================
-        // CAMERA BASIS
-        // Sama konsepnya dengan:
-        //
-        // cam_basis.x
-        // -cam_basis.z
-        //
-        // pada SmartVoc.
-        // =================================================
-
+        // =============================================
+        // CAMERA FORWARD
+        // =============================================
 
         cameraForward.set(
             Math.sin(cameraYaw),
@@ -765,6 +1108,10 @@ if (typeof THREE === "undefined") {
         cameraForward.normalize();
 
 
+        // =============================================
+        // CAMERA RIGHT
+        // =============================================
+
         cameraRight.set(
             Math.cos(cameraYaw),
             0,
@@ -774,9 +1121,9 @@ if (typeof THREE === "undefined") {
         cameraRight.normalize();
 
 
-        // =================================================
-        // W = MAJU SESUAI ARAH CAMERA
-        // =================================================
+        // =============================================
+        // W
+        // =============================================
 
         if (
             keys["KeyW"] ||
@@ -790,9 +1137,9 @@ if (typeof THREE === "undefined") {
         }
 
 
-        // =================================================
-        // S = MUNDUR
-        // =================================================
+        // =============================================
+        // S
+        // =============================================
 
         if (
             keys["KeyS"] ||
@@ -806,9 +1153,9 @@ if (typeof THREE === "undefined") {
         }
 
 
-        // =================================================
-        // A = KIRI RELATIF CAMERA
-        // =================================================
+        // =============================================
+        // A
+        // =============================================
 
         if (
             keys["KeyA"] ||
@@ -822,9 +1169,9 @@ if (typeof THREE === "undefined") {
         }
 
 
-        // =================================================
-        // D = KANAN RELATIF CAMERA
-        // =================================================
+        // =============================================
+        // D
+        // =============================================
 
         if (
             keys["KeyD"] ||
@@ -838,42 +1185,71 @@ if (typeof THREE === "undefined") {
         }
 
 
-        // =================================================
+        // =============================================
         // NORMALIZE
-        // =================================================
+        // =============================================
 
         const isMoving =
             moveDirection.lengthSq() > 0;
 
 
-        if (isMoving) {
+        if (
+            isMoving
+        ) {
 
             moveDirection.normalize();
 
 
-            // =============================================
-            // MOVEMENT
-            // =============================================
+            // =========================================
+            // CALCULATE NEW POSITION
+            // =========================================
 
             velocity.copy(
                 moveDirection
             );
 
             velocity.multiplyScalar(
-                moveSpeed * delta
-            );
-
-            player.position.add(
-                velocity
+                moveSpeed *
+                delta
             );
 
 
-            // =============================================
-            // CHARACTER ROTATION
-            //
-            // Sama konsep:
-            // atan2(dir.x, dir.z)
-            // =============================================
+            const oldX =
+                player.position.x;
+
+            const oldZ =
+                player.position.z;
+
+
+            // =========================================
+            // MOVE X
+            // =========================================
+
+            player.position.x +=
+                velocity.x;
+
+
+            resolvePlayerCollision(
+                player.position
+            );
+
+
+            // =========================================
+            // MOVE Z
+            // =========================================
+
+            player.position.z +=
+                velocity.z;
+
+
+            resolvePlayerCollision(
+                player.position
+            );
+
+
+            // =========================================
+            // ROTATION
+            // =========================================
 
             const targetRotation =
                 Math.atan2(
@@ -887,9 +1263,9 @@ if (typeof THREE === "undefined") {
                 player.rotation.y;
 
 
-            // Normalize rotation difference
             while (
-                rotationDifference > Math.PI
+                rotationDifference >
+                Math.PI
             ) {
 
                 rotationDifference -=
@@ -899,7 +1275,8 @@ if (typeof THREE === "undefined") {
 
 
             while (
-                rotationDifference < -Math.PI
+                rotationDifference <
+                -Math.PI
             ) {
 
                 rotationDifference +=
@@ -908,20 +1285,20 @@ if (typeof THREE === "undefined") {
             }
 
 
-            // Smooth rotation
             player.rotation.y +=
                 rotationDifference *
                 Math.min(
                     1,
-                    delta * rotationSpeed
+                    delta *
+                    rotationSpeed
                 );
 
         }
 
 
-        // =================================================
+        // =============================================
         // WORLD BOUNDS
-        // =================================================
+        // =============================================
 
         player.position.x =
             THREE.MathUtils.clamp(
@@ -942,28 +1319,34 @@ if (typeof THREE === "undefined") {
 
 
     // =================================================
-    // PLAYER WALK ANIMATION
+    // PLAYER ANIMATION
     // =================================================
 
     let walkTime = 0;
 
 
-    function updatePlayerAnimation(delta) {
+    function updatePlayerAnimation(
+        delta
+    ) {
 
         const isMoving =
             moveDirection.lengthSq() > 0;
 
 
-        if (isMoving) {
+        if (
+            isMoving
+        ) {
 
             walkTime +=
-                delta * 10;
+                delta *
+                10;
 
 
             const swing =
                 Math.sin(
                     walkTime
-                ) * 0.5;
+                ) *
+                0.5;
 
 
             leftLeg.rotation.x =
@@ -982,9 +1365,11 @@ if (typeof THREE === "undefined") {
         } else {
 
             leftLeg.rotation.x = 0;
+
             rightLeg.rotation.x = 0;
 
             leftArm.rotation.x = 0;
+
             rightArm.rotation.x = 0;
 
         }
@@ -993,14 +1378,12 @@ if (typeof THREE === "undefined") {
 
 
     // =================================================
-    // THIRD PERSON CAMERA FOLLOW
+    // CAMERA FOLLOW
     // =================================================
 
-    function updateCamera(delta) {
-
-        // =============================================
-        // TARGET
-        // =============================================
+    function updateCamera(
+        delta
+    ) {
 
         cameraTarget.set(
             player.position.x,
@@ -1010,21 +1393,18 @@ if (typeof THREE === "undefined") {
         );
 
 
-        // =============================================
-        // ORBIT POSITION
-        //
-        // Kamera berada DI BELAKANG player
-        // relatif terhadap cameraYaw.
-        // =============================================
-
         const horizontalDistance =
             cameraDistance *
-            Math.cos(cameraPitch);
+            Math.cos(
+                cameraPitch
+            );
 
 
         const verticalDistance =
             cameraDistance *
-            Math.sin(cameraPitch);
+            Math.sin(
+                cameraPitch
+            );
 
 
         cameraDesiredPosition.set(
@@ -1044,10 +1424,6 @@ if (typeof THREE === "undefined") {
         );
 
 
-        // =============================================
-        // CAMERA FOLLOW SMOOTH
-        // =============================================
-
         const followAlpha =
             1 -
             Math.pow(
@@ -1063,10 +1439,6 @@ if (typeof THREE === "undefined") {
         );
 
 
-        // =============================================
-        // CAMERA LOOK AT
-        // =============================================
-
         camera.lookAt(
             cameraTarget
         );
@@ -1075,7 +1447,890 @@ if (typeof THREE === "undefined") {
 
 
     // =================================================
+    // PROJECT DATA
+    // =================================================
+
+    const projects = {
+
+        smartvoc: {
+
+            title: "SmartVoc",
+
+            category: "GAME DEVELOPMENT",
+
+            description:
+                "3D open-world English learning RPG built for university students.",
+
+            about:
+                "An educational RPG that combines open-world exploration, NPC interaction, missions, vocabulary learning, mini-games and progression into one interactive experience.",
+
+            technologies:
+                "Godot Engine • GDScript • Blender • JSON",
+
+            contribution:
+                "Game design, gameplay programming, UI implementation, systems development, level design and educational mechanics.",
+
+            github:
+                "https://github.com/SadamAlkayyis117",
+
+            demo:
+                "#"
+
+        },
+
+
+        blockfight: {
+
+            title: "BlockFight",
+
+            category: "GAME DEVELOPMENT",
+
+            description:
+                "Interactive game project focused on gameplay systems and player interaction.",
+
+            about:
+                "A gameplay-focused project developed to explore game mechanics, interaction systems and real-time player experiences.",
+
+            technologies:
+                "Godot Engine • GDScript • Blender",
+
+            contribution:
+                "Gameplay programming, mechanics implementation, level design and visual development.",
+
+            github:
+                "https://github.com/SadamAlkayyis117",
+
+            demo:
+                "#"
+
+        },
+
+
+        uiux: {
+
+            title: "UI / UX DESIGN",
+
+            category: "UI / UX",
+
+            description:
+                "Interface and experience design projects created using Figma.",
+
+            about:
+                "A collection of interface design and prototyping work focused on usability, visual hierarchy and interactive user experiences.",
+
+            technologies:
+                "Figma • UI Design • UX Design • Prototyping",
+
+            contribution:
+                "UI design, UX planning, wireframing, prototyping and visual design.",
+
+            github:
+                "#",
+
+            demo:
+                "#"
+
+        },
+
+
+        graphic: {
+
+            title: "GRAPHIC DESIGN",
+
+            category: "GRAPHIC DESIGN",
+
+            description:
+                "Visual design projects covering illustration, branding and digital artwork.",
+
+            about:
+                "A selection of graphic design work created across various projects, combining visual communication, composition and digital illustration.",
+
+            technologies:
+                "CorelDRAW • Adobe Photoshop • Digital Illustration",
+
+            contribution:
+                "Graphic design, illustration, composition, layout and visual development.",
+
+            github:
+                "#",
+
+            demo:
+                "#"
+
+        }
+
+    };
+
+
+    // =================================================
+    // PROJECT SIGN SYSTEM
+    // =================================================
+
+    const projectSigns = [];
+
+
+    // =================================================
+    // CREATE SIGN TEXTURE
+    // =================================================
+
+    function createSignTexture(
+        title,
+        category
+    ) {
+
+        const canvas =
+            document.createElement(
+                "canvas"
+            );
+
+
+        canvas.width = 1024;
+
+        canvas.height = 512;
+
+
+        const context =
+            canvas.getContext(
+                "2d"
+            );
+
+
+        // Background
+
+        context.fillStyle =
+            "#111111";
+
+        context.fillRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+
+        // Border
+
+        context.strokeStyle =
+            "#ffffff";
+
+        context.lineWidth =
+            8;
+
+        context.strokeRect(
+            12,
+            12,
+            canvas.width - 24,
+            canvas.height - 24
+        );
+
+
+        // Category
+
+        context.fillStyle =
+            "#bbbbbb";
+
+        context.font =
+            "bold 32px Arial";
+
+        context.textAlign =
+            "center";
+
+        context.fillText(
+            category,
+            canvas.width / 2,
+            100
+        );
+
+
+        // Title
+
+        context.fillStyle =
+            "#ffffff";
+
+        context.font =
+            "bold 72px Arial";
+
+        context.fillText(
+            title,
+            canvas.width / 2,
+            205
+        );
+
+
+        // Interaction
+
+        context.fillStyle =
+            "#cccccc";
+
+        context.font =
+            "30px Arial";
+
+        context.fillText(
+            "PRESS E TO EXPLORE",
+            canvas.width / 2,
+            380
+        );
+
+
+        const texture =
+            new THREE.CanvasTexture(
+                canvas
+            );
+
+
+        texture.colorSpace =
+            THREE.SRGBColorSpace;
+
+
+        return texture;
+
+    }
+
+
+    // =================================================
+    // CREATE PROJECT SIGN
+    // =================================================
+
+    function createProjectSign(
+        projectId,
+        x,
+        z
+    ) {
+
+        const data =
+            projects[projectId];
+
+
+        const sign =
+            new THREE.Group();
+
+
+        sign.position.set(
+            x,
+            0,
+            z
+        );
+
+
+        // =============================================
+        // POST
+        // =============================================
+
+        const post =
+            new THREE.Mesh(
+                new THREE.BoxGeometry(
+                    0.25,
+                    2.2,
+                    0.25
+                ),
+                new THREE.MeshStandardMaterial({
+                    color: 0x333333
+                })
+            );
+
+
+        post.position.y =
+            1.1;
+
+
+        post.castShadow = true;
+
+
+        sign.add(
+            post
+        );
+
+
+        // =============================================
+        // BOARD
+        // =============================================
+
+        const board =
+            new THREE.Mesh(
+                new THREE.PlaneGeometry(
+                    3.2,
+                    1.6
+                ),
+                new THREE.MeshStandardMaterial({
+                    map:
+                        createSignTexture(
+                            data.title,
+                            data.category
+                        ),
+                    side:
+                        THREE.DoubleSide
+                })
+            );
+
+
+        board.position.y =
+            2.2;
+
+
+        board.castShadow = true;
+
+
+        sign.add(
+            board
+        );
+
+
+        // =============================================
+        // COLLISION
+        // =============================================
+
+        addCollisionBox(
+            x,
+            z,
+            0.8,
+            0.8
+        );
+
+
+        // =============================================
+        // USER DATA
+        // =============================================
+
+        sign.userData.projectId =
+            projectId;
+
+
+        sign.userData.interactionRadius =
+            3.2;
+
+
+        projectSigns.push(
+            sign
+        );
+
+
+        scene.add(
+            sign
+        );
+
+
+        return sign;
+
+    }
+
+
+    // =================================================
+    // PROJECT SIGN LOCATIONS
+    // =================================================
+
+    createProjectSign(
+        "smartvoc",
+        5,
+        -3
+    );
+
+
+    createProjectSign(
+        "blockfight",
+        -5,
+        -12
+    );
+
+
+    createProjectSign(
+        "uiux",
+        5,
+        -22
+    );
+
+
+    createProjectSign(
+        "graphic",
+        -5,
+        -32
+    );
+
+
+    // =================================================
+    // INTERACTION PROMPT
+    // =================================================
+
+    const interactionPrompt =
+        document.getElementById(
+            "interaction-prompt"
+        );
+
+
+    let nearestProject =
+        null;
+
+
+    // =================================================
+    // UPDATE PROJECT DETECTION
+    // =================================================
+
+    function updateProjectDetection() {
+
+        if (
+            projectOpen
+        ) {
+
+            if (
+                interactionPrompt
+            ) {
+
+                interactionPrompt.classList.add(
+                    "hidden"
+                );
+
+            }
+
+            nearestProject =
+                null;
+
+            return;
+
+        }
+
+
+        let closest =
+            null;
+
+
+        let closestDistance =
+            Infinity;
+
+
+        for (
+            const sign
+            of projectSigns
+        ) {
+
+            const dx =
+                player.position.x -
+                sign.position.x;
+
+
+            const dz =
+                player.position.z -
+                sign.position.z;
+
+
+            const distance =
+                Math.sqrt(
+                    dx * dx +
+                    dz * dz
+                );
+
+
+            if (
+                distance <
+                sign.userData.interactionRadius &&
+                distance <
+                closestDistance
+            ) {
+
+                closest =
+                    sign;
+
+                closestDistance =
+                    distance;
+
+            }
+
+        }
+
+
+        nearestProject =
+            closest;
+
+
+        if (
+            interactionPrompt
+        ) {
+
+            if (
+                nearestProject
+            ) {
+
+                interactionPrompt.classList.remove(
+                    "hidden"
+                );
+
+
+                const key =
+                    interactionPrompt.querySelector(
+                        ".key"
+                    );
+
+
+                if (
+                    key
+                ) {
+
+                    key.textContent =
+                        "E";
+
+                }
+
+
+                const textElements =
+                    interactionPrompt.querySelectorAll(
+                        "span"
+                    );
+
+
+                if (
+                    textElements.length >
+                    1
+                ) {
+
+                    textElements[
+                        textElements.length - 1
+                    ].textContent =
+                        "View Project";
+
+                }
+
+            } else {
+
+                interactionPrompt.classList.add(
+                    "hidden"
+                );
+
+            }
+
+        }
+
+    }
+
+
+    // =================================================
+    // PROJECT PANEL
+    // =================================================
+
+    const projectPanel =
+        document.getElementById(
+            "project-panel"
+        );
+
+
+    const backButton =
+        document.querySelector(
+            ".back-button"
+        );
+
+
+    let projectOpen =
+        false;
+
+
+    // =================================================
+    // OPEN PROJECT
+    // =================================================
+
+    function openProject(
+        projectId
+    ) {
+
+        const data =
+            projects[projectId];
+
+
+        if (
+            !data
+        ) {
+
+            return;
+
+        }
+
+
+        projectOpen =
+            true;
+
+
+        // =============================================
+        // FIND COMMON PROJECT ELEMENTS
+        // =============================================
+
+        const title =
+            document.getElementById(
+                "project-title"
+            );
+
+
+        const description =
+            document.getElementById(
+                "project-description"
+            );
+
+
+        const about =
+            document.getElementById(
+                "project-about"
+            );
+
+
+        const technologies =
+            document.getElementById(
+                "project-technologies"
+            );
+
+
+        const contribution =
+            document.getElementById(
+                "project-contribution"
+            );
+
+
+        if (
+            title
+        ) {
+
+            title.textContent =
+                data.title;
+
+        }
+
+
+        if (
+            description
+        ) {
+
+            description.textContent =
+                data.description;
+
+        }
+
+
+        if (
+            about
+        ) {
+
+            about.textContent =
+                data.about;
+
+        }
+
+
+        if (
+            technologies
+        ) {
+
+            technologies.textContent =
+                data.technologies;
+
+        }
+
+
+        if (
+            contribution
+        ) {
+
+            contribution.textContent =
+                data.contribution;
+
+        }
+
+
+        // =============================================
+        // LINKS
+        // =============================================
+
+        const githubLink =
+            document.getElementById(
+                "project-github"
+            );
+
+
+        const demoLink =
+            document.getElementById(
+                "project-demo"
+            );
+
+
+        if (
+            githubLink
+        ) {
+
+            githubLink.href =
+                data.github;
+
+        }
+
+
+        if (
+            demoLink
+        ) {
+
+            demoLink.href =
+                data.demo;
+
+        }
+
+
+        // =============================================
+        // SHOW PANEL
+        // =============================================
+
+        if (
+            projectPanel
+        ) {
+
+            projectPanel.classList.remove(
+                "hidden"
+            );
+
+        }
+
+
+        // =============================================
+        // HIDE PROMPT
+        // =============================================
+
+        if (
+            interactionPrompt
+        ) {
+
+            interactionPrompt.classList.add(
+                "hidden"
+            );
+
+        }
+
+
+        // =============================================
+        // UNLOCK MOUSE
+        // =============================================
+
+        if (
+            document.pointerLockElement
+        ) {
+
+            document.exitPointerLock();
+
+        }
+
+
+        console.log(
+            "Project opened:",
+            data.title
+        );
+
+    }
+
+
+    // =================================================
+    // E INTERACTION
+    // =================================================
+
+    function interactWithProject() {
+
+        if (
+            projectOpen
+        ) {
+
+            return;
+
+        }
+
+
+        if (
+            !nearestProject
+        ) {
+
+            return;
+
+        }
+
+
+        const projectId =
+            nearestProject.userData.projectId;
+
+
+        openProject(
+            projectId
+        );
+
+    }
+
+
+    // =================================================
+    // CLOSE PROJECT
+    // =================================================
+
+    function closeProject() {
+
+        projectOpen =
+            false;
+
+
+        if (
+            projectPanel
+        ) {
+
+            projectPanel.classList.add(
+                "hidden"
+            );
+
+        }
+
+
+        nearestProject =
+            null;
+
+
+        // =============================================
+        // RELOCK MOUSE
+        // =============================================
+
+        canvas.requestPointerLock();
+
+    }
+
+
+    // =================================================
+    // BACK BUTTON
+    // =================================================
+
+    if (
+        backButton
+    ) {
+
+        backButton.addEventListener(
+            "click",
+            function(event) {
+
+                event.preventDefault();
+
+                closeProject();
+
+            }
+        );
+
+    }
+
+
+    // =================================================
+    // ESC
+    // =================================================
+
+    document.addEventListener(
+        "keydown",
+        function(event) {
+
+            if (
+                event.code === "Escape" &&
+                projectOpen
+            ) {
+
+                closeProject();
+
+            }
+
+        }
+    );
+
+
+    // =================================================
     // NPC CREATION
+    // FULL BODY
     // =================================================
 
     function createNPC(
@@ -1096,7 +2351,9 @@ if (typeof THREE === "undefined") {
         );
 
 
-        scene.add(npc);
+        scene.add(
+            npc
+        );
 
 
         // =============================================
@@ -1115,12 +2372,17 @@ if (typeof THREE === "undefined") {
                 })
             );
 
+
         npcBody.position.y =
             1.1;
 
+
         npcBody.castShadow = true;
 
-        npc.add(npcBody);
+
+        npc.add(
+            npcBody
+        );
 
 
         // =============================================
@@ -1139,12 +2401,17 @@ if (typeof THREE === "undefined") {
                 })
             );
 
+
         npcHead.position.y =
             1.9;
 
+
         npcHead.castShadow = true;
 
-        npc.add(npcHead);
+
+        npc.add(
+            npcHead
+        );
 
 
         // =============================================
@@ -1158,6 +2425,7 @@ if (typeof THREE === "undefined") {
                 0.28
             );
 
+
         const npcLegMaterial =
             new THREE.MeshStandardMaterial({
                 color: 0x222222
@@ -1170,15 +2438,20 @@ if (typeof THREE === "undefined") {
                 npcLegMaterial
             );
 
+
         npcLeftLeg.position.set(
             -0.19,
             0.38,
             0
         );
 
+
         npcLeftLeg.castShadow = true;
 
-        npc.add(npcLeftLeg);
+
+        npc.add(
+            npcLeftLeg
+        );
 
 
         const npcRightLeg =
@@ -1187,38 +2460,130 @@ if (typeof THREE === "undefined") {
                 npcLegMaterial
             );
 
+
         npcRightLeg.position.set(
             0.19,
             0.38,
             0
         );
 
+
         npcRightLeg.castShadow = true;
 
-        npc.add(npcRightLeg);
+
+        npc.add(
+            npcRightLeg
+        );
 
 
         // =============================================
-        // NPC MOVEMENT DATA
+        // ARMS
         // =============================================
 
-        npc.userData.startX = x;
+        const npcArmGeometry =
+            new THREE.BoxGeometry(
+                0.18,
+                0.75,
+                0.22
+            );
 
-        npc.userData.startZ = z;
+
+        const npcArmMaterial =
+            new THREE.MeshStandardMaterial({
+                color: color
+            });
+
+
+        const npcLeftArm =
+            new THREE.Mesh(
+                npcArmGeometry,
+                npcArmMaterial
+            );
+
+
+        npcLeftArm.position.set(
+            -0.50,
+            1.15,
+            0
+        );
+
+
+        npcLeftArm.castShadow = true;
+
+
+        npc.add(
+            npcLeftArm
+        );
+
+
+        const npcRightArm =
+            new THREE.Mesh(
+                npcArmGeometry,
+                npcArmMaterial
+            );
+
+
+        npcRightArm.position.set(
+            0.50,
+            1.15,
+            0
+        );
+
+
+        npcRightArm.castShadow = true;
+
+
+        npc.add(
+            npcRightArm
+        );
+
+
+        // =============================================
+        // NPC DATA
+        // =============================================
+
+        npc.userData.startX =
+            x;
+
+
+        npc.userData.startZ =
+            z;
+
 
         npc.userData.pathLength =
             pathLength;
 
+
         npc.userData.speed =
             1.2 +
-            Math.random() * 0.6;
-
-        npc.userData.direction = 1;
-
-        npc.userData.walkTime = 0;
+            Math.random() *
+            0.6;
 
 
-        // Face initial direction
+        npc.userData.direction =
+            1;
+
+
+        npc.userData.walkTime =
+            0;
+
+
+        npc.userData.leftLeg =
+            npcLeftLeg;
+
+
+        npc.userData.rightLeg =
+            npcRightLeg;
+
+
+        npc.userData.leftArm =
+            npcLeftArm;
+
+
+        npc.userData.rightArm =
+            npcRightArm;
+
+
         npc.rotation.y =
             Math.PI / 2;
 
@@ -1229,7 +2594,7 @@ if (typeof THREE === "undefined") {
 
 
     // =================================================
-    // CREATE NPCS
+    // NPCS
     // =================================================
 
     const npc1 =
@@ -1270,13 +2635,16 @@ if (typeof THREE === "undefined") {
     // NPC UPDATE
     // =================================================
 
-    function updateNPCs(delta) {
+    function updateNPCs(
+        delta
+    ) {
 
         npcs.forEach(
             function(npc) {
 
                 npc.userData.walkTime +=
-                    delta * 8;
+                    delta *
+                    8;
 
 
                 const offset =
@@ -1295,7 +2663,7 @@ if (typeof THREE === "undefined") {
 
 
                 // =====================================
-                // REVERSE
+                // TURN AROUND
                 // =====================================
 
                 if (
@@ -1322,14 +2690,25 @@ if (typeof THREE === "undefined") {
                 const swing =
                     Math.sin(
                         npc.userData.walkTime
-                    ) * 0.45;
+                    ) *
+                    0.45;
 
 
-                npc.children[2].rotation.x =
+                npc.userData.leftLeg.rotation.x =
                     swing;
 
-                npc.children[3].rotation.x =
+
+                npc.userData.rightLeg.rotation.x =
                     -swing;
+
+
+                // Arms opposite legs
+                npc.userData.leftArm.rotation.x =
+                    -swing;
+
+
+                npc.userData.rightArm.rotation.x =
+                    swing;
 
             }
         );
@@ -1347,7 +2726,9 @@ if (typeof THREE === "undefined") {
         );
 
 
-    if (loadingScreen) {
+    if (
+        loadingScreen
+    ) {
 
         loadingScreen.classList.add(
             "hidden"
@@ -1367,6 +2748,7 @@ if (typeof THREE === "undefined") {
             camera.aspect =
                 window.innerWidth /
                 window.innerHeight;
+
 
             camera.updateProjectionMatrix();
 
@@ -1392,7 +2774,9 @@ if (typeof THREE === "undefined") {
     // INITIAL CAMERA
     // =================================================
 
-    updateCamera(0.016);
+    updateCamera(
+        0.016
+    );
 
 
     // =================================================
@@ -1437,6 +2821,13 @@ if (typeof THREE === "undefined") {
 
 
         // =============================================
+        // PROJECT DETECTION
+        // =============================================
+
+        updateProjectDetection();
+
+
+        // =============================================
         // CAMERA
         // =============================================
 
@@ -1465,7 +2856,7 @@ if (typeof THREE === "undefined") {
     );
 
     console.log(
-        "SmartVoc-style third-person movement active."
+        "Third-person + collision + project interaction active."
     );
 
 }
