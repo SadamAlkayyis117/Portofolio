@@ -205,6 +205,57 @@ body {
 
     letter-spacing: 2px;
 }
+.interaction-prompt {
+    position: absolute;
+
+    left: 50%;
+    bottom: 120px;
+
+    transform: translateX(-50%);
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 12px 18px;
+
+    background: rgba(0, 0, 0, 0.75);
+
+    border: 1px solid
+        rgba(255,255,255,0.3);
+
+    border-radius: 6px;
+
+    font-size: 14px;
+
+    backdrop-filter: blur(8px);
+}
+
+.interaction-prompt .key {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 34px;
+    height: 34px;
+
+    border: 1px solid
+        rgba(255,255,255,0.7);
+
+    border-radius: 5px;
+
+    font-weight: bold;
+
+    background: rgba(
+        255,
+        255,
+        255,
+        0.1
+    );
+}
 
 .controls-hint {
     position: absolute;
