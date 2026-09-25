@@ -1006,7 +1006,7 @@ if (typeof THREE === "undefined") {
         }
 
         const npc1 = createNPC(1, -7, 0xd94c4c, 4, "WALK");
-        const npc2 = createNPC(4, -12, 0xf0a83c, 0, "SWEEP");
+        const npc2 = createNPC(5, -10, 0xf0a83c, 0, "SWEEP");
         const npc3 = createNPC(-4, -24, 0x8e5bd9, 0, "WATER");
 
         const npcs = [npc1, npc2, npc3];
