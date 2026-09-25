@@ -496,22 +496,37 @@ if (typeof THREE === "undefined") {
             const sign = new THREE.Group();
             sign.position.set(x, 0, z);
 
-            // Tiang dibuat tinggi 4 meter
-            const postHeight = 4.0;
+            // 1. Tentukan ukuran papan
+            const boardWidth = 3.6;
+            const boardHeight = 1.8;
+            const boardThickness = 0.2;
+
+            // 2. Tentukan ketinggian papan dari tanah
+            // Ketinggian titik tengah papan (misal 3.8 meter di atas tanah)
+            const boardCenterY = 3.8; 
+
+            // 3. Tinggi tiang HANYA sampai bagian bawah papan (TIDAK tembus ke atas!)
+            const postHeight = boardCenterY - (boardHeight / 2); // = 2.9 meter
+
+            // Tiang (Post) diletakkan sedikit di belakang papan
             const post = new THREE.Mesh(
                 new THREE.CylinderGeometry(0.14, 0.16, postHeight, 12),
-                new THREE.MeshStandardMaterial({ color: 0x2b2b2b })
+                new THREE.MeshStandardMaterial({ color: 0x2b2b2b, roughness: 0.6 })
             );
-            post.position.y = postHeight / 2; // = 2.0 meter
+            // Titik tengah tiang
+            post.position.set(0, postHeight / 2, -0.05); // Z mundur sedikit (-0.05) agar tidak tembus
             post.castShadow = true;
             sign.add(post);
 
-            // Papan plang pas di ujung atas tiang
+            // 4. Papan Plang (Board) diletakkan pas menumpu di atas tiang
             const board = new THREE.Mesh(
-                new THREE.BoxGeometry(3.6, 1.8, 0.2),
-                new THREE.MeshStandardMaterial({ map: createSignTexture(data.title, data.category) })
+                new THREE.BoxGeometry(boardWidth, boardHeight, boardThickness),
+                new THREE.MeshStandardMaterial({
+                    map: createSignTexture(data.title, data.category)
+                })
             );
-            board.position.y = postHeight; // Menempel kokoh di puncak tiang
+            // Papan berada di atas tiang dan sedikit lebih maju (Z = 0.05)
+            board.position.set(0, boardCenterY, 0.05);
             board.castShadow = true;
             sign.add(board);
 
