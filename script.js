@@ -184,7 +184,7 @@ if (typeof THREE === "undefined") {
             const roofGeometry =
                 new THREE.CylinderGeometry(0, roofRadius, roofHeight, 4, 1);
             roofGeometry.rotateY(Math.PI / 4);
-            const roof = new THREE.Mesh(roofGeometry, roofMaterial);
+            const roof = new THREE.Mesh(roofGeometry, roofMat);
             roof.position.set(0, wallHeight + roofHeight / 2, 0);
             roof.castShadow = true;
             roof.receiveShadow = true;
@@ -496,21 +496,22 @@ if (typeof THREE === "undefined") {
             const sign = new THREE.Group();
             sign.position.set(x, 0, z);
 
-            // Tiang plang tinggi (3.2m)
+            // Tiang dibuat tinggi 4 meter
+            const postHeight = 4.0;
             const post = new THREE.Mesh(
-                new THREE.CylinderGeometry(0.14, 0.16, 3.2, 12),
+                new THREE.CylinderGeometry(0.14, 0.16, postHeight, 12),
                 new THREE.MeshStandardMaterial({ color: 0x2b2b2b })
             );
-            post.position.y = 1.6;
+            post.position.y = postHeight / 2; // = 2.0 meter
             post.castShadow = true;
             sign.add(post);
 
-            // Papan plang di atas tiang
+            // Papan plang pas di ujung atas tiang
             const board = new THREE.Mesh(
                 new THREE.BoxGeometry(3.6, 1.8, 0.2),
                 new THREE.MeshStandardMaterial({ map: createSignTexture(data.title, data.category) })
             );
-            board.position.y = 10.0;
+            board.position.y = postHeight; // Menempel kokoh di puncak tiang
             board.castShadow = true;
             sign.add(board);
 
