@@ -37,6 +37,7 @@ if (typeof THREE === "undefined") {
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        
 
         // LIGHTS
         const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x557755, 2);
@@ -69,7 +70,20 @@ if (typeof THREE === "undefined") {
         // Ambient malam
         const nightAmbient = new THREE.HemisphereLight(0x506080, 0x10151f, 0);
         scene.add(nightAmbient);
-        
+        const sunVisual = new THREE.Mesh(
+            new THREE.SphereGeometry(2.5, 24, 24),
+            new THREE.MeshBasicMaterial({
+                color: 0xffdd66
+            })
+        );
+        sunVisual.position.set(25, 35, -30);
+        scene.add(sunVisual);
+        const moonVisual = new THREE.Mesh(
+            new THREE.SphereGeometry(2.2, 24, 24),
+            new THREE.MeshBasicMaterial({
+                color: 0xdde7ff
+            })
+        );
         function setDayMode() {
             isNight = false;
             scene.background.copy(daySkyColor);
@@ -205,20 +219,6 @@ if (typeof THREE === "undefined") {
                 }
             });
         }
-        const sunVisual = new THREE.Mesh(
-            new THREE.SphereGeometry(2.5, 24, 24),
-            new THREE.MeshBasicMaterial({
-                color: 0xffdd66
-            })
-        );
-        sunVisual.position.set(25, 35, -30);
-        scene.add(sunVisual);
-        const moonVisual = new THREE.Mesh(
-            new THREE.SphereGeometry(2.2, 24, 24),
-            new THREE.MeshBasicMaterial({
-                color: 0xdde7ff
-            })
-        );
         moonVisual.position.set(-25, 30, -25);
         moonVisual.visible = false;
         scene.add(moonVisual);
