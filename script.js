@@ -510,7 +510,7 @@ if (typeof THREE === "undefined") {
                 new THREE.BoxGeometry(3.6, 1.8, 0.2),
                 new THREE.MeshStandardMaterial({ map: createSignTexture(data.title, data.category) })
             );
-            board.position.y = 2.8;
+            board.position.y = 4.0;
             board.castShadow = true;
             sign.add(board);
 
