@@ -9,6 +9,7 @@
 
     <link rel="stylesheet" href="style.css">
 
+    <!-- 1. Muat Three.js CDN langsung di sini -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 
@@ -167,26 +168,6 @@
 
                 <div class="project-media">
 
-                    <!--
-
-                    Video source will be inserted later.
-
-                    Example:
-
-                    <video
-                        id="project-video"
-                        controls
-                        muted
-                        playsinline>
-
-                        <source
-                            src="assets/smartvoc/gameplay.mp4"
-                            type="video/mp4">
-
-                    </video>
-
-                    -->
-
                     <div
                         id="project-video-placeholder"
                         class="media-placeholder">
@@ -211,14 +192,6 @@
                     <div
                         id="project-screenshots"
                         class="screenshot-grid">
-
-                        <!--
-
-                        Screenshots will be inserted
-                        dynamically later.
-
-                        -->
-
                     </div>
 
                 </div>
@@ -392,6 +365,12 @@
         </div>
 
     </main>
+
+
+    <!-- ================= JAVASCRIPT ================= -->
+    <!-- 2. script biasa tanpa type="module" -->
     <script src="script.js"></script>
+
 </body>
+
 </html>
