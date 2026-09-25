@@ -82,6 +82,7 @@ if (typeof THREE === "undefined") {
             moonVisual.visible = false;
             stars.visible = false;
             updateNightObjects();
+            updateTimeModeUI();
         }
         function setNightMode() {
             isNight = true;
@@ -95,6 +96,18 @@ if (typeof THREE === "undefined") {
             moonVisual.visible = true;
             stars.visible = true;
             updateNightObjects();
+            updateTimeModeUI();
+        }
+        function updateNightObjects() {
+            fireflies.forEach((firefly) => {
+                firefly.visible = isNight;
+            });
+        }
+        const timeModeUI = document.getElementById("time-mode");
+        function updateTimeModeUI() {
+            if (!timeModeUI) return;
+            timeModeUI.textContent =
+                isNight ? "🌙 NIGHT" : "☀️ DAY";
         }
         function toggleDayNight() {
             if (isNight) {
@@ -313,6 +326,45 @@ if (typeof THREE === "undefined") {
                 butterfly.rightWing.rotation.y = -flap;
             });
         }
+
+        const fireflies = [];
+        function createFireflies() {
+            for (let i = 0; i < 45; i++) {
+                const material = new THREE.MeshBasicMaterial({
+                    color: 0xbaff80
+                });
+                const firefly = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.045, 6, 6),
+                    material
+                );
+                firefly.position.set(
+                    (Math.random() - 0.5) * 60,
+                    0.8 + Math.random() * 3,
+                    -Math.random() * 45
+                );
+                firefly.userData.phase = Math.random() * Math.PI * 2;
+                firefly.userData.speed = 0.5 + Math.random();
+                firefly.visible = false;
+                scene.add(firefly);
+                fireflies.push(firefly);
+            }
+        }
+        function updateFireflies() {
+            fireflies.forEach((firefly) => {
+                if (!isNight) return;
+                const t =
+                    clock.elapsedTime *
+                    firefly.userData.speed +
+                    firefly.userData.phase;
+                firefly.position.y += Math.sin(t * 2) * 0.002;
+                const glow =
+                    0.5 + Math.sin(t * 4) * 0.5;
+                firefly.material.opacity = glow;
+                firefly.material.transparent = true;
+            });
+        }
+
+createFireflies();
         // COLLISION SYSTEM
         const collisionObjects = [];
         const npcCollisionObjects = [];
@@ -547,7 +599,12 @@ if (typeof THREE === "undefined") {
         const keys = {};
         window.addEventListener("keydown", (e) => {
             keys[e.code] = true;
-            if (e.code === "KeyE") interactWithProject();
+            if (e.code === "KeyE") {
+                interactWithProject();
+            }
+            if (e.code === "KeyN") {
+                toggleDayNight();
+            }
         });
         window.addEventListener("keyup", (e) => {
             keys[e.code] = false;
@@ -1078,6 +1135,7 @@ if (typeof THREE === "undefined") {
             updateClouds(delta);
             updateBirds(delta);
             updateButterflies(delta);
+            updateFireflies();
             renderer.render(scene, camera);
         }
 
