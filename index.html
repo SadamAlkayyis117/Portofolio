@@ -5,335 +5,394 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Sadam Alkayyis — Portfolio</title>
+    <title>Sadam Alkayyis — Interactive Portfolio</title>
 
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <!-- ================= NAVBAR ================= -->
+    <!-- =====================================================
+         3D PORTFOLIO
+         Main game/portfolio canvas
+    ====================================================== -->
 
-    <header>
-        <nav class="navbar">
+    <main id="portfolio-world">
 
-            <a href="#home" class="logo">
-                SADAM
-            </a>
+        <!-- ================= 3D CANVAS ================= -->
 
-            <div class="nav-links">
-                <a href="#work">Work</a>
-                <a href="#about">About</a>
-                <a href="#skills">Skills</a>
-                <a href="#contact">Contact</a>
-            </div>
-
-        </nav>
-    </header>
+        <canvas id="game-canvas"></canvas>
 
 
-    <main>
+        <!-- ================= START SCREEN ================= -->
 
-        <!-- ================= HERO ================= -->
+        <section id="start-screen" class="screen-overlay">
 
-        <section id="home" class="hero">
-
-            <div class="hero-content">
+            <div class="start-content">
 
                 <p class="eyebrow">
-                    CREATIVE DEVELOPER × UI/UX DESIGNER
+                    INTERACTIVE PORTFOLIO
                 </p>
 
                 <h1>
-                    Sadam Alkayyis
+                    SADAM ALKAYYIS
                 </h1>
 
-                <p class="hero-description">
-                    Informatics graduate creating digital experiences
-                    through design, development, and creativity.
+                <p>
+                    Creative Developer × UI/UX Designer
                 </p>
 
-                <a href="#work" class="primary-button">
-                    Explore My Work
-                </a>
+                <div class="controls-preview">
+
+                    <div>
+                        <strong>W A S D</strong>
+                        <span>Move</span>
+                    </div>
+
+                    <div>
+                        <strong>MOUSE</strong>
+                        <span>Look Around</span>
+                    </div>
+
+                    <div>
+                        <strong>E</strong>
+                        <span>Interact</span>
+                    </div>
+
+                </div>
+
+                <button
+                    id="start-button"
+                    class="primary-button"
+                    type="button">
+                    ENTER PORTFOLIO
+                </button>
 
             </div>
 
         </section>
 
 
-        <!-- ================= WORK ================= -->
+        <!-- ================= GAME HUD ================= -->
 
-        <section id="work" class="work-section">
+        <div id="game-hud" class="game-hud">
 
-            <div class="section-heading">
+            <!-- Top left -->
+
+            <div class="hud-name">
+                SADAM ALKAYYIS
+            </div>
+
+
+            <!-- Interaction prompt -->
+
+            <div
+                id="interaction-prompt"
+                class="interaction-prompt hidden">
+
+                <span class="key">E</span>
+
+                <span>
+                    Interact
+                </span>
+
+            </div>
+
+
+            <!-- Controls hint -->
+
+            <div class="controls-hint">
+
+                <span>WASD</span>
+                Move
+
+                <span>Mouse</span>
+                Look
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             PROJECT INTERACTION PANEL
+             Hidden until player presses E
+        ================================================== -->
+
+        <section
+            id="project-panel"
+            class="project-panel hidden">
+
+            <div class="project-window">
+
+                <!-- Close / Back -->
+
+                <button
+                    id="project-back-button"
+                    class="back-button"
+                    type="button">
+
+                    ← Back to World
+
+                </button>
+
+
+                <!-- Project header -->
+
+                <div class="project-header">
+
+                    <p
+                        id="project-category"
+                        class="eyebrow">
+
+                        GAME DEVELOPMENT
+
+                    </p>
+
+                    <h2 id="project-title">
+                        SmartVoc
+                    </h2>
+
+                    <p id="project-description">
+                        3D open-world English learning RPG
+                        developed for university students.
+                    </p>
+
+                </div>
+
+
+                <!-- Main project media -->
+
+                <div class="project-media">
+
+                    <!--
+
+                    Video source will be inserted later.
+
+                    Example:
+
+                    <video
+                        id="project-video"
+                        controls
+                        muted
+                        playsinline>
+
+                        <source
+                            src="assets/smartvoc/gameplay.mp4"
+                            type="video/mp4">
+
+                    </video>
+
+                    -->
+
+                    <div
+                        id="project-video-placeholder"
+                        class="media-placeholder">
+
+                        <span>
+                            GAMEPLAY CLIP
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Screenshots -->
+
+                <div class="project-gallery">
+
+                    <h3>
+                        Project Preview
+                    </h3>
+
+                    <div
+                        id="project-screenshots"
+                        class="screenshot-grid">
+
+                        <!--
+
+                        Screenshots will be inserted
+                        dynamically later.
+
+                        -->
+
+                    </div>
+
+                </div>
+
+
+                <!-- Project information -->
+
+                <div class="project-details">
+
+                    <div>
+
+                        <h3>
+                            About the Project
+                        </h3>
+
+                        <p id="project-about">
+                            Project information will appear here.
+                        </p>
+
+                    </div>
+
+
+                    <div>
+
+                        <h3>
+                            Technologies
+                        </h3>
+
+                        <p id="project-technologies">
+                            Godot Engine · GDScript · Blender
+                        </p>
+
+                    </div>
+
+
+                    <div>
+
+                        <h3>
+                            My Contribution
+                        </h3>
+
+                        <p id="project-contribution">
+                            Game Design · Programming · UI/UX
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Project links -->
+
+                <div class="project-links">
+
+                    <a
+                        id="project-github"
+                        href="#"
+                        target="_blank"
+                        rel="noopener noreferrer">
+
+                        View GitHub →
+
+                    </a>
+
+                    <a
+                        id="project-demo"
+                        href="#"
+                        target="_blank"
+                        rel="noopener noreferrer">
+
+                        View Demo →
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             FINISH SCREEN
+             Appears after reaching the finish flag
+        ================================================== -->
+
+        <section
+            id="finish-screen"
+            class="finish-screen hidden">
+
+            <div class="finish-content">
 
                 <p class="eyebrow">
-                    SELECTED WORKS
+                    PORTFOLIO COMPLETE
                 </p>
 
                 <h2>
-                    Projects I've Built
+                    Let's Connect
                 </h2>
 
-            </div>
-
-
-            <div class="project-grid">
-
-
-                <!-- SMARTVOC -->
-
-                <article class="project-card">
-
-                    <div class="project-preview">
-                        <span>GAMEPLAY VIDEO</span>
-                    </div>
-
-                    <div class="project-info">
-
-                        <p class="project-category">
-                            GAME DEVELOPMENT
-                        </p>
-
-                        <h3>
-                            SmartVoc
-                        </h3>
-
-                        <p>
-                            3D open-world English learning RPG
-                            developed for university students.
-                        </p>
-
-                        <a href="#">
-                            View Project →
-                        </a>
-
-                    </div>
-
-                </article>
-
-
-                <!-- BLOCKFIGHT -->
-
-                <article class="project-card">
-
-                    <div class="project-preview">
-                        <span>GAMEPLAY VIDEO</span>
-                    </div>
-
-                    <div class="project-info">
-
-                        <p class="project-category">
-                            GAME DEVELOPMENT
-                        </p>
-
-                        <h3>
-                            BlockFight
-                        </h3>
-
-                        <p>
-                            Game development project focused on
-                            gameplay and interactive systems.
-                        </p>
-
-                        <a href="#">
-                            View Project →
-                        </a>
-
-                    </div>
-
-                </article>
-
-
-                <!-- UI UX -->
-
-                <article class="project-card">
-
-                    <div class="project-preview">
-                        <span>UI / UX</span>
-                    </div>
-
-                    <div class="project-info">
-
-                        <p class="project-category">
-                            UI / UX DESIGN
-                        </p>
-
-                        <h3>
-                            UI/UX Projects
-                        </h3>
-
-                        <p>
-                            Interface design and interactive
-                            prototypes created with Figma.
-                        </p>
-
-                        <a href="#">
-                            View Projects →
-                        </a>
-
-                    </div>
-
-                </article>
-
-
-                <!-- GRAPHIC DESIGN -->
-
-                <article class="project-card">
-
-                    <div class="project-preview">
-                        <span>DESIGN GALLERY</span>
-                    </div>
-
-                    <div class="project-info">
-
-                        <p class="project-category">
-                            GRAPHIC DESIGN
-                        </p>
-
-                        <h3>
-                            Graphic Design
-                        </h3>
-
-                        <p>
-                            Selected visual design, illustration,
-                            branding, and creative works.
-                        </p>
-
-                        <a href="#">
-                            View Gallery →
-                        </a>
-
-                    </div>
-
-                </article>
-
-
-            </div>
-
-        </section>
-
-
-        <!-- ================= ABOUT ================= -->
-
-        <section id="about" class="about-section">
-
-            <div class="section-heading">
-
-                <p class="eyebrow">
-                    ABOUT ME
+                <p>
+                    Thanks for exploring my work.
                 </p>
 
-                <h2>
-                    Designing & Building Digital Experiences
-                </h2>
+
+                <div class="social-links">
+
+                    <a
+                        href="#"
+                        id="github-link"
+                        target="_blank"
+                        rel="noopener noreferrer">
+
+                        GitHub
+
+                    </a>
+
+
+                    <a
+                        href="#"
+                        id="linkedin-link"
+                        target="_blank"
+                        rel="noopener noreferrer">
+
+                        LinkedIn
+
+                    </a>
+
+
+                    <a
+                        href="#"
+                        id="email-link">
+
+                        Email
+
+                    </a>
+
+                </div>
+
+
+                <button
+                    id="restart-button"
+                    class="primary-button"
+                    type="button">
+
+                    Explore Again
+
+                </button>
 
             </div>
-
-            <p class="about-text">
-
-                I am an Informatics graduate interested in
-                UI/UX design, game development, prototyping,
-                and creative digital projects.
-
-                I enjoy combining visual design and technology
-                to create interactive experiences.
-
-            </p>
 
         </section>
 
 
-        <!-- ================= SKILLS ================= -->
+        <!-- =================================================
+             OPTIONAL PAUSE / INFO
+        ================================================== -->
 
-        <section id="skills" class="skills-section">
+        <div
+            id="loading-screen"
+            class="loading-screen">
 
-            <div class="section-heading">
+            <div>
 
-                <p class="eyebrow">
-                    SKILLS
+                <p>
+                    Loading Portfolio World...
                 </p>
 
-                <h2>
-                    Tools & Technologies
-                </h2>
-
             </div>
 
-
-            <div class="skills-grid">
-
-                <div class="skill">
-                    <h3>UI / UX</h3>
-                    <p>Figma · Prototyping · UI Design</p>
-                </div>
-
-                <div class="skill">
-                    <h3>Game Development</h3>
-                    <p>Godot Engine · GDScript</p>
-                </div>
-
-                <div class="skill">
-                    <h3>3D</h3>
-                    <p>Blender · 3D Asset Integration</p>
-                </div>
-
-                <div class="skill">
-                    <h3>Graphic Design</h3>
-                    <p>CorelDRAW · Visual Design</p>
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- ================= CONTACT ================= -->
-
-        <section id="contact" class="contact-section">
-
-            <p class="eyebrow">
-                CONTACT
-            </p>
-
-            <h2>
-                Let's Create Something.
-            </h2>
-
-            <p>
-                Interested in working together?
-            </p>
-
-            <div class="contact-links">
-
-                <a href="#">
-                    GitHub
-                </a>
-
-                <a href="#">
-                    LinkedIn
-                </a>
-
-                <a href="#">
-                    Email
-                </a>
-
-            </div>
-
-        </section>
+        </div>
 
     </main>
 
 
-    <footer>
-
-        <p>
-            © 2026 Sadam Alkayyis
-        </p>
-
-    </footer>
-
+    <!-- ================= JAVASCRIPT ================= -->
 
     <script src="script.js"></script>
 
