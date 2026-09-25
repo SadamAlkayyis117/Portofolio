@@ -1,55 +1,12 @@
+/* =====================================================
+   GLOBAL
+===================================================== */
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
-
-html {
-    scroll-behavior: smooth;
-}
-
-body {
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
-}
-
-header {
-    padding: 20px;
-    border-bottom: 1px solid #ddd;
-}
-
-nav {
-    display: flex;
-    gap: 20px;
-}
-
-nav a {
-    text-decoration: none;
-    color: inherit;
-}
-
-section {
-    min-height: 500px;
-    padding: 80px 10%;
-}
-
-#home {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-h1 {
-    font-size: 60px;
-}
-
-h2 {
-    font-size: 40px;
-    margin-bottom: 30px;
-}
-/* =====================================================
-   3D PORTFOLIO WORLD
-===================================================== */
 
 html,
 body {
@@ -59,9 +16,14 @@ body {
 }
 
 body {
-    margin: 0;
+    font-family: Arial, sans-serif;
     background: #000;
 }
+
+
+/* =====================================================
+   3D WORLD
+===================================================== */
 
 #portfolio-world {
     position: relative;
@@ -72,16 +34,22 @@ body {
     overflow: hidden;
 }
 
+
+/* =====================================================
+   THREE.JS CANVAS
+===================================================== */
+
 #game-canvas {
     position: absolute;
 
-    top: 0;
-    left: 0;
+    inset: 0;
 
     width: 100%;
     height: 100%;
 
     display: block;
+
+    z-index: 1;
 }
 
 
@@ -97,33 +65,51 @@ body {
     z-index: 10;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
+
+    text-align: center;
+
+    color: white;
 
     background:
         linear-gradient(
             rgba(0, 0, 0, 0.55),
             rgba(0, 0, 0, 0.25)
         );
-
-    color: white;
-
-    text-align: center;
 }
 
 .start-content {
-    max-width: 800px;
+    width: min(
+        900px,
+        90%
+    );
 
     padding: 40px;
 }
 
+.eyebrow {
+    font-size: 12px;
+
+    letter-spacing: 4px;
+
+    margin-bottom: 15px;
+}
+
 .start-content h1 {
-    font-size: clamp(50px, 8vw, 100px);
+    font-size: clamp(
+        48px,
+        8vw,
+        100px
+    );
+
+    line-height: 1;
 
     margin-bottom: 20px;
 }
 
-.start-content p {
+.start-content > p {
     color: #ddd;
 }
 
@@ -151,11 +137,12 @@ body {
 }
 
 .controls-preview strong {
-    font-size: 18px;
-
     padding: 8px 12px;
 
-    border: 1px solid rgba(255,255,255,0.4);
+    font-size: 18px;
+
+    border: 1px solid
+        rgba(255,255,255,0.4);
 
     border-radius: 5px;
 }
@@ -172,8 +159,6 @@ body {
 ===================================================== */
 
 .primary-button {
-    display: inline-block;
-
     padding: 15px 30px;
 
     border: none;
@@ -203,9 +188,9 @@ body {
 
     inset: 0;
 
-    pointer-events: none;
-
     z-index: 5;
+
+    pointer-events: none;
 
     color: white;
 }
@@ -227,7 +212,12 @@ body {
     right: 25px;
     bottom: 25px;
 
-    color: rgba(255,255,255,0.7);
+    color: rgba(
+        255,
+        255,
+        255,
+        0.7
+    );
 
     font-size: 12px;
 }
@@ -237,7 +227,8 @@ body {
 
     padding: 5px 8px;
 
-    border: 1px solid rgba(255,255,255,0.3);
+    border: 1px solid
+        rgba(255,255,255,0.3);
 
     border-radius: 4px;
 }
@@ -249,6 +240,101 @@ body {
 
 .hidden {
     display: none !important;
+}
+
+
+/* =====================================================
+   PROJECT PANEL
+===================================================== */
+
+.project-panel {
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 20;
+
+    overflow-y: auto;
+
+    background:
+        rgba(0,0,0,0.92);
+
+    color: white;
+}
+
+.project-window {
+    width: min(
+        1100px,
+        90%
+    );
+
+    margin: 50px auto;
+
+    padding: 40px;
+}
+
+.back-button {
+    margin-bottom: 30px;
+
+    padding: 10px 16px;
+
+    cursor: pointer;
+}
+
+
+/* =====================================================
+   PROJECT MEDIA
+===================================================== */
+
+.project-media {
+    margin-top: 30px;
+
+    width: 100%;
+
+    aspect-ratio: 16 / 9;
+
+    background: #111;
+}
+
+.media-placeholder {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    color: #888;
+}
+
+
+/* =====================================================
+   FINISH SCREEN
+===================================================== */
+
+.finish-screen {
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 30;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    background: rgba(
+        0,
+        0,
+        0,
+        0.9
+    );
+
+    color: white;
 }
 
 
@@ -266,10 +352,31 @@ body {
     display: flex;
 
     align-items: center;
-
     justify-content: center;
 
     background: #111;
 
     color: white;
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (
+    max-width: 700px
+) {
+
+    .controls-preview {
+        gap: 15px;
+    }
+
+    .controls-preview strong {
+        font-size: 14px;
+    }
+
+    .start-content {
+        padding: 20px;
+    }
 }
