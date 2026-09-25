@@ -1,15 +1,9 @@
 // =====================================================
 // SADAM ALKAYYIS - INTERACTIVE 3D PORTFOLIO
-// STEP 5 - PLAYER / MOVEMENT / NPC / INTERACTION
-// THREE.JS R128 (COMPATIBLE & FIXED VERSION)
+// STEP 5 - THIRD PERSON CONTROLLER
 // =====================================================
 
 console.log("=== PORTFOLIO SCRIPT START ===");
-
-
-// =====================================================
-// CHECK THREE.JS
-// =====================================================
 
 if (typeof THREE === "undefined") {
 
@@ -44,7 +38,7 @@ if (typeof THREE === "undefined") {
     scene.fog =
         new THREE.Fog(
             0x87ceeb,
-            35,
+            30,
             100
         );
 
@@ -55,7 +49,7 @@ if (typeof THREE === "undefined") {
 
     const camera =
         new THREE.PerspectiveCamera(
-            70,
+            65,
             window.innerWidth /
             window.innerHeight,
             0.1,
@@ -121,11 +115,8 @@ if (typeof THREE === "undefined") {
 
     sunLight.castShadow = true;
 
-    sunLight.shadow.mapSize.width =
-        2048;
-
-    sunLight.shadow.mapSize.height =
-        2048;
+    sunLight.shadow.mapSize.width = 2048;
+    sunLight.shadow.mapSize.height = 2048;
 
     scene.add(
         sunLight
@@ -164,13 +155,13 @@ if (typeof THREE === "undefined") {
 
 
     // =================================================
-    // MAIN PATH
+    // PATH
     // =================================================
 
     const pathGeometry =
         new THREE.PlaneGeometry(
-            7,
-            80
+            6,
+            60
         );
 
     const pathMaterial =
@@ -189,8 +180,8 @@ if (typeof THREE === "undefined") {
 
     path.position.set(
         0,
-        0.025,
-        -25
+        0.02,
+        -20
     );
 
     scene.add(
@@ -199,7 +190,7 @@ if (typeof THREE === "undefined") {
 
 
     // =================================================
-    // DECORATIVE BOX
+    // BOX FUNCTION
     // =================================================
 
     function createBox(
@@ -237,7 +228,6 @@ if (typeof THREE === "undefined") {
         );
 
         mesh.castShadow = true;
-
         mesh.receiveShadow = true;
 
         scene.add(
@@ -249,7 +239,7 @@ if (typeof THREE === "undefined") {
 
 
     // =================================================
-    // ENVIRONMENT OBJECTS
+    // ENVIRONMENT
     // =================================================
 
     createBox(
@@ -257,22 +247,20 @@ if (typeof THREE === "undefined") {
         2,
         4,
         0x8b6f47,
-        -7,
+        -6,
         1,
-        -10
+        -8
     );
-
 
     createBox(
         3,
         3,
         3,
         0x6d8f52,
-        7,
+        6,
         1.5,
-        -16
+        -12
     );
-
 
     createBox(
         5,
@@ -281,7 +269,7 @@ if (typeof THREE === "undefined") {
         0x77624a,
         0,
         0.5,
-        -27
+        -18
     );
 
 
@@ -362,165 +350,224 @@ if (typeof THREE === "undefined") {
     createTree(10, -7);
     createTree(-12, -18);
     createTree(12, -22);
-
-    createTree(-10, -30);
-    createTree(10, -35);
-
-    createTree(-14, -45);
-    createTree(14, -48);
+    createTree(4, -25);
 
 
     // =================================================
     // PLAYER
     // =================================================
 
-    const player = {
-
-        position:
-            new THREE.Vector3(
-                0,
-                0,
-                5
-            ),
-
-        height: 1.7,
-
-        speed: 6,
-
-        yaw: 0,
-
-        pitch: 0
-
-    };
-
-
-    // =================================================
-    // PLAYER BODY (FIXED: CylinderGeometry kompatibel r128)
-    // =================================================
-
-    const playerGroup =
+    const player =
         new THREE.Group();
 
+    player.position.set(
+        0,
+        0,
+        6
+    );
 
-    // Mengganti CapsuleGeometry yang belum ada di r128
+    scene.add(
+        player
+    );
+
+
+    // =================================================
+    // PLAYER BODY
+    // =================================================
+
     const bodyGeometry =
-        new THREE.CylinderGeometry(
-            0.35,
-            0.35,
-            0.9,
-            16
+        new THREE.BoxGeometry(
+            0.8,
+            1.2,
+            0.45
         );
 
     const bodyMaterial =
         new THREE.MeshStandardMaterial({
-            color: 0x222222
+            color: 0x2d5bff
         });
 
-    const playerBody =
+    const body =
         new THREE.Mesh(
             bodyGeometry,
             bodyMaterial
         );
 
-    playerBody.position.y =
-        0.8;
+    body.position.y = 1.15;
 
-    playerBody.castShadow = true;
+    body.castShadow = true;
 
-    playerGroup.add(
-        playerBody
+    player.add(
+        body
     );
 
 
-    // Head
+    // =================================================
+    // PLAYER HEAD
+    // =================================================
 
     const headGeometry =
         new THREE.SphereGeometry(
-            0.3,
-            12,
-            12
+            0.35,
+            16,
+            16
         );
 
     const headMaterial =
         new THREE.MeshStandardMaterial({
-            color: 0xd6a27a
+            color: 0xf0c8a0
         });
 
-    const playerHead =
+    const head =
         new THREE.Mesh(
             headGeometry,
             headMaterial
         );
 
-    playerHead.position.y =
-        1.55;
+    head.position.y = 2.0;
 
-    playerHead.castShadow = true;
+    head.castShadow = true;
 
-    playerGroup.add(
-        playerHead
-    );
-
-
-    playerGroup.position.copy(
-        player.position
-    );
-
-    scene.add(
-        playerGroup
+    player.add(
+        head
     );
 
 
     // =================================================
-    // CAMERA INITIAL POSITION
+    // PLAYER LEGS
     // =================================================
 
-    camera.position.set(
-        player.position.x,
-        player.height,
-        player.position.z
+    const legGeometry =
+        new THREE.BoxGeometry(
+            0.25,
+            0.8,
+            0.3
+        );
+
+    const legMaterial =
+        new THREE.MeshStandardMaterial({
+            color: 0x202020
+        });
+
+
+    const leftLeg =
+        new THREE.Mesh(
+            legGeometry,
+            legMaterial
+        );
+
+    leftLeg.position.set(
+        -0.2,
+        0.4,
+        0
+    );
+
+    leftLeg.castShadow = true;
+
+    player.add(
+        leftLeg
+    );
+
+
+    const rightLeg =
+        new THREE.Mesh(
+            legGeometry,
+            legMaterial
+        );
+
+    rightLeg.position.set(
+        0.2,
+        0.4,
+        0
+    );
+
+    rightLeg.castShadow = true;
+
+    player.add(
+        rightLeg
     );
 
 
     // =================================================
-    // KEYBOARD
+    // PLAYER ARMS
     // =================================================
 
-    const keys = {
+    const armGeometry =
+        new THREE.BoxGeometry(
+            0.2,
+            0.9,
+            0.25
+        );
 
-        KeyW: false,
-        KeyA: false,
-        KeyS: false,
-        KeyD: false
 
-    };
+    const leftArm =
+        new THREE.Mesh(
+            armGeometry,
+            bodyMaterial
+        );
 
+    leftArm.position.set(
+        -0.55,
+        1.2,
+        0
+    );
+
+    leftArm.castShadow = true;
+
+    player.add(
+        leftArm
+    );
+
+
+    const rightArm =
+        new THREE.Mesh(
+            armGeometry,
+            bodyMaterial
+        );
+
+    rightArm.position.set(
+        0.55,
+        1.2,
+        0
+    );
+
+    rightArm.castShadow = true;
+
+    player.add(
+        rightArm
+    );
+
+
+    // =================================================
+    // CAMERA SETTINGS
+    // =================================================
+
+    const cameraDistance = 6;
+    const cameraHeight = 3.2;
+
+    let cameraYaw = 0;
+    let cameraPitch = 0.15;
+
+    const cameraTarget =
+        new THREE.Vector3();
+
+    const cameraDesiredPosition =
+        new THREE.Vector3();
+
+
+    // =================================================
+    // INPUT
+    // =================================================
+
+    const keys = {};
 
     window.addEventListener(
         "keydown",
-        function(event) {
+        function (event) {
 
-            if (
-                event.code in keys
-            ) {
-
-                keys[event.code] =
-                    true;
-
-                event.preventDefault();
-            }
-
-
-            // -----------------------------------------
-            // INTERACTION
-            // -----------------------------------------
-
-            if (
-                event.code === "KeyE"
-            ) {
-
-                interact();
-            }
+            keys[
+                event.code
+            ] = true;
 
         }
     );
@@ -528,17 +575,11 @@ if (typeof THREE === "undefined") {
 
     window.addEventListener(
         "keyup",
-        function(event) {
+        function (event) {
 
-            if (
-                event.code in keys
-            ) {
-
-                keys[event.code] =
-                    false;
-
-                event.preventDefault();
-            }
+            keys[
+                event.code
+            ] = false;
 
         }
     );
@@ -548,43 +589,48 @@ if (typeof THREE === "undefined") {
     // MOUSE LOOK
     // =================================================
 
-    const mouseSensitivity =
-        0.0025;
+    let mouseLocked = false;
+
+    document.addEventListener(
+        "pointerlockchange",
+        function () {
+
+            mouseLocked =
+                document.pointerLockElement === canvas;
+
+        }
+    );
 
 
     document.addEventListener(
         "mousemove",
-        function(event) {
+        function (event) {
 
-            if (
-                document.pointerLockElement !==
-                canvas
-            ) {
-
+            if (!mouseLocked) {
                 return;
             }
 
 
-            player.yaw -=
+            const sensitivity =
+                0.0025;
+
+
+            cameraYaw -=
                 event.movementX *
-                mouseSensitivity;
+                sensitivity;
 
 
-            player.pitch -=
+            cameraPitch -=
                 event.movementY *
-                mouseSensitivity;
+                sensitivity;
 
 
-            const limit =
-                Math.PI / 2 - 0.1;
-
-
-            player.pitch =
+            cameraPitch =
                 Math.max(
-                    -limit,
+                    -0.65,
                     Math.min(
-                        limit,
-                        player.pitch
+                        0.65,
+                        cameraPitch
                     )
                 );
 
@@ -607,43 +653,32 @@ if (typeof THREE === "undefined") {
         );
 
 
-    let gameStarted =
-        false;
-
-
     if (startButton) {
 
         startButton.addEventListener(
             "click",
-            function() {
-
-                gameStarted =
-                    true;
-
+            function () {
 
                 startScreen.classList.add(
                     "hidden"
                 );
 
 
-                // Request mouse control
+                // Lock mouse
 
-                if (
-                    canvas.requestPointerLock
-                ) {
-
-                    canvas.requestPointerLock();
-
-                }
+                canvas.requestPointerLock();
 
 
                 console.log(
                     "Portfolio started."
                 );
 
+                console.log(
+                    "Third-person controller active."
+                );
+
             }
         );
-
     }
 
 
@@ -651,109 +686,203 @@ if (typeof THREE === "undefined") {
     // PLAYER MOVEMENT
     // =================================================
 
+    const moveDirection =
+        new THREE.Vector3();
+
+    const forward =
+        new THREE.Vector3();
+
+    const right =
+        new THREE.Vector3();
+
+    const velocity =
+        new THREE.Vector3();
+
+
+    const moveSpeed = 6;
+
+
     function updatePlayer(
         delta
     ) {
 
-        if (
-            !gameStarted
-        ) {
-
-            return;
-        }
-
-
-        const direction =
-            new THREE.Vector3();
+        moveDirection.set(
+            0,
+            0,
+            0
+        );
 
 
-        // Forward / backward
+        // ---------------------------------------------
+        // CAMERA FORWARD
+        // ---------------------------------------------
 
-        if (
-            keys.KeyW
-        ) {
+        forward.set(
+            Math.sin(cameraYaw),
+            0,
+            Math.cos(cameraYaw)
+        );
 
-            direction.z -= 1;
-
-        }
-
-
-        if (
-            keys.KeyS
-        ) {
-
-            direction.z += 1;
-
-        }
+        forward.normalize();
 
 
-        // Left / right
+        // ---------------------------------------------
+        // CAMERA RIGHT
+        // ---------------------------------------------
 
-        if (
-            keys.KeyA
-        ) {
+        right.set(
+            Math.cos(cameraYaw),
+            0,
+            -Math.sin(cameraYaw)
+        );
 
-            direction.x -= 1;
+        right.normalize();
 
-        }
 
+        // ---------------------------------------------
+        // W
+        // ---------------------------------------------
 
         if (
-            keys.KeyD
+            keys["KeyW"] ||
+            keys["ArrowUp"]
         ) {
 
-            direction.x += 1;
-
-        }
-
-
-        if (
-            direction.lengthSq() === 0
-        ) {
-
-            return;
-        }
-
-
-        direction.normalize();
-
-
-        // Rotate movement according to camera yaw
-
-        const sin =
-            Math.sin(
-                player.yaw
+            moveDirection.add(
+                forward
             );
 
-        const cos =
-            Math.cos(
-                player.yaw
+        }
+
+
+        // ---------------------------------------------
+        // S
+        // ---------------------------------------------
+
+        if (
+            keys["KeyS"] ||
+            keys["ArrowDown"]
+        ) {
+
+            moveDirection.sub(
+                forward
+            );
+
+        }
+
+
+        // ---------------------------------------------
+        // A
+        // ---------------------------------------------
+
+        if (
+            keys["KeyA"] ||
+            keys["ArrowLeft"]
+        ) {
+
+            moveDirection.sub(
+                right
+            );
+
+        }
+
+
+        // ---------------------------------------------
+        // D
+        // ---------------------------------------------
+
+        if (
+            keys["KeyD"] ||
+            keys["ArrowRight"]
+        ) {
+
+            moveDirection.add(
+                right
+            );
+
+        }
+
+
+        // ---------------------------------------------
+        // NORMALIZE
+        // ---------------------------------------------
+
+        if (
+            moveDirection.lengthSq() > 0
+        ) {
+
+            moveDirection.normalize();
+
+
+            // -----------------------------------------
+            // MOVEMENT
+            // -----------------------------------------
+
+            velocity.copy(
+                moveDirection
+            );
+
+            velocity.multiplyScalar(
+                moveSpeed *
+                delta
+            );
+
+            player.position.add(
+                velocity
             );
 
 
-        const moveX =
-            direction.x * cos -
-            direction.z * sin;
+            // -----------------------------------------
+            // CHARACTER ROTATION
+            // -----------------------------------------
+
+            const targetRotation =
+                Math.atan2(
+                    moveDirection.x,
+                    moveDirection.z
+                );
 
 
-        const moveZ =
-            direction.x * sin +
-            direction.z * cos;
+            let rotationDifference =
+                targetRotation -
+                player.rotation.y;
 
 
-        player.position.x +=
-            moveX *
-            player.speed *
-            delta;
+            while (
+                rotationDifference >
+                Math.PI
+            ) {
+
+                rotationDifference -=
+                    Math.PI * 2;
+
+            }
 
 
-        player.position.z +=
-            moveZ *
-            player.speed *
-            delta;
+            while (
+                rotationDifference <
+                -Math.PI
+            ) {
+
+                rotationDifference +=
+                    Math.PI * 2;
+
+            }
 
 
-        // World boundaries
+            player.rotation.y +=
+                rotationDifference *
+                Math.min(
+                    1,
+                    delta * 10
+                );
+
+        }
+
+
+        // ---------------------------------------------
+        // WORLD BOUNDS
+        // ---------------------------------------------
 
         player.position.x =
             THREE.MathUtils.clamp(
@@ -762,130 +891,145 @@ if (typeof THREE === "undefined") {
                 45
             );
 
-
         player.position.z =
             THREE.MathUtils.clamp(
                 player.position.z,
-                -75,
-                8
+                -45,
+                45
             );
 
-
-        // Player body
-
-        playerGroup.position.copy(
-            player.position
-        );
+    }
 
 
-        // Camera
+    // =================================================
+    // PLAYER WALK ANIMATION
+    // =================================================
 
-        camera.position.set(
+    let walkTime = 0;
+
+
+    function updatePlayerAnimation(
+        delta
+    ) {
+
+        const isMoving =
+            moveDirection.lengthSq() > 0;
+
+
+        if (isMoving) {
+
+            walkTime +=
+                delta * 10;
+
+
+            const swing =
+                Math.sin(
+                    walkTime
+                ) * 0.5;
+
+
+            leftLeg.rotation.x =
+                swing;
+
+            rightLeg.rotation.x =
+                -swing;
+
+
+            leftArm.rotation.x =
+                -swing;
+
+            rightArm.rotation.x =
+                swing;
+
+        } else {
+
+            leftLeg.rotation.x = 0;
+            rightLeg.rotation.x = 0;
+
+            leftArm.rotation.x = 0;
+            rightArm.rotation.x = 0;
+
+        }
+
+    }
+
+
+    // =================================================
+    // CAMERA FOLLOW
+    // =================================================
+
+    function updateCamera(
+        delta
+    ) {
+
+        cameraTarget.set(
             player.position.x,
-            player.position.y +
-            player.height,
+            player.position.y + 1.2,
             player.position.z
         );
 
+
+        const horizontalDistance =
+            cameraDistance *
+            Math.cos(
+                cameraPitch
+            );
+
+
+        const verticalDistance =
+            cameraDistance *
+            Math.sin(
+                cameraPitch
+            );
+
+
+        cameraDesiredPosition.set(
+            player.position.x -
+                Math.sin(cameraYaw) *
+                horizontalDistance,
+
+            player.position.y +
+                cameraHeight -
+                verticalDistance,
+
+            player.position.z -
+                Math.cos(cameraYaw) *
+                horizontalDistance
+        );
+
+
+        // Smooth camera
+
+        camera.position.lerp(
+            cameraDesiredPosition,
+            1 -
+            Math.pow(
+                0.001,
+                delta
+            )
+        );
+
+
+        camera.lookAt(
+            cameraTarget
+        );
+
     }
 
 
     // =================================================
-    // CAMERA ROTATION
+    // NPC CREATION
     // =================================================
-
-    function updateCamera() {
-
-        camera.rotation.order =
-            "YXZ";
-
-
-        camera.rotation.y =
-            player.yaw;
-
-
-        camera.rotation.x =
-            player.pitch;
-
-    }
-
-
-    // =================================================
-    // NPC SYSTEM (FIXED: CylinderGeometry kompatibel r128)
-    // =================================================
-
-    const npcs = [];
-
 
     function createNPC(
         x,
         z,
         color,
-        name
+        pathLength
     ) {
 
         const npc =
             new THREE.Group();
-
-
-        // Body (CylinderGeometry kompatibel semua versi Three.js)
-        const bodyGeometry =
-            new THREE.CylinderGeometry(
-                0.35,
-                0.35,
-                0.9,
-                16
-            );
-
-        const bodyMaterial =
-            new THREE.MeshStandardMaterial({
-                color: color
-            });
-
-        const body =
-            new THREE.Mesh(
-                bodyGeometry,
-                bodyMaterial
-            );
-
-        body.position.y =
-            0.8;
-
-        body.castShadow = true;
-
-        npc.add(
-            body
-        );
-
-
-        // Head
-
-        const headGeometry =
-            new THREE.SphereGeometry(
-                0.3,
-                12,
-                12
-            );
-
-        const headMaterial =
-            new THREE.MeshStandardMaterial({
-                color: 0xd6a27a
-            });
-
-        const head =
-            new THREE.Mesh(
-                headGeometry,
-                headMaterial
-            );
-
-        head.position.y =
-            1.55;
-
-        head.castShadow = true;
-
-        npc.add(
-            head
-        );
 
 
         npc.position.set(
@@ -900,81 +1044,170 @@ if (typeof THREE === "undefined") {
         );
 
 
-        const npcData = {
+        // Body
 
-            object: npc,
+        const npcBody =
+            new THREE.Mesh(
+                new THREE.BoxGeometry(
+                    0.75,
+                    1.1,
+                    0.45
+                ),
+                new THREE.MeshStandardMaterial({
+                    color: color
+                })
+            );
 
-            name: name,
+        npcBody.position.y =
+            1.1;
 
-            startX: x,
+        npcBody.castShadow = true;
 
-            startZ: z,
-
-            time: Math.random() * 10,
-
-            radius: 4,
-
-            speed:
-                0.7 +
-                Math.random() * 0.5,
-
-            direction:
-                Math.random() * Math.PI * 2
-
-        };
-
-
-        npcs.push(
-            npcData
+        npc.add(
+            npcBody
         );
 
 
-        return npcData;
+        // Head
+
+        const npcHead =
+            new THREE.Mesh(
+                new THREE.SphereGeometry(
+                    0.33,
+                    12,
+                    12
+                ),
+                new THREE.MeshStandardMaterial({
+                    color: 0xe8bd96
+                })
+            );
+
+        npcHead.position.y =
+            1.9;
+
+        npcHead.castShadow = true;
+
+        npc.add(
+            npcHead
+        );
+
+
+        // Legs
+
+        const npcLegGeometry =
+            new THREE.BoxGeometry(
+                0.23,
+                0.75,
+                0.28
+            );
+
+        const npcLegMaterial =
+            new THREE.MeshStandardMaterial({
+                color: 0x222222
+            });
+
+
+        const npcLeftLeg =
+            new THREE.Mesh(
+                npcLegGeometry,
+                npcLegMaterial
+            );
+
+        npcLeftLeg.position.set(
+            -0.19,
+            0.38,
+            0
+        );
+
+        npcLeftLeg.castShadow = true;
+
+        npc.add(
+            npcLeftLeg
+        );
+
+
+        const npcRightLeg =
+            new THREE.Mesh(
+                npcLegGeometry,
+                npcLegMaterial
+            );
+
+        npcRightLeg.position.set(
+            0.19,
+            0.38,
+            0
+        );
+
+        npcRightLeg.castShadow = true;
+
+        npc.add(
+            npcRightLeg
+        );
+
+
+        // NPC movement data
+
+        npc.userData.startX = x;
+        npc.userData.startZ = z;
+
+        npc.userData.pathLength =
+            pathLength;
+
+        npc.userData.speed =
+            1.2 +
+            Math.random() *
+            0.6;
+
+        npc.userData.direction = 1;
+
+        npc.userData.walkTime = 0;
+
+
+        return npc;
+
     }
 
 
-    // NPC 1
+    // =================================================
+    // CREATE NPCS
+    // =================================================
 
-    createNPC(
-        -5,
-        -5,
-        0x355c7d,
-        "Alex"
-    );
-
-
-    // NPC 2
-
-    createNPC(
-        5,
-        -13,
-        0x9b59b6,
-        "Maya"
-    );
+    const npc1 =
+        createNPC(
+            -5,
+            -10,
+            0xd94c4c,
+            5
+        );
 
 
-    // NPC 3
+    const npc2 =
+        createNPC(
+            5,
+            -17,
+            0xf0a83c,
+            4
+        );
 
-    createNPC(
-        -5,
-        -25,
-        0xe67e22,
-        "Jordan"
-    );
+
+    const npc3 =
+        createNPC(
+            -4,
+            -25,
+            0x8e5bd9,
+            6
+        );
 
 
-    // NPC 4
-
-    createNPC(
-        6,
-        -38,
-        0x16a085,
-        "Riley"
-    );
+    const npcs = [
+        npc1,
+        npc2,
+        npc3
+    ];
 
 
     // =================================================
-    // NPC MOVEMENT
+    // NPC UPDATE
     // =================================================
 
     function updateNPCs(
@@ -982,877 +1215,55 @@ if (typeof THREE === "undefined") {
     ) {
 
         npcs.forEach(
-            function(npc) {
+            function (npc) {
 
-                npc.time +=
-                    delta *
-                    npc.speed;
-
-
-                const angle =
-                    npc.time;
+                npc.userData.walkTime +=
+                    delta * 8;
 
 
-                const targetX =
-                    npc.startX +
-                    Math.cos(angle) *
-                    npc.radius;
+                const offset =
+                    npc.userData.direction *
+                    npc.userData.speed *
+                    delta;
 
 
-                const targetZ =
-                    npc.startZ +
-                    Math.sin(angle) *
-                    npc.radius;
-
-
-                const dx =
-                    targetX -
-                    npc.object.position.x;
-
-
-                const dz =
-                    targetZ -
-                    npc.object.position.z;
+                npc.position.x +=
+                    offset;
 
 
                 const distance =
-                    Math.sqrt(
-                        dx * dx +
-                        dz * dz
-                    );
+                    npc.position.x -
+                    npc.userData.startX;
 
 
                 if (
-                    distance > 0.05
+                    Math.abs(distance) >
+                    npc.userData.pathLength
                 ) {
 
-                    npc.object.position.x +=
-                        dx *
-                        delta *
-                        npc.speed;
+                    npc.userData.direction *=
+                        -1;
 
-
-                    npc.object.position.z +=
-                        dz *
-                        delta *
-                        npc.speed;
-
-
-                    npc.object.rotation.y =
-                        Math.atan2(
-                            dx,
-                            dz
-                        );
+                    npc.rotation.y =
+                        npc.userData.direction > 0
+                            ? Math.PI / 2
+                            : -Math.PI / 2;
 
                 }
 
-            }
-        );
 
-    }
+                const swing =
+                    Math.sin(
+                        npc.userData.walkTime
+                    ) *
+                    0.45;
 
 
-    // =================================================
-    // PROJECT SIGN SYSTEM
-    // =================================================
+                npc.children[2].rotation.x =
+                    swing;
 
-    const interactables = [];
-
-
-    function createTextTexture(
-        title,
-        subtitle
-    ) {
-
-        const canvas =
-            document.createElement(
-                "canvas"
-            );
-
-        canvas.width = 1024;
-        canvas.height = 512;
-
-
-        const context =
-            canvas.getContext(
-                "2d"
-            );
-
-
-        context.fillStyle =
-            "#101820";
-
-        context.fillRect(
-            0,
-            0,
-            canvas.width,
-            canvas.height
-        );
-
-
-        context.fillStyle =
-            "#ffffff";
-
-        context.textAlign =
-            "center";
-
-
-        context.font =
-            "bold 70px Arial";
-
-        context.fillText(
-            title,
-            512,
-            220
-        );
-
-
-        context.font =
-            "32px Arial";
-
-        context.fillStyle =
-            "#9ad7ff";
-
-        context.fillText(
-            subtitle,
-            512,
-            290
-        );
-
-
-        context.font =
-            "bold 26px Arial";
-
-        context.fillStyle =
-            "#ffffff";
-
-        context.fillText(
-            "PRESS E TO EXPLORE",
-            512,
-            390
-        );
-
-
-        return new THREE.CanvasTexture(
-            canvas
-        );
-
-    }
-
-
-    function createProjectSign(
-        title,
-        subtitle,
-        x,
-        z,
-        projectId
-    ) {
-
-        const group =
-            new THREE.Group();
-
-
-        // Pole
-
-        const poleGeometry =
-            new THREE.CylinderGeometry(
-                0.12,
-                0.12,
-                3,
-                8
-            );
-
-        const poleMaterial =
-            new THREE.MeshStandardMaterial({
-                color: 0x333333
-            });
-
-        const pole =
-            new THREE.Mesh(
-                poleGeometry,
-                poleMaterial
-            );
-
-        pole.position.y =
-            1.5;
-
-        pole.castShadow = true;
-
-        group.add(
-            pole
-        );
-
-
-        // Sign board
-
-        const signGeometry =
-            new THREE.BoxGeometry(
-                3.5,
-                1.8,
-                0.18
-            );
-
-        const signMaterial =
-            new THREE.MeshStandardMaterial({
-                map:
-                    createTextTexture(
-                        title,
-                        subtitle
-                    )
-            });
-
-
-        const sign =
-            new THREE.Mesh(
-                signGeometry,
-                signMaterial
-            );
-
-
-        sign.position.y =
-            3;
-
-        sign.castShadow = true;
-
-        group.add(
-            sign
-        );
-
-
-        group.position.set(
-            x,
-            0,
-            z
-        );
-
-
-        scene.add(
-            group
-        );
-
-
-        interactables.push({
-
-            object: group,
-
-            type: "project",
-
-            projectId: projectId,
-
-            title: title
-
-        });
-
-
-        return group;
-    }
-
-
-    // =================================================
-    // PROJECTS
-    // =================================================
-
-    createProjectSign(
-        "SMARTVOC",
-        "GAME DEVELOPMENT",
-        -5,
-        -12,
-        "smartvoc"
-    );
-
-
-    createProjectSign(
-        "BLOCKFIGHT",
-        "GAME DEVELOPMENT",
-        5,
-        -22,
-        "blockfight"
-    );
-
-
-    createProjectSign(
-        "UI / UX",
-        "FIGMA PROJECTS",
-        -5,
-        -34,
-        "uiux"
-    );
-
-
-    createProjectSign(
-        "GRAPHIC DESIGN",
-        "DESIGN PROJECTS",
-        5,
-        -45,
-        "graphic"
-    );
-
-
-    // =================================================
-    // INTERACTION PROMPT
-    // =================================================
-
-    const interactionPrompt =
-        document.getElementById(
-            "interaction-prompt"
-        );
-
-
-    let nearbyObject =
-        null;
-
-
-    function updateInteraction() {
-
-        nearbyObject =
-            null;
-
-
-        let closestDistance =
-            Infinity;
-
-
-        interactables.forEach(
-            function(item) {
-
-                const distance =
-                    player.position.distanceTo(
-                        item.object.position
-                    );
-
-
-                if (
-                    distance < 4 &&
-                    distance <
-                    closestDistance
-                ) {
-
-                    closestDistance =
-                        distance;
-
-                    nearbyObject =
-                        item;
-
-                }
-
-            }
-        );
-
-
-        if (
-            nearbyObject
-        ) {
-
-            interactionPrompt.classList.remove(
-                "hidden"
-            );
-
-        } else {
-
-            interactionPrompt.classList.add(
-                "hidden"
-            );
-
-        }
-
-    }
-
-
-    // =================================================
-    // PROJECT DATA
-    // =================================================
-
-    const projects = {
-
-        smartvoc: {
-
-            category:
-                "GAME DEVELOPMENT",
-
-            title:
-                "SmartVoc",
-
-            description:
-                "3D open-world English learning RPG developed for university students.",
-
-            about:
-                "An experiential English learning game where players explore an open world, interact with NPCs, complete activities, learn vocabulary and progress through different learning levels.",
-
-            technologies:
-                "Godot Engine · GDScript · Blender · JSON",
-
-            contribution:
-                "Game Design · Gameplay Programming · UI/UX · System Development",
-
-            github:
-                "https://github.com/SadamAlkayyis117",
-
-            demo:
-                "#",
-
-            screenshots: []
-
-        },
-
-
-        blockfight: {
-
-            category:
-                "GAME DEVELOPMENT",
-
-            title:
-                "BlockFight",
-
-            description:
-                "3D game project focused on gameplay systems and interactive environments.",
-
-            about:
-                "A separate game development project exploring gameplay mechanics, level design and interactive systems.",
-
-            technologies:
-                "Godot Engine · GDScript · Blender",
-
-            contribution:
-                "Gameplay Programming · Game Design · 3D Development",
-
-            github:
-                "https://github.com/SadamAlkayyis117",
-
-            demo:
-                "#",
-
-            screenshots: []
-
-        },
-
-
-        uiux: {
-
-            category:
-                "UI / UX DESIGN",
-
-            title:
-                "UI / UX Projects",
-
-            description:
-                "Interface and experience design projects created with Figma.",
-
-            about:
-                "A collection of interface design and prototyping projects focusing on visual hierarchy, usability and interaction flow.",
-
-            technologies:
-                "Figma · UI Design · Prototyping",
-
-            contribution:
-                "UI Design · UX Research · Prototyping",
-
-            github:
-                "#",
-
-            demo:
-                "#",
-
-            screenshots: []
-
-        },
-
-
-        graphic: {
-
-            category:
-                "GRAPHIC DESIGN",
-
-            title:
-                "Graphic Design",
-
-            description:
-                "Selected graphic design and visual communication projects.",
-
-            about:
-                "A collection of graphic design work including illustrations, visual assets, promotional designs and digital artwork.",
-
-            technologies:
-                "CorelDRAW · Adobe tools · Digital Illustration",
-
-            contribution:
-                "Graphic Design · Illustration · Visual Development",
-
-            github:
-                "https://github.com/SadamAlkayyis117/Graphic-Designer",
-
-            demo:
-                "#",
-
-            screenshots: []
-
-        }
-
-    };
-
-
-    // =================================================
-    // PROJECT PANEL
-    // =================================================
-
-    const projectPanel =
-        document.getElementById(
-            "project-panel"
-        );
-
-
-    const projectBackButton =
-        document.getElementById(
-            "project-back-button"
-        );
-
-
-    function openProject(
-        projectId
-    ) {
-
-        const project =
-            projects[projectId];
-
-
-        if (
-            !project
-        ) {
-
-            return;
-        }
-
-
-        document.getElementById(
-            "project-category"
-        ).textContent =
-            project.category;
-
-
-        document.getElementById(
-            "project-title"
-        ).textContent =
-            project.title;
-
-
-        document.getElementById(
-            "project-description"
-        ).textContent =
-            project.description;
-
-
-        document.getElementById(
-            "project-about"
-        ).textContent =
-            project.about;
-
-
-        document.getElementById(
-            "project-technologies"
-        ).textContent =
-            project.technologies;
-
-
-        document.getElementById(
-            "project-contribution"
-        ).textContent =
-            project.contribution;
-
-
-        const github =
-            document.getElementById(
-                "project-github"
-            );
-
-
-        const demo =
-            document.getElementById(
-                "project-demo"
-            );
-
-
-        github.href =
-            project.github;
-
-
-        demo.href =
-            project.demo;
-
-
-        // Close pointer lock
-
-        if (
-            document.exitPointerLock
-        ) {
-
-            document.exitPointerLock();
-
-        }
-
-
-        projectPanel.classList.remove(
-            "hidden"
-        );
-
-    }
-
-
-    if (
-        projectBackButton
-    ) {
-
-        projectBackButton.addEventListener(
-            "click",
-            function() {
-
-                projectPanel.classList.add(
-                    "hidden"
-                );
-
-
-                canvas.requestPointerLock();
-
-            }
-        );
-
-    }
-
-
-    // =================================================
-    // INTERACT
-    // =================================================
-
-    function interact() {
-
-        if (
-            !gameStarted
-        ) {
-
-            return;
-        }
-
-
-        if (
-            !nearbyObject
-        ) {
-
-            return;
-        }
-
-
-        if (
-            nearbyObject.type ===
-            "project"
-        ) {
-
-            openProject(
-                nearbyObject.projectId
-            );
-
-        }
-
-    }
-
-
-    // =================================================
-    // FINISH FLAG
-    // =================================================
-
-    function createFinishFlag() {
-
-        const group =
-            new THREE.Group();
-
-
-        const poleGeometry =
-            new THREE.CylinderGeometry(
-                0.12,
-                0.12,
-                4,
-                8
-            );
-
-        const poleMaterial =
-            new THREE.MeshStandardMaterial({
-                color: 0xffffff
-            });
-
-
-        const pole =
-            new THREE.Mesh(
-                poleGeometry,
-                poleMaterial
-            );
-
-
-        pole.position.y =
-            2;
-
-        group.add(
-            pole
-        );
-
-
-        const flagGeometry =
-            new THREE.PlaneGeometry(
-                2.2,
-                1.2
-            );
-
-
-        const flagMaterial =
-            new THREE.MeshStandardMaterial({
-                color: 0x111111,
-                side:
-                    THREE.DoubleSide
-            });
-
-
-        const flag =
-            new THREE.Mesh(
-                flagGeometry,
-                flagMaterial
-            );
-
-
-        flag.position.set(
-            1,
-            3.3,
-            0
-        );
-
-
-        group.add(
-            flag
-        );
-
-
-        group.position.set(
-            0,
-            0,
-            -70
-        );
-
-
-        scene.add(
-            group
-        );
-
-
-        return group;
-
-    }
-
-
-    const finishFlag =
-        createFinishFlag();
-
-
-    // =================================================
-    // FINISH SCREEN
-    // =================================================
-
-    const finishScreen =
-        document.getElementById(
-            "finish-screen"
-        );
-
-
-    let finished =
-        false;
-
-
-    function checkFinish() {
-
-        if (
-            finished
-        ) {
-
-            return;
-        }
-
-
-        const distance =
-            player.position.distanceTo(
-                finishFlag.position
-            );
-
-
-        if (
-            distance < 4
-        ) {
-
-            finished =
-                true;
-
-
-            if (
-                document.exitPointerLock
-            ) {
-
-                document.exitPointerLock();
-
-            }
-
-
-            finishScreen.classList.remove(
-                "hidden"
-            );
-
-        }
-
-    }
-
-
-    // =================================================
-    // RESTART
-    // =================================================
-
-    const restartButton =
-        document.getElementById(
-            "restart-button"
-        );
-
-
-    if (
-        restartButton
-    ) {
-
-        restartButton.addEventListener(
-            "click",
-            function() {
-
-                player.position.set(
-                    0,
-                    0,
-                    5
-                );
-
-
-                player.yaw =
-                    0;
-
-
-                player.pitch =
-                    0;
-
-
-                camera.position.set(
-                    0,
-                    player.height,
-                    5
-                );
-
-
-                finishScreen.classList.add(
-                    "hidden"
-                );
-
-
-                finished =
-                    false;
-
-
-                canvas.requestPointerLock();
+                npc.children[3].rotation.x =
+                    -swing;
 
             }
         );
@@ -1870,9 +1281,7 @@ if (typeof THREE === "undefined") {
         );
 
 
-    if (
-        loadingScreen
-    ) {
+    if (loadingScreen) {
 
         loadingScreen.classList.add(
             "hidden"
@@ -1887,15 +1296,13 @@ if (typeof THREE === "undefined") {
 
     window.addEventListener(
         "resize",
-        function() {
+        function () {
 
             camera.aspect =
                 window.innerWidth /
                 window.innerHeight;
 
-
             camera.updateProjectionMatrix();
-
 
             renderer.setSize(
                 window.innerWidth,
@@ -1915,7 +1322,16 @@ if (typeof THREE === "undefined") {
 
 
     // =================================================
-    // ANIMATION
+    // INITIAL CAMERA
+    // =================================================
+
+    updateCamera(
+        0.016
+    );
+
+
+    // =================================================
+    // ANIMATION LOOP
     // =================================================
 
     function animate() {
@@ -1937,7 +1353,9 @@ if (typeof THREE === "undefined") {
         );
 
 
-        updateCamera();
+        updatePlayerAnimation(
+            delta
+        );
 
 
         updateNPCs(
@@ -1945,10 +1363,9 @@ if (typeof THREE === "undefined") {
         );
 
 
-        updateInteraction();
-
-
-        checkFinish();
+        updateCamera(
+            delta
+        );
 
 
         renderer.render(
@@ -1958,10 +1375,6 @@ if (typeof THREE === "undefined") {
 
     }
 
-
-    // =================================================
-    // START
-    // =================================================
 
     animate();
 
