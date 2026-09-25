@@ -1,7 +1,7 @@
 // =====================================================
 // SADAM ALKAYYIS - INTERACTIVE 3D PORTFOLIO
 // STEP 5 - PLAYER / MOVEMENT / NPC / INTERACTION
-// THREE.JS R128
+// THREE.JS R128 (COMPATIBLE & FIXED VERSION)
 // =====================================================
 
 console.log("=== PORTFOLIO SCRIPT START ===");
@@ -395,19 +395,20 @@ if (typeof THREE === "undefined") {
 
 
     // =================================================
-    // PLAYER BODY
+    // PLAYER BODY (FIXED: CylinderGeometry kompatibel r128)
     // =================================================
 
     const playerGroup =
         new THREE.Group();
 
 
+    // Mengganti CapsuleGeometry yang belum ada di r128
     const bodyGeometry =
-        new THREE.CapsuleGeometry(
+        new THREE.CylinderGeometry(
             0.35,
-            0.8,
-            4,
-            8
+            0.35,
+            0.9,
+            16
         );
 
     const bodyMaterial =
@@ -810,7 +811,7 @@ if (typeof THREE === "undefined") {
 
 
     // =================================================
-    // NPC SYSTEM
+    // NPC SYSTEM (FIXED: CylinderGeometry kompatibel r128)
     // =================================================
 
     const npcs = [];
@@ -827,14 +828,13 @@ if (typeof THREE === "undefined") {
             new THREE.Group();
 
 
-        // Body
-
+        // Body (CylinderGeometry kompatibel semua versi Three.js)
         const bodyGeometry =
-            new THREE.CapsuleGeometry(
+            new THREE.CylinderGeometry(
                 0.35,
-                0.8,
-                4,
-                8
+                0.35,
+                0.9,
+                16
             );
 
         const bodyMaterial =
