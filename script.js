@@ -1,6 +1,6 @@
 // =====================================================
 // SADAM ALKAYYIS - INTERACTIVE 3D PORTFOLIO
-// STEP 5 - THIRD PERSON CONTROLLER
+// THIRD PERSON CONTROLLER - SMARTVOC STYLE
 // =====================================================
 
 console.log("=== PORTFOLIO SCRIPT START ===");
@@ -16,62 +16,56 @@ if (typeof THREE === "undefined") {
         THREE.REVISION
     );
 
-
     // =================================================
     // CANVAS
     // =================================================
 
-    const canvas =
-        document.getElementById("game-canvas");
+    const canvas = document.getElementById("game-canvas");
+
+    if (!canvas) {
+        console.error("Canvas #game-canvas tidak ditemukan.");
+        return;
+    }
 
 
     // =================================================
     // SCENE
     // =================================================
 
-    const scene =
-        new THREE.Scene();
+    const scene = new THREE.Scene();
 
-    scene.background =
-        new THREE.Color(0x87ceeb);
+    scene.background = new THREE.Color(0x87ceeb);
 
-    scene.fog =
-        new THREE.Fog(
-            0x87ceeb,
-            30,
-            100
-        );
+    scene.fog = new THREE.Fog(
+        0x87ceeb,
+        30,
+        100
+    );
 
 
     // =================================================
     // CAMERA
     // =================================================
 
-    const camera =
-        new THREE.PerspectiveCamera(
-            65,
-            window.innerWidth /
-            window.innerHeight,
-            0.1,
-            1000
-        );
+    const camera = new THREE.PerspectiveCamera(
+        65,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+    );
 
 
     // =================================================
     // RENDERER
     // =================================================
 
-    const renderer =
-        new THREE.WebGLRenderer({
-            canvas: canvas,
-            antialias: true
-        });
+    const renderer = new THREE.WebGLRenderer({
+        canvas: canvas,
+        antialias: true
+    });
 
     renderer.setPixelRatio(
-        Math.min(
-            window.devicePixelRatio,
-            2
-        )
+        Math.min(window.devicePixelRatio, 2)
     );
 
     renderer.setSize(
@@ -80,7 +74,6 @@ if (typeof THREE === "undefined") {
     );
 
     renderer.shadowMap.enabled = true;
-
     renderer.shadowMap.type =
         THREE.PCFSoftShadowMap;
 
@@ -96,9 +89,7 @@ if (typeof THREE === "undefined") {
             2
         );
 
-    scene.add(
-        hemisphereLight
-    );
+    scene.add(hemisphereLight);
 
 
     const sunLight =
@@ -118,9 +109,12 @@ if (typeof THREE === "undefined") {
     sunLight.shadow.mapSize.width = 2048;
     sunLight.shadow.mapSize.height = 2048;
 
-    scene.add(
-        sunLight
-    );
+    sunLight.shadow.camera.left = -50;
+    sunLight.shadow.camera.right = 50;
+    sunLight.shadow.camera.top = 50;
+    sunLight.shadow.camera.bottom = -50;
+
+    scene.add(sunLight);
 
 
     // =================================================
@@ -149,9 +143,7 @@ if (typeof THREE === "undefined") {
 
     ground.receiveShadow = true;
 
-    scene.add(
-        ground
-    );
+    scene.add(ground);
 
 
     // =================================================
@@ -184,9 +176,9 @@ if (typeof THREE === "undefined") {
         -20
     );
 
-    scene.add(
-        path
-    );
+    path.receiveShadow = true;
+
+    scene.add(path);
 
 
     // =================================================
@@ -230,9 +222,7 @@ if (typeof THREE === "undefined") {
         mesh.castShadow = true;
         mesh.receiveShadow = true;
 
-        scene.add(
-            mesh
-        );
+        scene.add(mesh);
 
         return mesh;
     }
@@ -309,9 +299,7 @@ if (typeof THREE === "undefined") {
 
         trunk.castShadow = true;
 
-        scene.add(
-            trunk
-        );
+        scene.add(trunk);
 
 
         const leavesGeometry =
@@ -340,9 +328,7 @@ if (typeof THREE === "undefined") {
 
         leaves.castShadow = true;
 
-        scene.add(
-            leaves
-        );
+        scene.add(leaves);
     }
 
 
@@ -366,9 +352,7 @@ if (typeof THREE === "undefined") {
         6
     );
 
-    scene.add(
-        player
-    );
+    scene.add(player);
 
 
     // =================================================
@@ -397,9 +381,7 @@ if (typeof THREE === "undefined") {
 
     body.castShadow = true;
 
-    player.add(
-        body
-    );
+    player.add(body);
 
 
     // =================================================
@@ -428,9 +410,7 @@ if (typeof THREE === "undefined") {
 
     head.castShadow = true;
 
-    player.add(
-        head
-    );
+    player.add(head);
 
 
     // =================================================
@@ -464,9 +444,7 @@ if (typeof THREE === "undefined") {
 
     leftLeg.castShadow = true;
 
-    player.add(
-        leftLeg
-    );
+    player.add(leftLeg);
 
 
     const rightLeg =
@@ -483,9 +461,7 @@ if (typeof THREE === "undefined") {
 
     rightLeg.castShadow = true;
 
-    player.add(
-        rightLeg
-    );
+    player.add(rightLeg);
 
 
     // =================================================
@@ -514,9 +490,7 @@ if (typeof THREE === "undefined") {
 
     leftArm.castShadow = true;
 
-    player.add(
-        leftArm
-    );
+    player.add(leftArm);
 
 
     const rightArm =
@@ -533,26 +507,43 @@ if (typeof THREE === "undefined") {
 
     rightArm.castShadow = true;
 
-    player.add(
-        rightArm
-    );
+    player.add(rightArm);
 
 
     // =================================================
-    // CAMERA SETTINGS
+    // THIRD PERSON CAMERA
+    // SMARTVOC STYLE
     // =================================================
-
-    const cameraDistance = 6;
-    const cameraHeight = 3.2;
 
     let cameraYaw = 0;
-    let cameraPitch = 0.15;
+    let cameraPitch = 0.18;
+
+    let cameraDistance = 6.0;
+
+    const CAMERA_MIN_DISTANCE = 3.5;
+    const CAMERA_MAX_DISTANCE = 9.0;
+
+    const CAMERA_HEIGHT = 2.8;
+
+    const CAMERA_LOOK_HEIGHT = 1.15;
 
     const cameraTarget =
         new THREE.Vector3();
 
     const cameraDesiredPosition =
         new THREE.Vector3();
+
+    const cameraOffset =
+        new THREE.Vector3();
+
+
+    // =================================================
+    // CAMERA SMOOTHING
+    // =================================================
+
+    const cameraFollowSpeed = 12;
+
+    const cameraLookSpeed = 14;
 
 
     // =================================================
@@ -561,13 +552,12 @@ if (typeof THREE === "undefined") {
 
     const keys = {};
 
+
     window.addEventListener(
         "keydown",
-        function (event) {
+        function(event) {
 
-            keys[
-                event.code
-            ] = true;
+            keys[event.code] = true;
 
         }
     );
@@ -575,25 +565,23 @@ if (typeof THREE === "undefined") {
 
     window.addEventListener(
         "keyup",
-        function (event) {
+        function(event) {
 
-            keys[
-                event.code
-            ] = false;
+            keys[event.code] = false;
 
         }
     );
 
 
     // =================================================
-    // MOUSE LOOK
+    // MOUSE / POINTER LOCK
     // =================================================
 
     let mouseLocked = false;
 
     document.addEventListener(
         "pointerlockchange",
-        function () {
+        function() {
 
             mouseLocked =
                 document.pointerLockElement === canvas;
@@ -604,15 +592,18 @@ if (typeof THREE === "undefined") {
 
     document.addEventListener(
         "mousemove",
-        function (event) {
+        function(event) {
 
             if (!mouseLocked) {
                 return;
             }
 
 
-            const sensitivity =
-                0.0025;
+            // =========================================
+            // CAMERA ORBIT
+            // =========================================
+
+            const sensitivity = 0.0025;
 
 
             cameraYaw -=
@@ -625,15 +616,44 @@ if (typeof THREE === "undefined") {
                 sensitivity;
 
 
+            // =========================================
+            // SMARTVOC-LIKE CAMERA LIMIT
+            // =========================================
+
             cameraPitch =
-                Math.max(
+                THREE.MathUtils.clamp(
+                    cameraPitch,
                     -0.65,
-                    Math.min(
-                        0.65,
-                        cameraPitch
-                    )
+                    0.85
                 );
 
+        }
+    );
+
+
+    // =================================================
+    // CAMERA ZOOM
+    // =================================================
+
+    canvas.addEventListener(
+        "wheel",
+        function(event) {
+
+            event.preventDefault();
+
+            cameraDistance +=
+                event.deltaY * 0.005;
+
+            cameraDistance =
+                THREE.MathUtils.clamp(
+                    cameraDistance,
+                    CAMERA_MIN_DISTANCE,
+                    CAMERA_MAX_DISTANCE
+                );
+
+        },
+        {
+            passive: false
         }
     );
 
@@ -657,14 +677,20 @@ if (typeof THREE === "undefined") {
 
         startButton.addEventListener(
             "click",
-            function () {
+            function() {
 
-                startScreen.classList.add(
-                    "hidden"
-                );
+                if (startScreen) {
+
+                    startScreen.classList.add(
+                        "hidden"
+                    );
+
+                }
 
 
-                // Lock mouse
+                // =====================================
+                // POINTER LOCK
+                // =====================================
 
                 canvas.requestPointerLock();
 
@@ -674,11 +700,12 @@ if (typeof THREE === "undefined") {
                 );
 
                 console.log(
-                    "Third-person controller active."
+                    "Third-person SmartVoc-style controller active."
                 );
 
             }
         );
+
     }
 
 
@@ -689,10 +716,10 @@ if (typeof THREE === "undefined") {
     const moveDirection =
         new THREE.Vector3();
 
-    const forward =
+    const cameraForward =
         new THREE.Vector3();
 
-    const right =
+    const cameraRight =
         new THREE.Vector3();
 
     const velocity =
@@ -701,10 +728,15 @@ if (typeof THREE === "undefined") {
 
     const moveSpeed = 6;
 
+    const rotationSpeed = 10;
 
-    function updatePlayer(
-        delta
-    ) {
+
+    // =================================================
+    // PLAYER MOVEMENT
+    // SMARTVOC STYLE
+    // =================================================
+
+    function updatePlayer(delta) {
 
         moveDirection.set(
             0,
@@ -713,35 +745,38 @@ if (typeof THREE === "undefined") {
         );
 
 
-        // ---------------------------------------------
-        // CAMERA FORWARD
-        // ---------------------------------------------
+        // =================================================
+        // CAMERA BASIS
+        // Sama konsepnya dengan:
+        //
+        // cam_basis.x
+        // -cam_basis.z
+        //
+        // pada SmartVoc.
+        // =================================================
 
-        forward.set(
+
+        cameraForward.set(
             Math.sin(cameraYaw),
             0,
             Math.cos(cameraYaw)
         );
 
-        forward.normalize();
+        cameraForward.normalize();
 
 
-        // ---------------------------------------------
-        // CAMERA RIGHT
-        // ---------------------------------------------
-
-        right.set(
+        cameraRight.set(
             Math.cos(cameraYaw),
             0,
             -Math.sin(cameraYaw)
         );
 
-        right.normalize();
+        cameraRight.normalize();
 
 
-        // ---------------------------------------------
-        // W
-        // ---------------------------------------------
+        // =================================================
+        // W = MAJU SESUAI ARAH CAMERA
+        // =================================================
 
         if (
             keys["KeyW"] ||
@@ -749,15 +784,15 @@ if (typeof THREE === "undefined") {
         ) {
 
             moveDirection.add(
-                forward
+                cameraForward
             );
 
         }
 
 
-        // ---------------------------------------------
-        // S
-        // ---------------------------------------------
+        // =================================================
+        // S = MUNDUR
+        // =================================================
 
         if (
             keys["KeyS"] ||
@@ -765,15 +800,15 @@ if (typeof THREE === "undefined") {
         ) {
 
             moveDirection.sub(
-                forward
+                cameraForward
             );
 
         }
 
 
-        // ---------------------------------------------
-        // A
-        // ---------------------------------------------
+        // =================================================
+        // A = KIRI RELATIF CAMERA
+        // =================================================
 
         if (
             keys["KeyA"] ||
@@ -781,15 +816,15 @@ if (typeof THREE === "undefined") {
         ) {
 
             moveDirection.sub(
-                right
+                cameraRight
             );
 
         }
 
 
-        // ---------------------------------------------
-        // D
-        // ---------------------------------------------
+        // =================================================
+        // D = KANAN RELATIF CAMERA
+        // =================================================
 
         if (
             keys["KeyD"] ||
@@ -797,34 +832,35 @@ if (typeof THREE === "undefined") {
         ) {
 
             moveDirection.add(
-                right
+                cameraRight
             );
 
         }
 
 
-        // ---------------------------------------------
+        // =================================================
         // NORMALIZE
-        // ---------------------------------------------
+        // =================================================
 
-        if (
-            moveDirection.lengthSq() > 0
-        ) {
+        const isMoving =
+            moveDirection.lengthSq() > 0;
+
+
+        if (isMoving) {
 
             moveDirection.normalize();
 
 
-            // -----------------------------------------
+            // =============================================
             // MOVEMENT
-            // -----------------------------------------
+            // =============================================
 
             velocity.copy(
                 moveDirection
             );
 
             velocity.multiplyScalar(
-                moveSpeed *
-                delta
+                moveSpeed * delta
             );
 
             player.position.add(
@@ -832,9 +868,12 @@ if (typeof THREE === "undefined") {
             );
 
 
-            // -----------------------------------------
+            // =============================================
             // CHARACTER ROTATION
-            // -----------------------------------------
+            //
+            // Sama konsep:
+            // atan2(dir.x, dir.z)
+            // =============================================
 
             const targetRotation =
                 Math.atan2(
@@ -848,9 +887,9 @@ if (typeof THREE === "undefined") {
                 player.rotation.y;
 
 
+            // Normalize rotation difference
             while (
-                rotationDifference >
-                Math.PI
+                rotationDifference > Math.PI
             ) {
 
                 rotationDifference -=
@@ -860,8 +899,7 @@ if (typeof THREE === "undefined") {
 
 
             while (
-                rotationDifference <
-                -Math.PI
+                rotationDifference < -Math.PI
             ) {
 
                 rotationDifference +=
@@ -870,19 +908,20 @@ if (typeof THREE === "undefined") {
             }
 
 
+            // Smooth rotation
             player.rotation.y +=
                 rotationDifference *
                 Math.min(
                     1,
-                    delta * 10
+                    delta * rotationSpeed
                 );
 
         }
 
 
-        // ---------------------------------------------
+        // =================================================
         // WORLD BOUNDS
-        // ---------------------------------------------
+        // =================================================
 
         player.position.x =
             THREE.MathUtils.clamp(
@@ -890,6 +929,7 @@ if (typeof THREE === "undefined") {
                 -45,
                 45
             );
+
 
         player.position.z =
             THREE.MathUtils.clamp(
@@ -908,9 +948,7 @@ if (typeof THREE === "undefined") {
     let walkTime = 0;
 
 
-    function updatePlayerAnimation(
-        delta
-    ) {
+    function updatePlayerAnimation(delta) {
 
         const isMoving =
             moveDirection.lengthSq() > 0;
@@ -955,60 +993,79 @@ if (typeof THREE === "undefined") {
 
 
     // =================================================
-    // CAMERA FOLLOW
+    // THIRD PERSON CAMERA FOLLOW
     // =================================================
 
-    function updateCamera(
-        delta
-    ) {
+    function updateCamera(delta) {
+
+        // =============================================
+        // TARGET
+        // =============================================
 
         cameraTarget.set(
             player.position.x,
-            player.position.y + 1.2,
+            player.position.y +
+            CAMERA_LOOK_HEIGHT,
             player.position.z
         );
 
 
+        // =============================================
+        // ORBIT POSITION
+        //
+        // Kamera berada DI BELAKANG player
+        // relatif terhadap cameraYaw.
+        // =============================================
+
         const horizontalDistance =
             cameraDistance *
-            Math.cos(
-                cameraPitch
-            );
+            Math.cos(cameraPitch);
 
 
         const verticalDistance =
             cameraDistance *
-            Math.sin(
-                cameraPitch
-            );
+            Math.sin(cameraPitch);
 
 
         cameraDesiredPosition.set(
+
             player.position.x -
-                Math.sin(cameraYaw) *
-                horizontalDistance,
+            Math.sin(cameraYaw) *
+            horizontalDistance,
 
             player.position.y +
-                cameraHeight -
-                verticalDistance,
+            CAMERA_HEIGHT -
+            verticalDistance,
 
             player.position.z -
-                Math.cos(cameraYaw) *
-                horizontalDistance
+            Math.cos(cameraYaw) *
+            horizontalDistance
+
         );
 
 
-        // Smooth camera
+        // =============================================
+        // CAMERA FOLLOW SMOOTH
+        // =============================================
 
-        camera.position.lerp(
-            cameraDesiredPosition,
+        const followAlpha =
             1 -
             Math.pow(
                 0.001,
-                delta
-            )
+                delta *
+                cameraFollowSpeed
+            );
+
+
+        camera.position.lerp(
+            cameraDesiredPosition,
+            followAlpha
         );
 
+
+        // =============================================
+        // CAMERA LOOK AT
+        // =============================================
 
         camera.lookAt(
             cameraTarget
@@ -1039,12 +1096,12 @@ if (typeof THREE === "undefined") {
         );
 
 
-        scene.add(
-            npc
-        );
+        scene.add(npc);
 
 
-        // Body
+        // =============================================
+        // BODY
+        // =============================================
 
         const npcBody =
             new THREE.Mesh(
@@ -1063,12 +1120,12 @@ if (typeof THREE === "undefined") {
 
         npcBody.castShadow = true;
 
-        npc.add(
-            npcBody
-        );
+        npc.add(npcBody);
 
 
-        // Head
+        // =============================================
+        // HEAD
+        // =============================================
 
         const npcHead =
             new THREE.Mesh(
@@ -1087,12 +1144,12 @@ if (typeof THREE === "undefined") {
 
         npcHead.castShadow = true;
 
-        npc.add(
-            npcHead
-        );
+        npc.add(npcHead);
 
 
-        // Legs
+        // =============================================
+        // LEGS
+        // =============================================
 
         const npcLegGeometry =
             new THREE.BoxGeometry(
@@ -1121,9 +1178,7 @@ if (typeof THREE === "undefined") {
 
         npcLeftLeg.castShadow = true;
 
-        npc.add(
-            npcLeftLeg
-        );
+        npc.add(npcLeftLeg);
 
 
         const npcRightLeg =
@@ -1140,14 +1195,15 @@ if (typeof THREE === "undefined") {
 
         npcRightLeg.castShadow = true;
 
-        npc.add(
-            npcRightLeg
-        );
+        npc.add(npcRightLeg);
 
 
-        // NPC movement data
+        // =============================================
+        // NPC MOVEMENT DATA
+        // =============================================
 
         npc.userData.startX = x;
+
         npc.userData.startZ = z;
 
         npc.userData.pathLength =
@@ -1155,12 +1211,16 @@ if (typeof THREE === "undefined") {
 
         npc.userData.speed =
             1.2 +
-            Math.random() *
-            0.6;
+            Math.random() * 0.6;
 
         npc.userData.direction = 1;
 
         npc.userData.walkTime = 0;
+
+
+        // Face initial direction
+        npc.rotation.y =
+            Math.PI / 2;
 
 
         return npc;
@@ -1210,12 +1270,10 @@ if (typeof THREE === "undefined") {
     // NPC UPDATE
     // =================================================
 
-    function updateNPCs(
-        delta
-    ) {
+    function updateNPCs(delta) {
 
         npcs.forEach(
-            function (npc) {
+            function(npc) {
 
                 npc.userData.walkTime +=
                     delta * 8;
@@ -1236,6 +1294,10 @@ if (typeof THREE === "undefined") {
                     npc.userData.startX;
 
 
+                // =====================================
+                // REVERSE
+                // =====================================
+
                 if (
                     Math.abs(distance) >
                     npc.userData.pathLength
@@ -1243,6 +1305,7 @@ if (typeof THREE === "undefined") {
 
                     npc.userData.direction *=
                         -1;
+
 
                     npc.rotation.y =
                         npc.userData.direction > 0
@@ -1252,11 +1315,14 @@ if (typeof THREE === "undefined") {
                 }
 
 
+                // =====================================
+                // WALK ANIMATION
+                // =====================================
+
                 const swing =
                     Math.sin(
                         npc.userData.walkTime
-                    ) *
-                    0.45;
+                    ) * 0.45;
 
 
                 npc.children[2].rotation.x =
@@ -1296,13 +1362,14 @@ if (typeof THREE === "undefined") {
 
     window.addEventListener(
         "resize",
-        function () {
+        function() {
 
             camera.aspect =
                 window.innerWidth /
                 window.innerHeight;
 
             camera.updateProjectionMatrix();
+
 
             renderer.setSize(
                 window.innerWidth,
@@ -1325,9 +1392,7 @@ if (typeof THREE === "undefined") {
     // INITIAL CAMERA
     // =================================================
 
-    updateCamera(
-        0.016
-    );
+    updateCamera(0.016);
 
 
     // =================================================
@@ -1348,6 +1413,10 @@ if (typeof THREE === "undefined") {
             );
 
 
+        // =============================================
+        // PLAYER
+        // =============================================
+
         updatePlayer(
             delta
         );
@@ -1358,15 +1427,27 @@ if (typeof THREE === "undefined") {
         );
 
 
+        // =============================================
+        // NPC
+        // =============================================
+
         updateNPCs(
             delta
         );
 
 
+        // =============================================
+        // CAMERA
+        // =============================================
+
         updateCamera(
             delta
         );
 
+
+        // =============================================
+        // RENDER
+        // =============================================
 
         renderer.render(
             scene,
@@ -1381,6 +1462,10 @@ if (typeof THREE === "undefined") {
 
     console.log(
         "=== 3D WORLD RUNNING ==="
+    );
+
+    console.log(
+        "SmartVoc-style third-person movement active."
     );
 
 }
