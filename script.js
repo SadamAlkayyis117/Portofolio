@@ -1,9 +1,9 @@
 // =====================================================
 // SADAM ALKAYYIS - INTERACTIVE 3D PORTFOLIO
-// STEP 4 - THREE.JS WORLD
+// STEP 4 - THREE.JS WORLD (FIXED VERSION)
 // =====================================================
-console.log("=== PORTFOLIO SCRIPT START ===");
 
+console.log("=== PORTFOLIO SCRIPT START ===");
 
 // =====================================================
 // CHECK THREE.JS
