@@ -1,6 +1,6 @@
 // =====================================================
 // SADAM ALKAYYIS - INTERACTIVE 3D PORTFOLIO
-// STEP 6 - FULL FIXED & TESTED
+// STEP 6 - FULL FIXED & TESTED (NO REFERENCE ERROR)
 // =====================================================
 
 console.log("=== PORTFOLIO SCRIPT START ===");
@@ -15,12 +15,18 @@ if (typeof THREE === "undefined") {
     if (!canvas) {
         console.error("Canvas #game-canvas tidak ditemukan.");
     } else {
-        // SCENE & FOG
+        // =============================================
+        // 1. SCENE, FOG, CAMERA & RENDERER
+        // =============================================
         const scene = new THREE.Scene();
+        const daySkyColor = new THREE.Color(0x87ceeb);
+        const nightSkyColor = new THREE.Color(0x071426);
+        const dayFogColor = new THREE.Color(0x87ceeb);
+        const nightFogColor = new THREE.Color(0x071426);
+
         scene.background = new THREE.Color(0x87ceeb);
         scene.fog = new THREE.Fog(0x87ceeb, 30, 100);
 
-        // CAMERA
         const camera = new THREE.PerspectiveCamera(
             65,
             window.innerWidth / window.innerHeight,
@@ -28,7 +34,6 @@ if (typeof THREE === "undefined") {
             1000
         );
 
-        // RENDERER
         const renderer = new THREE.WebGLRenderer({
             canvas: canvas,
             antialias: true
@@ -37,9 +42,10 @@ if (typeof THREE === "undefined") {
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-        
 
-        // LIGHTS
+        // =============================================
+        // 2. LIGHTING & ATMOSPHERE VISUALS
+        // =============================================
         const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x557755, 2);
         scene.add(hemisphereLight);
 
@@ -54,36 +60,33 @@ if (typeof THREE === "undefined") {
         sunLight.shadow.camera.bottom = -50;
         scene.add(sunLight);
 
-        let isNight = false;
-        const daySkyColor = new THREE.Color(0x87ceeb);
-        const nightSkyColor = new THREE.Color(0x071426);
-        
-        const dayFogColor = new THREE.Color(0x87ceeb);
-        const nightFogColor = new THREE.Color(0x071426);
-        // Moon light
         const moonLight = new THREE.DirectionalLight(0x9db7ff, 0);
         moonLight.position.set(-20, 35, -15);
         moonLight.castShadow = true;
         moonLight.shadow.mapSize.width = 1024;
         moonLight.shadow.mapSize.height = 1024;
         scene.add(moonLight);
-        // Ambient malam
+
         const nightAmbient = new THREE.HemisphereLight(0x506080, 0x10151f, 0);
         scene.add(nightAmbient);
+
+        // Sun & Moon Visual Meshes
         const sunVisual = new THREE.Mesh(
             new THREE.SphereGeometry(2.5, 24, 24),
-            new THREE.MeshBasicMaterial({
-                color: 0xffdd66
-            })
+            new THREE.MeshBasicMaterial({ color: 0xffdd66 })
         );
         sunVisual.position.set(25, 35, -30);
         scene.add(sunVisual);
+
         const moonVisual = new THREE.Mesh(
             new THREE.SphereGeometry(2.2, 24, 24),
-            new THREE.MeshBasicMaterial({
-                color: 0xdde7ff
-            })
+            new THREE.MeshBasicMaterial({ color: 0xdde7ff })
         );
+        moonVisual.position.set(-25, 30, -25);
+        moonVisual.visible = false;
+        scene.add(moonVisual);
+
+        // Stars
         const starGeometry = new THREE.BufferGeometry();
         const starPositions = [];
         for (let i = 0; i < 250; i++) {
@@ -101,18 +104,15 @@ if (typeof THREE === "undefined") {
             size: 0.18,
             sizeAttenuation: true
         });
-        const stars = new THREE.Points(
-            starGeometry,
-            starMaterial
-        );
+        const stars = new THREE.Points(starGeometry, starMaterial);
         stars.visible = false;
         scene.add(stars);
+
+        // Fireflies (Dibuat SEBELUM setDayMode agar tidak ada ReferenceError)
         const fireflies = [];
         function createFireflies() {
             for (let i = 0; i < 45; i++) {
-                const material = new THREE.MeshBasicMaterial({
-                    color: 0xbaff80
-                });
+                const material = new THREE.MeshBasicMaterial({ color: 0xbaff80 });
                 const firefly = new THREE.Mesh(
                     new THREE.SphereGeometry(0.045, 6, 6),
                     material
@@ -129,12 +129,25 @@ if (typeof THREE === "undefined") {
                 fireflies.push(firefly);
             }
         }
+        createFireflies();
+
+        // =============================================
+        // 3. DAY / NIGHT TOGGLE SYSTEM
+        // =============================================
+        let isNight = false;
         const timeModeUI = document.getElementById("time-mode");
+
         function updateTimeModeUI() {
             if (!timeModeUI) return;
-            timeModeUI.textContent =
-                isNight ? "🌙 NIGHT" : "☀️ DAY";
+            timeModeUI.textContent = isNight ? "🌙 NIGHT" : "☀️ DAY";
         }
+
+        function updateNightObjects() {
+            fireflies.forEach((firefly) => {
+                firefly.visible = isNight;
+            });
+        }
+
         function setDayMode() {
             isNight = false;
             scene.background.copy(daySkyColor);
@@ -149,6 +162,7 @@ if (typeof THREE === "undefined") {
             updateNightObjects();
             updateTimeModeUI();
         }
+
         function setNightMode() {
             isNight = true;
             scene.background.copy(nightSkyColor);
@@ -163,11 +177,7 @@ if (typeof THREE === "undefined") {
             updateNightObjects();
             updateTimeModeUI();
         }
-        function updateNightObjects() {
-            fireflies.forEach((firefly) => {
-                firefly.visible = isNight;
-            });
-        }
+
         function toggleDayNight() {
             if (isNight) {
                 setDayMode();
@@ -176,9 +186,13 @@ if (typeof THREE === "undefined") {
             }
             console.log(isNight ? "🌙 NIGHT MODE" : "☀️ DAY MODE");
         }
-        // Default awal
+
+        // Aktifkan default siang hari
         setDayMode();
-        // GROUND
+
+        // =============================================
+        // 4. GROUND & PATH
+        // =============================================
         const ground = new THREE.Mesh(
             new THREE.PlaneGeometry(100, 100),
             new THREE.MeshStandardMaterial({ color: 0x4f7d3a })
@@ -187,7 +201,6 @@ if (typeof THREE === "undefined") {
         ground.receiveShadow = true;
         scene.add(ground);
 
-        // PATH
         const path = new THREE.Mesh(
             new THREE.PlaneGeometry(6, 60),
             new THREE.MeshStandardMaterial({ color: 0xb89b6a })
@@ -196,6 +209,10 @@ if (typeof THREE === "undefined") {
         path.position.set(0, 0.02, -20);
         path.receiveShadow = true;
         scene.add(path);
+
+        // =============================================
+        // 5. CLOUDS, BIRDS & BUTTERFLIES
+        // =============================================
         const clouds = [];
         function createCloud(x, y, z, scale = 1) {
             const cloud = new THREE.Group();
@@ -216,8 +233,6 @@ if (typeof THREE === "undefined") {
                     cloudMaterial
                 );
                 puff.position.set(px, py, pz);
-                puff.castShadow = false;
-                puff.receiveShadow = false;
                 cloud.add(puff);
             });
             cloud.position.set(x, y, z);
@@ -241,29 +256,15 @@ if (typeof THREE === "undefined") {
                 }
             });
         }
-        moonVisual.position.set(-25, 30, -25);
-        moonVisual.visible = false;
-        scene.add(moonVisual);
 
         const birds = [];
         function createBird(x, y, z) {
             const bird = new THREE.Group();
-            const birdMaterial = new THREE.MeshStandardMaterial({
-                color: 0x222222
-            });
-            const body = new THREE.Mesh(
-                new THREE.SphereGeometry(0.15, 8, 8),
-                birdMaterial
-            );
+            const birdMaterial = new THREE.MeshStandardMaterial({ color: 0x222222 });
+            const body = new THREE.Mesh(new THREE.SphereGeometry(0.15, 8, 8), birdMaterial);
             bird.add(body);
-            const leftWing = new THREE.Mesh(
-                new THREE.BoxGeometry(0.6, 0.05, 0.18),
-                birdMaterial
-            );
-            const rightWing = new THREE.Mesh(
-                new THREE.BoxGeometry(0.6, 0.05, 0.18),
-                birdMaterial
-            );
+            const leftWing = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.05, 0.18), birdMaterial);
+            const rightWing = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.05, 0.18), birdMaterial);
             leftWing.position.x = -0.3;
             rightWing.position.x = 0.3;
             bird.add(leftWing);
@@ -285,12 +286,8 @@ if (typeof THREE === "undefined") {
         function updateBirds(delta) {
             birds.forEach((bird) => {
                 bird.object.position.x += bird.speed * delta;
-                bird.object.position.z +=
-                    Math.sin(clock.elapsedTime * 1.5 + bird.phase) *
-                    delta *
-                    0.8;
-                const flap =
-                    Math.sin(clock.elapsedTime * 8 + bird.phase) * 0.35;
+                bird.object.position.z += Math.sin(clock.elapsedTime * 1.5 + bird.phase) * delta * 0.8;
+                const flap = Math.sin(clock.elapsedTime * 8 + bird.phase) * 0.35;
                 bird.leftWing.rotation.z = flap;
                 bird.rightWing.rotation.z = -flap;
                 if (bird.object.position.x > 40) {
@@ -306,14 +303,8 @@ if (typeof THREE === "undefined") {
                 color: 0xffd34d,
                 side: THREE.DoubleSide
             });
-            const leftWing = new THREE.Mesh(
-                new THREE.PlaneGeometry(0.25, 0.35),
-                wingMaterial
-            );
-            const rightWing = new THREE.Mesh(
-                new THREE.PlaneGeometry(0.25, 0.35),
-                wingMaterial
-            );
+            const leftWing = new THREE.Mesh(new THREE.PlaneGeometry(0.25, 0.35), wingMaterial);
+            const rightWing = new THREE.Mesh(new THREE.PlaneGeometry(0.25, 0.35), wingMaterial);
             leftWing.position.x = -0.15;
             rightWing.position.x = 0.15;
             butterfly.add(leftWing);
@@ -337,34 +328,29 @@ if (typeof THREE === "undefined") {
         function updateButterflies(delta) {
             butterflies.forEach((butterfly) => {
                 const t = clock.elapsedTime * butterfly.speed + butterfly.phase;
-                butterfly.object.position.x =
-                    butterfly.origin.x + Math.sin(t) * 2;
-                butterfly.object.position.z =
-                    butterfly.origin.z + Math.cos(t * 0.8) * 2;
-                butterfly.object.position.y =
-                    butterfly.origin.y + Math.sin(t * 2) * 0.4;
+                butterfly.object.position.x = butterfly.origin.x + Math.sin(t) * 2;
+                butterfly.object.position.z = butterfly.origin.z + Math.cos(t * 0.8) * 2;
+                butterfly.object.position.y = butterfly.origin.y + Math.sin(t * 2) * 0.4;
                 const flap = Math.sin(t * 12) * 0.7;
                 butterfly.leftWing.rotation.y = flap;
                 butterfly.rightWing.rotation.y = -flap;
             });
         }
+
         function updateFireflies() {
             fireflies.forEach((firefly) => {
                 if (!isNight) return;
-                const t =
-                    clock.elapsedTime *
-                    firefly.userData.speed +
-                    firefly.userData.phase;
+                const t = clock.elapsedTime * firefly.userData.speed + firefly.userData.phase;
                 firefly.position.y += Math.sin(t * 2) * 0.002;
-                const glow =
-                    0.5 + Math.sin(t * 4) * 0.5;
+                const glow = 0.5 + Math.sin(t * 4) * 0.5;
                 firefly.material.opacity = glow;
                 firefly.material.transparent = true;
             });
         }
 
-createFireflies();
-        // COLLISION SYSTEM
+        // =============================================
+        // 6. COLLISION SYSTEM
+        // =============================================
         const collisionObjects = [];
         const npcCollisionObjects = [];
         const PLAYER_RADIUS = 0.45;
@@ -438,7 +424,9 @@ createFireflies();
             }
         }
 
-        // BENTUK RUMAH REALISTIS DENGAN ATAP PELANA, PINTU, & TERAS
+        // =============================================
+        // 7. HOUSES & TREES
+        // =============================================
         function createHouse(x, z, width, depth, wallColor, roofColor) {
             const house = new THREE.Group();
             house.position.set(x, 0, z);
@@ -448,7 +436,6 @@ createFireflies();
             const wallMat = new THREE.MeshStandardMaterial({ color: wallColor });
             const roofMat = new THREE.MeshStandardMaterial({ color: roofColor });
 
-            // 4 Sisi Dinding
             const backWall = new THREE.Mesh(new THREE.BoxGeometry(width, wallHeight, 0.3), wallMat);
             backWall.position.set(0, wallHeight / 2, -depth / 2);
             backWall.castShadow = true;
@@ -469,18 +456,17 @@ createFireflies();
             rightWall.castShadow = true;
             house.add(rightWall);
 
-            // Atap Segitiga
+            // Atap Piramida
             const roofHeight = 1.8;
-            const roofRadius =
-                Math.sqrt(Math.pow(width / 2, 2) + Math.pow(depth / 2, 2)) + 0.35;
-            const roofGeometry =
-                new THREE.CylinderGeometry(0, roofRadius, roofHeight, 4, 1);
+            const roofRadius = Math.sqrt(Math.pow(width / 2, 2) + Math.pow(depth / 2, 2)) + 0.35;
+            const roofGeometry = new THREE.CylinderGeometry(0, roofRadius, roofHeight, 4, 1);
             roofGeometry.rotateY(Math.PI / 4);
             const roof = new THREE.Mesh(roofGeometry, roofMat);
             roof.position.set(0, wallHeight + roofHeight / 2, 0);
             roof.castShadow = true;
             roof.receiveShadow = true;
             house.add(roof);
+
             // Pintu
             const door = new THREE.Mesh(
                 new THREE.BoxGeometry(1.0, 1.8, 0.08),
@@ -499,18 +485,14 @@ createFireflies();
             terrace.castShadow = true;
             house.add(terrace);
 
-            // Dinding Rumah Menjadi Solid (Tidak Tembus)
             addCollisionBox(x, z, width + 0.4, depth + 0.4);
-
             return house;
         }
 
-        // Rumah-rumah di sekitar desa
         createHouse(-7, -8, 6, 6, 0xc08b5c, 0x7a3328);
         createHouse(7, -15, 6, 7, 0x9eaf78, 0x4d5c38);
         createHouse(-7, -28, 7, 6, 0xd1a06b, 0x65402c);
 
-        // POHON
         function createTree(x, z) {
             const trunk = new THREE.Mesh(
                 new THREE.CylinderGeometry(0.35, 0.45, 3, 8),
@@ -537,7 +519,9 @@ createFireflies();
         createTree(12, -22);
         createTree(4, -25);
 
-        // PLAYER 3D
+        // =============================================
+        // 8. PLAYER & THIRD PERSON CAMERA
+        // =============================================
         const player = new THREE.Group();
         player.position.set(0, 0, 6);
         scene.add(player);
@@ -581,7 +565,6 @@ createFireflies();
         rightArm.castShadow = true;
         player.add(rightArm);
 
-        // KAMERA THIRD-PERSON
         let cameraYaw = 0;
         let cameraPitch = 0.18;
         let cameraDistance = 6.0;
@@ -594,16 +577,11 @@ createFireflies();
         const cameraDesiredPosition = new THREE.Vector3();
         const cameraFollowSpeed = 12;
 
-        // CONTROLS & POINTER LOCK
         const keys = {};
         window.addEventListener("keydown", (e) => {
             keys[e.code] = true;
-            if (e.code === "KeyE") {
-                interactWithProject();
-            }
-            if (e.code === "KeyN") {
-                toggleDayNight();
-            }
+            if (e.code === "KeyE") interactWithProject();
+            if (e.code === "KeyN") toggleDayNight();
         });
         window.addEventListener("keyup", (e) => {
             keys[e.code] = false;
@@ -626,7 +604,6 @@ createFireflies();
             cameraDistance = THREE.MathUtils.clamp(cameraDistance, CAMERA_MIN_DISTANCE, CAMERA_MAX_DISTANCE);
         }, { passive: false });
 
-        // START SCREEN
         const startScreen = document.getElementById("start-screen");
         const startButton = document.getElementById("start-button");
         if (startButton) {
@@ -636,7 +613,6 @@ createFireflies();
             });
         }
 
-        // PLAYER MOVEMENT & ANIMATION
         const moveDirection = new THREE.Vector3();
         const cameraForward = new THREE.Vector3();
         const cameraRight = new THREE.Vector3();
@@ -711,7 +687,9 @@ createFireflies();
             camera.lookAt(cameraTarget);
         }
 
-        // PLANG PROYEK TINGGI DENGAN POSTER BESAR
+        // =============================================
+        // 9. PROJECT SIGN POST (BERDIRI RAPI TANPA MENUTUP)
+        // =============================================
         const projects = {
             smartvoc: {
                 title: "SmartVoc",
@@ -793,36 +771,26 @@ createFireflies();
             const sign = new THREE.Group();
             sign.position.set(x, 0, z);
 
-            // 1. Tentukan ukuran papan
             const boardWidth = 3.6;
             const boardHeight = 1.8;
             const boardThickness = 0.2;
-
-            // 2. Tentukan ketinggian papan dari tanah
-            // Ketinggian titik tengah papan (misal 3.8 meter di atas tanah)
             const boardCenterY = 3.8; 
+            const postHeight = boardCenterY - (boardHeight / 2); // 2.9m
 
-            // 3. Tinggi tiang HANYA sampai bagian bawah papan (TIDAK tembus ke atas!)
-            const postHeight = boardCenterY - (boardHeight / 2); // = 2.9 meter
-
-            // Tiang (Post) diletakkan sedikit di belakang papan
             const post = new THREE.Mesh(
                 new THREE.CylinderGeometry(0.14, 0.16, postHeight, 12),
                 new THREE.MeshStandardMaterial({ color: 0x2b2b2b, roughness: 0.6 })
             );
-            // Titik tengah tiang
-            post.position.set(0, postHeight / 2, -0.05); // Z mundur sedikit (-0.05) agar tidak tembus
+            post.position.set(0, postHeight / 2, -0.05);
             post.castShadow = true;
             sign.add(post);
 
-            // 4. Papan Plang (Board) diletakkan pas menumpu di atas tiang
             const board = new THREE.Mesh(
                 new THREE.BoxGeometry(boardWidth, boardHeight, boardThickness),
                 new THREE.MeshStandardMaterial({
                     map: createSignTexture(data.title, data.category)
                 })
             );
-            // Papan berada di atas tiang dan sedikit lebih maju (Z = 0.05)
             board.position.set(0, boardCenterY, 0.05);
             board.castShadow = true;
             sign.add(board);
@@ -841,7 +809,9 @@ createFireflies();
         createProjectSign("uiux", 5, -22);
         createProjectSign("graphic", -5, -32);
 
-        // INTERACTION MODAL
+        // =============================================
+        // 10. MODAL / UI INTERACTION
+        // =============================================
         const interactionPrompt = document.getElementById("interaction-prompt");
         let nearestProject = null;
 
@@ -925,13 +895,14 @@ createFireflies();
             if (e.code === "Escape" && projectOpen) closeProject();
         });
 
-        // NPC DENGAN PERLENGKAPAN & ANIMASI KHUSUS
+        // =============================================
+        // 11. NPC SYSTEM (DENGAN ANIMASI KHUSUS & ALAT)
+        // =============================================
         function createNPC(x, z, color, pathLength, activity) {
             const npc = new THREE.Group();
             npc.position.set(x, 0, z);
             scene.add(npc);
 
-            // Badan (PERBAIKAN KOMA - TIDAK AKAN ERROR LAGI)
             const npcBody = new THREE.Mesh(
                 new THREE.BoxGeometry(0.75, 1.1, 0.45),
                 new THREE.MeshStandardMaterial({ color: color })
@@ -988,7 +959,6 @@ createFireflies();
             npc.userData.direction = 1;
             npc.userData.walkTime = 0;
 
-            // Perlengkapan Sapu
             if (activity === "SWEEP") {
                 const broom = new THREE.Group();
                 const broomStick = new THREE.Mesh(
@@ -1011,7 +981,6 @@ createFireflies();
                 npc.userData.broom = broom;
             }
 
-            // Perlengkapan Teko Gembor Air
             if (activity === "WATER") {
                 const wateringCan = new THREE.Group();
                 const canBody = new THREE.Mesh(
@@ -1036,15 +1005,13 @@ createFireflies();
             return npc;
         }
 
-        // Tiga NPC dengan Peran & Animasi Masing-masing
-        const npc1 = createNPC(1, -7, 0xd94c4c, 4, "WALK");  // Alex: Jalan Patroli
-        const npc2 = createNPC(4, -12, 0xf0a83c, 0, "SWEEP");  // Maya: Menyapu Halaman
-        const npc3 = createNPC(-4, -24, 0x8e5bd9, 0, "WATER"); // Jordan: Menyiram Tanaman
+        const npc1 = createNPC(1, -7, 0xd94c4c, 4, "WALK");
+        const npc2 = createNPC(4, -12, 0xf0a83c, 0, "SWEEP");
+        const npc3 = createNPC(-4, -24, 0x8e5bd9, 0, "WATER");
 
         const npcs = [npc1, npc2, npc3];
         npcs.forEach((npc) => addNPCCollider(npc));
 
-        // NPC SALING MENGHINDAR (TIDAK SALING TABRAKAN)
         function resolveNPCVsNPC() {
             for (let i = 0; i < npcs.length; i++) {
                 for (let j = i + 1; j < npcs.length; j++) {
@@ -1067,13 +1034,11 @@ createFireflies();
             }
         }
 
-        // LOOP ANIMASI NPC
         function updateNPCs(delta) {
             npcs.forEach((npc) => {
                 const act = npc.userData.activity;
                 npc.userData.activityTime += delta;
 
-                // 1. Animasi Jalan
                 if (act === "WALK") {
                     npc.userData.walkTime += delta * 8;
                     npc.position.x += npc.userData.direction * npc.userData.speed * delta;
@@ -1086,17 +1051,13 @@ createFireflies();
                     npc.userData.rightLeg.rotation.x = -swing;
                     npc.userData.leftArm.rotation.x = -swing;
                     npc.userData.rightArm.rotation.x = swing;
-                }
-                // 2. Animasi Menyapu
-                else if (act === "SWEEP") {
+                } else if (act === "SWEEP") {
                     const sweep = Math.sin(npc.userData.activityTime * 4);
                     npc.userData.body.rotation.z = sweep * 0.08;
                     npc.userData.leftArm.rotation.x = -0.4 + sweep * 0.25;
                     npc.userData.rightArm.rotation.x = -0.5 + sweep * 0.25;
                     if (npc.userData.broom) npc.userData.broom.rotation.x = sweep * 0.3;
-                }
-                // 3. Animasi Menyiram
-                else if (act === "WATER") {
+                } else if (act === "WATER") {
                     const water = Math.sin(npc.userData.activityTime * 3);
                     npc.userData.rightArm.rotation.x = -0.7 + water * 0.2;
                     npc.userData.leftArm.rotation.x = -0.2;
@@ -1107,7 +1068,9 @@ createFireflies();
             resolveNPCVsNPC();
         }
 
-        // LOADING & RESIZE
+        // =============================================
+        // 12. LOADING & RESIZE
+        // =============================================
         const loadingScreen = document.getElementById("loading-screen");
         if (loadingScreen) loadingScreen.classList.add("hidden");
 
@@ -1117,7 +1080,9 @@ createFireflies();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // ANIMATION LOOP
+        // =============================================
+        // 13. ANIMATION LOOP
+        // =============================================
         const clock = new THREE.Clock();
         updateCamera(0.016);
 
