@@ -178,17 +178,18 @@ if (typeof THREE === "undefined") {
             house.add(rightWall);
 
             // Atap Segitiga
-            const roofLeft = new THREE.Mesh(new THREE.BoxGeometry(width + 0.8, 0.35, depth + 0.8), roofMat);
-            roofLeft.position.set(-width * 0.0001, wallHeight + 0.75, 0);
-            roofLeft.rotation.z = -Math.PI / 6;
-            roofLeft.castShadow = true;
-            house.add(roofLeft);
-
-            const roofRight = new THREE.Mesh(new THREE.BoxGeometry(width + 0.8, 0.35, depth + 0.8), roofMat);
-            roofRight.position.set(width * 0.0001, wallHeight + 0.75, 0);
-            roofRight.rotation.z = Math.PI / 6;
-            roofRight.castShadow = true;
-            house.add(roofRight);
+            // Atap Piramida Segitiga Utuh
+            const roofGeometry = new THREE.ConeGeometry(
+                Math.max(width, depth) * 0.75,  // Lebar radius alas atap
+                2.2,                            // Tinggi puncak atap
+                4                               // 4 sisi (segi empat piramida)
+                );
+            const roof = new THREE.Mesh(roofGeometry, roofMat);
+            // Posisi Atap
+            roof.position.set(0, wallHeight + 1.1, 0); // Tepat di atas dinding rumah
+            roof.rotation.y = Math.PI / 4;             // Putar 45 derajat agar sisinya pas dengan dinding
+            roof.castShadow = true;
+            house.add(roof);
 
             // Pintu
             const door = new THREE.Mesh(
