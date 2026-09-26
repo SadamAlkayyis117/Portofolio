@@ -1,6 +1,6 @@
 // =====================================================
 // SADAM ALKAYYIS - INTERACTIVE 3D PORTFOLIO
-// STEP 6 - FULL FIXED & TESTED (NO REFERENCE ERROR)
+// STEP 6 - FULL FIXED (ABOUT ME MOVED + CLEAN BACK TO WORLD)
 // =====================================================
 
 console.log("=== PORTFOLIO SCRIPT START ===");
@@ -70,7 +70,6 @@ if (typeof THREE === "undefined") {
         const nightAmbient = new THREE.HemisphereLight(0x506080, 0x10151f, 0);
         scene.add(nightAmbient);
 
-        // Sun & Moon Visual Meshes
         const sunVisual = new THREE.Mesh(
             new THREE.SphereGeometry(2.5, 24, 24),
             new THREE.MeshBasicMaterial({ color: 0xffdd66 })
@@ -86,7 +85,6 @@ if (typeof THREE === "undefined") {
         moonVisual.visible = false;
         scene.add(moonVisual);
 
-        // Stars
         const starGeometry = new THREE.BufferGeometry();
         const starPositions = [];
         for (let i = 0; i < 250; i++) {
@@ -108,7 +106,6 @@ if (typeof THREE === "undefined") {
         stars.visible = false;
         scene.add(stars);
 
-        // Fireflies (Dibuat SEBELUM setDayMode agar tidak ada ReferenceError)
         const fireflies = [];
         function createFireflies() {
             for (let i = 0; i < 45; i++) {
@@ -187,7 +184,6 @@ if (typeof THREE === "undefined") {
             console.log(isNight ? "🌙 NIGHT MODE" : "☀️ DAY MODE");
         }
 
-        // Aktifkan default siang hari
         setDayMode();
 
         // =============================================
@@ -688,7 +684,7 @@ if (typeof THREE === "undefined") {
         }
 
         // =============================================
-        // 9. PROJECT SIGN POST (BERDIRI RAPI TANPA MENUTUP)
+        // 9. PROJECT & ABOUT BOARDS
         // =============================================
         const projects = {
             smartvoc: {
@@ -736,7 +732,7 @@ if (typeof THREE === "undefined") {
         const projectSigns = [];
         const aboutBoard = {
             group: null,
-            interactionRadius: 4
+            interactionRadius: 4.5
         };
 
         function createIntroTexture() {
@@ -744,143 +740,90 @@ if (typeof THREE === "undefined") {
             canvasTex.width = 1024;
             canvasTex.height = 600;
             const ctx = canvasTex.getContext("2d");
-            // Background
+
             ctx.fillStyle = "#111111";
             ctx.fillRect(0, 0, 1024, 600);
-            // Border
+
             ctx.strokeStyle = "#4fd1c5";
             ctx.lineWidth = 14;
             ctx.strokeRect(12, 12, 1000, 576);
-            // Small title
+
             ctx.fillStyle = "#38bdf8";
             ctx.font = "bold 30px Arial";
             ctx.textAlign = "center";
-            ctx.fillText(
-                "WELCOME TO MY PORTFOLIO",
-                512,
-                75
-            );
-            // Name
+            ctx.fillText("WELCOME TO MY PORTFOLIO", 512, 75);
+
             ctx.fillStyle = "#ffffff";
             ctx.font = "bold 68px Arial";
-            ctx.fillText(
-                "SADAM ALKAYYIS",
-                512,
-                165
-            );
-            // Role
+            ctx.fillText("SADAM ALKAYYIS", 512, 165);
+
             ctx.fillStyle = "#a3e635";
             ctx.font = "bold 30px Arial";
-            ctx.fillText(
-                "CREATIVE DEVELOPER • UI/UX DESIGNER",
-                512,
-                225
-            );
-            // Short introduction
+            ctx.fillText("CREATIVE DEVELOPER • UI/UX DESIGNER", 512, 225);
+
             ctx.fillStyle = "#dddddd";
             ctx.font = "26px Arial";
-            ctx.fillText(
-                "Informatics Graduate passionate about",
-                512,
-                305
-            );
+            ctx.fillText("Informatics Graduate passionate about", 512, 305);
             ctx.fillText("game development, UI/UX and creative digital projects.", 512, 345);
-            // Interaction instruction
+
             ctx.fillStyle = "#4fd1c5";
-            ctx.font = "bold 28px Arial";
-            ctx.fillText(
-                "PRESS E TO LEARN MORE ABOUT ME",
-                512,
-                445
-            );
+            ctx.font = "bold 32px Arial";
+            ctx.fillText("TEKAN E UNTUK MELIHAT ABOUT ME", 512, 445);
+
             ctx.fillStyle = "#ffffff";
             ctx.font = "23px Arial";
-            ctx.fillText(
-                "EXPLORE • DISCOVER • CREATE",
-                512,
-                500
-            );
-            const texture =
-                new THREE.CanvasTexture(canvasTex);
-            if (THREE.SRGBColorSpace) {texture.colorSpace = THREE.SRGBColorSpace;}
+            ctx.fillText("EXPLORE • DISCOVER • CREATE", 512, 500);
+
+            const texture = new THREE.CanvasTexture(canvasTex);
+            if (THREE.SRGBColorSpace) texture.colorSpace = THREE.SRGBColorSpace;
             return texture;
         }
 
+        // FUNGSI MEMBUAT PAPAN ABOUT ME (DIPASANG DI PINGGIR JALAN)
         function createIntroBoard(x, z) {
             const boardGroup = new THREE.Group();
             boardGroup.position.set(x, 0, z);
             boardGroup.userData.type = "about";
-            const boardWidth = 5.2;
-            const boardHeight = 3.0;
+
+            // Hadapkan sedikit menyerong ke arah jalan masuk (sekitar 25 derajat)
+            boardGroup.rotation.y = Math.PI / 8;
+
+            const boardWidth = 4.8;
+            const boardHeight = 2.8;
             const boardThickness = 0.22;
-            const boardCenterY = 3.3;
-            const postHeight =
-                boardCenterY -
-                (boardHeight / 2);
-            const postMaterial =
-                new THREE.MeshStandardMaterial({
-                    color: 0x2b2b2b,
-                    roughness: 0.6
-                });
-            const postGeometry =
-                new THREE.CylinderGeometry(
-                    0.16,
-                    0.18,
-                    postHeight,
-                    12
-                );
-            const leftPost =
-                new THREE.Mesh(
-                    postGeometry,
-                    postMaterial
-                );
-            leftPost.position.set(
-                -1.8,
-                postHeight / 2,
-                0
-            );
+            const boardCenterY = 3.2;
+            const postHeight = boardCenterY - (boardHeight / 2); // 1.8m
+
+            const postMaterial = new THREE.MeshStandardMaterial({
+                color: 0x2b2b2b,
+                roughness: 0.6
+            });
+            const postGeometry = new THREE.CylinderGeometry(0.14, 0.16, postHeight, 12);
+
+            const leftPost = new THREE.Mesh(postGeometry, postMaterial);
+            leftPost.position.set(-1.6, postHeight / 2, -0.05);
             leftPost.castShadow = true;
             boardGroup.add(leftPost);
-            const rightPost =
-                new THREE.Mesh(
-                    postGeometry,
-                    postMaterial
-                );
-            rightPost.position.set(
-                1.8,
-                postHeight / 2,
-                0
-            );
+
+            const rightPost = new THREE.Mesh(postGeometry, postMaterial);
+            rightPost.position.set(1.6, postHeight / 2, -0.05);
             rightPost.castShadow = true;
             boardGroup.add(rightPost);
-            const boardMaterial =
-                new THREE.MeshStandardMaterial({
-                    map: createIntroTexture()
-                });
-            const board =
-                new THREE.Mesh(
-                    new THREE.BoxGeometry(
-                        boardWidth,
-                        boardHeight,
-                        boardThickness
-                    ),
-                    boardMaterial
-                );
-            board.position.set(0, boardCenterY, 0);
+
+            const board = new THREE.Mesh(
+                new THREE.BoxGeometry(boardWidth, boardHeight, boardThickness),
+                new THREE.MeshStandardMaterial({ map: createIntroTexture() })
+            );
+            board.position.set(0, boardCenterY, 0.05);
             board.castShadow = true;
             board.receiveShadow = true;
             boardGroup.add(board);
-            const baseMaterial = new THREE.MeshStandardMaterial({color: 0x444444});
-            const base = new THREE.Mesh(new THREE.BoxGeometry(4.5, 0.18, 0.8), baseMaterial);
-            base.position.set(0, 0.09, 0);
-            base.castShadow = true;
-            boardGroup.add(base);
-            addCollisionBox(x, z, 2.0, 1.0);
+
+            addCollisionBox(x, z, 3.0, 1.2);
             aboutBoard.group = boardGroup;
             scene.add(boardGroup);
             return boardGroup;
         }
-        
 
         function createSignTexture(title, category) {
             const canvasTex = document.createElement("canvas");
@@ -934,9 +877,7 @@ if (typeof THREE === "undefined") {
 
             const board = new THREE.Mesh(
                 new THREE.BoxGeometry(boardWidth, boardHeight, boardThickness),
-                new THREE.MeshStandardMaterial({
-                    map: createSignTexture(data.title, data.category)
-                })
+                new THREE.MeshStandardMaterial({ map: createSignTexture(data.title, data.category) })
             );
             board.position.set(0, boardCenterY, 0.05);
             board.castShadow = true;
@@ -950,8 +891,14 @@ if (typeof THREE === "undefined") {
 
             return sign;
         }
-        
-        createIntroBoard(0, -1);
+
+        // ============================================================
+        // PERBAIKAN POSISI:
+        // Papan About Me ditaruh di sisi KIRI jalan (X: -4.5, Z: 2.0)
+        // Sehingga jalan setapak lurus (X: 0) TIDAK TERHALANG SAMA SEKALI!
+        // ============================================================
+        createIntroBoard(-4.5, 2.0);
+
         createProjectSign("smartvoc", 5, -3);
         createProjectSign("blockfight", -5, -12);
         createProjectSign("uiux", 5, -22);
@@ -962,6 +909,7 @@ if (typeof THREE === "undefined") {
         // =============================================
         const interactionPrompt = document.getElementById("interaction-prompt");
         let nearestProject = null;
+        let nearestAboutBoard = false;
 
         function updateProjectDetection() {
             if (projectOpen) {
@@ -970,32 +918,25 @@ if (typeof THREE === "undefined") {
                 nearestAboutBoard = false;
                 return;
             }
+
             nearestAboutBoard = false;
-            if (aboutBoard.group) {const dx = player.position.x - aboutBoard.group.position.x;
-                                   const dz = player.position.z - aboutBoard.group.position.z;
-                                   const distance = Math.sqrt(dx * dx + dz * dz);
-                                   if (distance < aboutBoard.interactionRadius) 
-                                   {
-                                       nearestAboutBoard = true;
-                                       nearestProject = null;
-                                       if (interactionPrompt) {
-                                           interactionPrompt.classList.remove(
-                                               "hidden"
-                                           );
-                                           const key =
-                                               interactionPrompt.querySelector(
-                                                   ".key"
-                                               );
-                                           const text =
-                                               interactionPrompt.querySelector(
-                                                   "span:last-child"
-                                               );
-                                           if (key) {key.textContent = "E";}
-                                           if (text) {text.textContent = "About Me";}
-                                       }
-                                       return;
-                                   }
-                                  }
+            if (aboutBoard.group) {
+                const dx = player.position.x - aboutBoard.group.position.x;
+                const dz = player.position.z - aboutBoard.group.position.z;
+                const distance = Math.sqrt(dx * dx + dz * dz);
+                if (distance < aboutBoard.interactionRadius) {
+                    nearestAboutBoard = true;
+                    nearestProject = null;
+                    if (interactionPrompt) {
+                        interactionPrompt.classList.remove("hidden");
+                        const key = interactionPrompt.querySelector(".key");
+                        const text = interactionPrompt.querySelector("span:last-child");
+                        if (key) key.textContent = "E";
+                        if (text) text.textContent = "About Me";
+                    }
+                    return;
+                }
+            }
 
             let closest = null;
             let closestDistance = Infinity;
@@ -1012,14 +953,20 @@ if (typeof THREE === "undefined") {
 
             nearestProject = closest;
             if (interactionPrompt) {
-                if (nearestProject) interactionPrompt.classList.remove("hidden");
-                else interactionPrompt.classList.add("hidden");
+                if (nearestProject) {
+                    interactionPrompt.classList.remove("hidden");
+                    const key = interactionPrompt.querySelector(".key");
+                    const text = interactionPrompt.querySelector("span:last-child");
+                    if (key) key.textContent = "E";
+                    if (text) text.textContent = "View Project";
+                } else {
+                    interactionPrompt.classList.add("hidden");
+                }
             }
         }
 
         const projectPanel = document.getElementById("project-panel");
-        const backButton = document.getElementById("project-back-button");
-        const aboutBackButton = document.getElementById("about-back-button");
+        const aboutPanel = document.getElementById("about-panel");
         let projectOpen = false;
 
         function openProject(projectId) {
@@ -1045,71 +992,89 @@ if (typeof THREE === "undefined") {
             if (dm) dm.href = data.demo;
 
             if (projectPanel) projectPanel.classList.remove("hidden");
+            if (aboutPanel) aboutPanel.classList.add("hidden");
             if (interactionPrompt) interactionPrompt.classList.add("hidden");
-            if (document.pointerLockElement) document.exitPointerLock();
+
+            if (document.exitPointerLock) {
+                document.exitPointerLock();
+            }
         }
+
         function openAbout() {
-            const aboutPanel =
-                document.getElementById(
-                    "about-panel"
-                );
             if (!aboutPanel) return;
             projectOpen = true;
-            aboutPanel.classList.remove(
-                "hidden"
-            );
-            if (interactionPrompt) {
-                interactionPrompt.classList.add(
-                    "hidden"
-                );
-            }
+
+            aboutPanel.classList.remove("hidden");
+            if (projectPanel) projectPanel.classList.add("hidden");
+            if (interactionPrompt) interactionPrompt.classList.add("hidden");
+
             nearestProject = null;
             nearestAboutBoard = false;
-            if (document.pointerLockElement) {
+
+            if (document.exitPointerLock) {
                 document.exitPointerLock();
             }
         }
 
         function interactWithProject() {
             if (projectOpen) return;
-            if (nearestAboutBoard) {openAbout(); return;}
-            if (!nearestProject) return;
-            openProject(nearestProject.userData.projectId);
+            if (nearestAboutBoard) {
+                openAbout();
+                return;
+            }
+            if (nearestProject) {
+                openProject(nearestProject.userData.projectId);
+            }
         }
-        function closeProject() {
+
+        // =============================================
+        // FUNGSI UNIVERSAL UNTUK MENUTUP SEMUA PANEL
+        // =============================================
+        function closeAllPanels() {
             projectOpen = false;
-            if (projectPanel) projectPanel.classList.add("hidden");
-            nearestProject = null;
-            canvas.requestPointerLock();
-        }
-        function closeAbout() {
-            const aboutPanel =
-                document.getElementById("about-panel");
-            if (aboutPanel) {aboutPanel.classList.add("hidden");}
-            projectOpen = false;
+
+            if (projectPanel) {
+                projectPanel.classList.add("hidden");
+                projectPanel.style.display = "none"; // Paksa sembunyikan
+            }
+            if (aboutPanel) {
+                aboutPanel.classList.add("hidden");
+                aboutPanel.style.display = "none";   // Paksa sembunyikan
+            }
+
             nearestProject = null;
             nearestAboutBoard = false;
+
             if (interactionPrompt) {
                 interactionPrompt.classList.add("hidden");
             }
-            canvas.requestPointerLock();
+
+            // Kembalikan kontrol pointer lock ke game canvas
+            if (canvas && canvas.requestPointerLock) {
+                canvas.requestPointerLock();
+            }
         }
 
-        if (backButton) {
-            backButton.addEventListener("click", (e) => {
+        // Event listener ke SEMUA tombol kembali yang ada di halaman
+        document.querySelectorAll(
+            ".back-button, #about-back-button, #project-back-button, [data-back]"
+        ).forEach((btn) => {
+            btn.addEventListener("click", (e) => {
                 e.preventDefault();
-                closeProject();
+                e.stopPropagation();
+                closeAllPanels();
             });
-        }
-        if (aboutBackButton) {
-            aboutBackButton.addEventListener("click",(e) => {e.preventDefault(); closeAbout();});}
-        document.addEventListener("keydown", (e) => {if (e.code !== "Escape") return;
-                                                     const aboutPanel = document.getElementById("about-panel");
-                                                     if (projectOpen && aboutPanel && !aboutPanel.classList.contains("hidden")) {closeAbout(); return;}
-                                                     if (projectOpen) {closeProject();}});
+        });
+
+        // Tombol ESC di keyboard untuk menutup panel
+        document.addEventListener("keydown", (e) => {
+            if (e.code === "Escape" && projectOpen) {
+                closeAllPanels();
+            }
+        });
 
         // =============================================
-        // 11. NPC SYSTEM (DENGAN ANIMASI KHUSUS & ALAT)
+        // 11. NPC SYSTEM (ANIMASI & PERLENGKAPAN)
         // =============================================
         function createNPC(x, z, color, pathLength, activity) {
             const npc = new THREE.Group();
