@@ -3,13 +3,15 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
     <title>Sadam Alkayyis — Interactive Portfolio</title>
 
     <link rel="stylesheet" href="style.css">
 
-    <!-- 1. Muat Three.js CDN langsung di sini -->
+    <!-- Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
 </head>
 
@@ -17,7 +19,7 @@
 
     <!-- =====================================================
          3D PORTFOLIO
-         Main game/portfolio canvas
+         Main game / portfolio canvas
     ====================================================== -->
 
     <main id="portfolio-world">
@@ -27,9 +29,46 @@
         <canvas id="game-canvas"></canvas>
 
 
+        <!-- =================================================
+             MOBILE LANDSCAPE NOTICE
+
+             Shown only on mobile when the device is in
+             portrait orientation.
+        ================================================== -->
+
+        <section
+            id="rotate-device-screen"
+            class="rotate-device-screen hidden">
+
+            <div class="rotate-device-content">
+
+                <div class="rotate-icon">
+                    ↻
+                </div>
+
+                <p class="eyebrow">
+                    MOBILE EXPERIENCE
+                </p>
+
+                <h2>
+                    Rotate Your Device
+                </h2>
+
+                <p>
+                    Please rotate your phone to landscape
+                    for the best portfolio experience.
+                </p>
+
+            </div>
+
+        </section>
+
+
         <!-- ================= START SCREEN ================= -->
 
-        <section id="start-screen" class="screen-overlay">
+        <section
+            id="start-screen"
+            class="screen-overlay">
 
             <div class="start-content">
 
@@ -45,7 +84,12 @@
                     Creative Developer × UI/UX Designer
                 </p>
 
-                <div class="controls-preview">
+
+                <!-- =================
+                     PC CONTROLS PREVIEW
+                ================== -->
+
+                <div class="controls-preview pc-controls-preview">
 
                     <div>
                         <strong>W A S D</strong>
@@ -62,13 +106,45 @@
                         <span>Interact</span>
                     </div>
 
+                    <div>
+                        <strong>N</strong>
+                        <span>Day / Night</span>
+                    </div>
+
                 </div>
+
+
+                <!-- =================
+                     MOBILE CONTROLS PREVIEW
+                ================== -->
+
+                <div class="controls-preview mobile-controls-preview">
+
+                    <div>
+                        <strong>ANALOG</strong>
+                        <span>Move</span>
+                    </div>
+
+                    <div>
+                        <strong>SWIPE</strong>
+                        <span>Look Around</span>
+                    </div>
+
+                    <div>
+                        <strong>E</strong>
+                        <span>Interact</span>
+                    </div>
+
+                </div>
+
 
                 <button
                     id="start-button"
                     class="primary-button"
                     type="button">
+
                     ENTER PORTFOLIO
+
                 </button>
 
             </div>
@@ -78,16 +154,22 @@
 
         <!-- ================= GAME HUD ================= -->
 
-        <div id="game-hud" class="game-hud">
+        <div
+            id="game-hud"
+            class="game-hud">
 
             <!-- Top left -->
 
             <div class="hud-name">
                 SADAM ALKAYYIS
             </div>
-             <div id="time-mode">
-                 ☀️ DAY
-             </div>
+
+
+            <!-- Day / Night indicator -->
+
+            <div id="time-mode">
+                ☀️ DAY
+            </div>
 
 
             <!-- Interaction prompt -->
@@ -96,7 +178,9 @@
                 id="interaction-prompt"
                 class="interaction-prompt hidden">
 
-                <span class="key">E</span>
+                <span class="key">
+                    E
+                </span>
 
                 <span>
                     Interact
@@ -105,9 +189,11 @@
             </div>
 
 
-            <!-- Controls hint -->
+            <!-- =================
+                 PC CONTROLS HINT
+            ================== -->
 
-            <div class="controls-hint">
+            <div class="controls-hint pc-controls-hint">
 
                 <span>WASD</span>
                 Move
@@ -115,79 +201,269 @@
                 <span>Mouse</span>
                 Look
 
+                <span>E</span>
+                Interact
+
+                <span>N</span>
+                Day / Night
+
             </div>
 
         </div>
 
 
         <!-- =================================================
-             PROJECT INTERACTION PANEL
-             Hidden until player presses E
+             MOBILE GAME CONTROLS
+
+             These controls are hidden on PC and enabled
+             through CSS / JavaScript on touch devices.
         ================================================== -->
 
-        <section id="about-panel" class="project-panel hidden">
-            <div class="project-window">
-                <button id="about-back-button" class="back-button" type="button">
-                    ← Back to World
-                </button>
+        <div
+            id="mobile-controls"
+            class="mobile-controls">
 
-                <div class="project-header">
-                    <p class="eyebrow">ABOUT ME</p>
-                    <h2>Sadam Alkayyis</h2>
-                    <p>Creative Developer × UI/UX Designer</p>
+
+            <!-- =================
+                 TOUCH LOOK AREA
+
+                 Swipe this area to rotate the camera.
+            ================== -->
+
+            <div
+                id="touch-look-area"
+                class="touch-look-area">
+
+                <div class="touch-look-hint">
+                    SWIPE TO LOOK
                 </div>
 
+            </div>
+
+
+            <!-- =================
+                 VIRTUAL ANALOG
+            ================== -->
+
+            <div
+                id="virtual-joystick"
+                class="virtual-joystick">
+
+                <div
+                    id="joystick-base"
+                    class="joystick-base">
+
+                    <div
+                        id="joystick-knob"
+                        class="joystick-knob">
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================
+                 MOBILE ACTION BUTTONS
+            ================== -->
+
+            <div class="mobile-action-buttons">
+
+                <!-- Interact -->
+
+                <button
+                    id="mobile-interact-button"
+                    class="mobile-action-button interact-button"
+                    type="button"
+                    aria-label="Interact">
+
+                    <span class="mobile-button-key">
+                        E
+                    </span>
+
+                    <span class="mobile-button-label">
+                        Interact
+                    </span>
+
+                </button>
+
+
+                <!-- Day / Night -->
+
+                <button
+                    id="mobile-time-button"
+                    class="mobile-action-button time-button"
+                    type="button"
+                    aria-label="Toggle Day and Night">
+
+                    <span
+                        id="mobile-time-icon"
+                        class="mobile-button-icon">
+
+                        ☀️
+
+                    </span>
+
+                    <span class="mobile-button-label">
+                        Day / Night
+                    </span>
+
+                </button>
+
+            </div>
+
+
+            <!-- =================
+                 MOBILE CONTROLS HINT
+            ================== -->
+
+            <div
+                id="mobile-controls-hint"
+                class="mobile-controls-hint">
+
+                <span>
+                    Drag the joystick to move
+                </span>
+
+                <span>
+                    Swipe the screen to look
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             ABOUT PANEL
+        ================================================== -->
+
+        <section
+            id="about-panel"
+            class="project-panel hidden">
+
+            <div class="project-window">
+
+                <button
+                    id="about-back-button"
+                    class="back-button"
+                    type="button">
+
+                    ← Back to World
+
+                </button>
+
+
+                <div class="project-header">
+
+                    <p class="eyebrow">
+                        ABOUT ME
+                    </p>
+
+                    <h2>
+                        Sadam Alkayyis
+                    </h2>
+
+                    <p>
+                        Creative Developer × UI/UX Designer
+                    </p>
+
+                </div>
+
+
                 <div class="about-content">
+
                     <div class="about-section">
-                        <h3>Hello, I'm Sadam.</h3>
+
+                        <h3>
+                            Hello, I'm Sadam.
+                        </h3>
+
                         <p>
-                            I am an Informatics graduate with a strong interest
-                            in game development, UI/UX design, and creative
-                            digital projects. I enjoy combining programming
-                            and visual design to create interactive experiences
-                            that are functional, engaging, and visually appealing.
+                            I am an Informatics graduate with a strong
+                            interest in game development, UI/UX design,
+                            and creative digital projects. I enjoy
+                            combining programming and visual design
+                            to create interactive experiences that
+                            are functional, engaging, and visually appealing.
                         </p>
+
                         <p>
                             My experience includes developing interactive
                             applications and games, designing user interfaces
-                            and prototypes, as well as creating various digital
-                            and graphic design projects. I am particularly
-                            interested in projects where technology and
-                            creativity can work together.
+                            and prototypes, as well as creating various
+                            digital and graphic design projects. I am
+                            particularly interested in projects where
+                            technology and creativity can work together.
                         </p>
+
                     </div>
 
+
                     <div class="about-section">
-                        <h3>What I Do</h3>
+
+                        <h3>
+                            What I Do
+                        </h3>
+
                         <div class="about-tags">
-                            <span>Game Development</span>
-                            <span>UI/UX Design</span>
-                            <span>Prototyping</span>
-                            <span>Creative Development</span>
-                            <span>Graphic Design</span>
+
+                            <span>
+                                Game Development
+                            </span>
+
+                            <span>
+                                UI/UX Design
+                            </span>
+
+                            <span>
+                                Prototyping
+                            </span>
+
+                            <span>
+                                Creative Development
+                            </span>
+
+                            <span>
+                                Graphic Design
+                            </span>
+
                         </div>
+
                     </div>
 
+
                     <div class="about-section">
-                        <h3>My Approach</h3>
+
+                        <h3>
+                            My Approach
+                        </h3>
+
                         <p>
-                            I like learning by building things. Whether it is
-                            a game, interface, prototype, or visual project,
-                            I focus on understanding the problem first and
-                            then turning the idea into something that people
-                            can actually interact with.
+                            I like learning by building things. Whether
+                            it is a game, interface, prototype, or visual
+                            project, I focus on understanding the problem
+                            first and then turning the idea into something
+                            that people can actually interact with.
                         </p>
+
                         <p>
                             This portfolio is designed in the same spirit.
                             Instead of simply presenting a collection of
                             projects, I wanted to create an interactive
-                            environment where you can explore my work like
-                            a small game world.
+                            environment where you can explore my work
+                            like a small game world.
                         </p>
+
                     </div>
 
+
                     <div class="about-section">
-                        <h3>Explore My Work</h3>
+
+                        <h3>
+                            Explore My Work
+                        </h3>
+
                         <p>
                             Explore the world to discover my projects,
                             including game development, UI/UX design,
@@ -195,71 +471,164 @@
                             additional information, previews, and links
                             to the work.
                         </p>
+
                     </div>
+
                 </div>
+
             </div>
+
         </section>
 
 
         <!-- =================================================
-             2. PROJECT PANEL (TERPISAH SENDIRI)
-             Muncul HANYA ketika menekan E di plang Project
+             PROJECT PANEL
+             Appears when interacting with a project sign.
         ================================================== -->
-        <section id="project-panel" class="project-panel hidden">
+
+        <section
+            id="project-panel"
+            class="project-panel hidden">
+
             <div class="project-window">
-                <button id="project-back-button" class="back-button" type="button">
+
+                <button
+                    id="project-back-button"
+                    class="back-button"
+                    type="button">
+
                     ← Back to World
+
                 </button>
 
+
                 <div class="project-header">
-                    <p id="project-category" class="eyebrow">GAME DEVELOPMENT</p>
-                    <h2 id="project-title">SmartVoc</h2>
-                    <p id="project-description">
-                        3D open-world English learning RPG developed for university students.
+
+                    <p
+                        id="project-category"
+                        class="eyebrow">
+
+                        GAME DEVELOPMENT
+
                     </p>
+
+                    <h2 id="project-title">
+                        SmartVoc
+                    </h2>
+
+                    <p id="project-description">
+                        3D open-world English learning RPG
+                        developed for university students.
+                    </p>
+
                 </div>
+
 
                 <div class="project-media">
-                    <div id="project-video-placeholder" class="media-placeholder">
-                        <span>GAMEPLAY CLIP</span>
+
+                    <div
+                        id="project-video-placeholder"
+                        class="media-placeholder">
+
+                        <span>
+                            GAMEPLAY CLIP
+                        </span>
+
                     </div>
+
                 </div>
+
 
                 <div class="project-gallery">
-                    <h3>Project Preview</h3>
-                    <div id="project-screenshots" class="screenshot-grid"></div>
+
+                    <h3>
+                        Project Preview
+                    </h3>
+
+                    <div
+                        id="project-screenshots"
+                        class="screenshot-grid">
+                    </div>
+
                 </div>
+
 
                 <div class="project-details">
+
                     <div>
-                        <h3>About the Project</h3>
-                        <p id="project-about">Project information will appear here.</p>
+
+                        <h3>
+                            About the Project
+                        </h3>
+
+                        <p id="project-about">
+                            Project information will appear here.
+                        </p>
+
                     </div>
+
+
                     <div>
-                        <h3>Technologies</h3>
-                        <p id="project-technologies">Godot Engine · GDScript · Blender</p>
+
+                        <h3>
+                            Technologies
+                        </h3>
+
+                        <p id="project-technologies">
+                            Godot Engine · GDScript · Blender
+                        </p>
+
                     </div>
+
+
                     <div>
-                        <h3>My Contribution</h3>
-                        <p id="project-contribution">Game Design · Programming · UI/UX</p>
+
+                        <h3>
+                            My Contribution
+                        </h3>
+
+                        <p id="project-contribution">
+                            Game Design · Programming · UI/UX
+                        </p>
+
                     </div>
+
                 </div>
 
+
                 <div class="project-links">
-                    <a id="project-github" href="#" target="_blank" rel="noopener noreferrer">
+
+                    <a
+                        id="project-github"
+                        href="#"
+                        target="_blank"
+                        rel="noopener noreferrer">
+
                         View GitHub →
+
                     </a>
-                    <a id="project-demo" href="#" target="_blank" rel="noopener noreferrer">
+
+
+                    <a
+                        id="project-demo"
+                        href="#"
+                        target="_blank"
+                        rel="noopener noreferrer">
+
                         View Demo →
+
                     </a>
+
                 </div>
+
             </div>
+
         </section>
 
 
         <!-- =================================================
              FINISH SCREEN
-             Appears after reaching the finish flag
+             Appears after reaching the finish flag.
         ================================================== -->
 
         <section
@@ -331,7 +700,7 @@
 
 
         <!-- =================================================
-             OPTIONAL PAUSE / INFO
+             LOADING SCREEN
         ================================================== -->
 
         <div
@@ -352,7 +721,7 @@
 
 
     <!-- ================= JAVASCRIPT ================= -->
-    <!-- 2. script biasa tanpa type="module" -->
+
     <script src="script.js?v=42"></script>
 
 </body>
