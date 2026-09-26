@@ -1,6 +1,6 @@
 // =====================================================
 // SADAM ALKAYYIS - INTERACTIVE 3D PORTFOLIO
-// FULL FIXED & TESTED
+// FULL FIXED & TESTED - STEP 7
 // =====================================================
 
 console.log("=== PORTFOLIO SCRIPT START ===");
@@ -452,7 +452,6 @@ if (typeof THREE === "undefined") {
             rightWall.castShadow = true;
             house.add(rightWall);
 
-            // Atap Piramida
             const roofHeight = 1.8;
             const roofRadius = Math.sqrt(Math.pow(width / 2, 2) + Math.pow(depth / 2, 2)) + 0.35;
             const roofGeometry = new THREE.CylinderGeometry(0, roofRadius, roofHeight, 4, 1);
@@ -463,7 +462,6 @@ if (typeof THREE === "undefined") {
             roof.receiveShadow = true;
             house.add(roof);
 
-            // Pintu
             const door = new THREE.Mesh(
                 new THREE.BoxGeometry(1.0, 1.8, 0.08),
                 new THREE.MeshStandardMaterial({ color: 0x4a2b1b })
@@ -472,7 +470,6 @@ if (typeof THREE === "undefined") {
             door.castShadow = true;
             house.add(door);
 
-            // Teras
             const terrace = new THREE.Mesh(
                 new THREE.BoxGeometry(width + 1.2, 0.2, 1.5),
                 new THREE.MeshStandardMaterial({ color: 0xa98258 })
@@ -732,7 +729,7 @@ if (typeof THREE === "undefined") {
         const projectSigns = [];
         const aboutBoard = {
             group: null,
-            interactionRadius: 4.5
+            interactionRadius: 6.0 // Diperluas agar mudah diinteraksi dari jalan
         };
 
         function createIntroTexture() {
@@ -779,18 +776,18 @@ if (typeof THREE === "undefined") {
             return texture;
         }
 
-        // Papan About Me ditaruh menyamping di kiri jalan
+        // Papan About Me ditaruh di sisi kiri jalan dengan posisi pas
         function createIntroBoard(x, z) {
             const boardGroup = new THREE.Group();
             boardGroup.position.set(x, 0, z);
             boardGroup.userData.type = "about";
-            boardGroup.rotation.y = Math.PI / 8; // Miring menghadap player
+            boardGroup.rotation.y = Math.PI / 6;
 
             const boardWidth = 4.8;
             const boardHeight = 2.8;
             const boardThickness = 0.22;
             const boardCenterY = 3.2;
-            const postHeight = boardCenterY - (boardHeight / 2); // 1.8m
+            const postHeight = boardCenterY - (boardHeight / 2);
 
             const postMaterial = new THREE.MeshStandardMaterial({
                 color: 0x2b2b2b,
@@ -817,7 +814,8 @@ if (typeof THREE === "undefined") {
             board.receiveShadow = true;
             boardGroup.add(board);
 
-            addCollisionBox(x, z, 3.0, 1.2);
+            // Collision box tipis agar tidak menghalangi pemain mendekat
+            addCollisionBox(x, z, 1.5, 0.8);
             aboutBoard.group = boardGroup;
             scene.add(boardGroup);
             return boardGroup;
@@ -863,7 +861,7 @@ if (typeof THREE === "undefined") {
             const boardHeight = 1.8;
             const boardThickness = 0.2;
             const boardCenterY = 3.8; 
-            const postHeight = boardCenterY - (boardHeight / 2); // 2.9m
+            const postHeight = boardCenterY - (boardHeight / 2);
 
             const post = new THREE.Mesh(
                 new THREE.CylinderGeometry(0.14, 0.16, postHeight, 12),
@@ -890,20 +888,20 @@ if (typeof THREE === "undefined") {
             return sign;
         }
 
-        // Papan About Me ditaruh di sisi kiri jalan (tidak memblokir jalan lurus)
-        createIntroBoard(-4.5, -1.0);
-
+        // Posisi Papan
+        createIntroBoard(-4.5, 1.5); // Di kiri jalan dekat start
         createProjectSign("smartvoc", 5, -3);
         createProjectSign("blockfight", -5, -12);
         createProjectSign("uiux", 5, -22);
         createProjectSign("graphic", -5, -32);
 
         // =============================================
-        // 10. MODAL / UI INTERACTION (FIXED 100%)
+        // 10. MODAL & INTERACTION SYSTEM (SEMPURNA)
         // =============================================
         const interactionPrompt = document.getElementById("interaction-prompt");
         const projectPanel = document.getElementById("project-panel");
         const aboutPanel = document.getElementById("about-panel");
+        const crosshair = document.getElementById("crosshair");
 
         let nearestProject = null;
         let nearestAboutBoard = false;
@@ -917,7 +915,7 @@ if (typeof THREE === "undefined") {
                 return;
             }
 
-            // 1. Cek interaksi About Me
+            // 1. Cek Interaksi About Me
             nearestAboutBoard = false;
             if (aboutBoard.group) {
                 const dx = player.position.x - aboutBoard.group.position.x;
@@ -935,11 +933,11 @@ if (typeof THREE === "undefined") {
                         if (key) key.textContent = "E";
                         if (text) text.textContent = "About Me";
                     }
-                    return;
+                    return; // Prioritas About Me saat berada dekat papan
                 }
             }
 
-            // 2. Cek interaksi Plang Proyek
+            // 2. Cek Interaksi Plang Proyek
             let closest = null;
             let closestDistance = Infinity;
 
@@ -968,17 +966,24 @@ if (typeof THREE === "undefined") {
             }
         }
 
+        // BUKA MODAL PROYEK (HANYA PROYEK, ABOUT ME HARUS HILANG TOTAL)
         function openProject(projectId) {
             const data = projects[projectId];
             if (!data) return;
             projectOpen = true;
 
-            // Tutup total panel About Me jika terbuka
+            // 1. SEMBUNYIKAN PANEL ABOUT ME SECARA TOTAL
             if (aboutPanel) {
                 aboutPanel.classList.add("hidden");
-                aboutPanel.style.display = "none";
+                aboutPanel.style.setProperty("display", "none", "important");
             }
 
+            // 2. SEMBUNYIKAN TANDA CROSSHAIR (+) AGAR TIDAK MELAYANG DI TENGAH MODAL
+            if (crosshair) {
+                crosshair.style.display = "none";
+            }
+
+            // 3. ISI DATA PROYEK
             const title = document.getElementById("project-title");
             const desc = document.getElementById("project-description");
             const about = document.getElementById("project-about");
@@ -996,39 +1001,51 @@ if (typeof THREE === "undefined") {
             if (gh) gh.href = data.github;
             if (dm) dm.href = data.demo;
 
+            // 4. MUNCULKAN PANEL PROYEK
             if (projectPanel) {
                 projectPanel.classList.remove("hidden");
-                projectPanel.style.display = "flex";
+                projectPanel.style.setProperty("display", "flex", "important");
             }
+
             if (interactionPrompt) interactionPrompt.classList.add("hidden");
 
+            // Lepas kursor agar bisa ngeklik tombol
             if (document.exitPointerLock) {
                 document.exitPointerLock();
             }
         }
 
+        // BUKA MODAL ABOUT ME (HANYA ABOUT ME, PROYEK HARUS HILANG TOTAL)
         function openAbout() {
             if (!aboutPanel) return;
             projectOpen = true;
 
-            // Tutup total panel Project jika terbuka
+            // 1. SEMBUNYIKAN PANEL PROYEK SECARA TOTAL
             if (projectPanel) {
                 projectPanel.classList.add("hidden");
-                projectPanel.style.display = "none";
+                projectPanel.style.setProperty("display", "none", "important");
             }
 
+            // 2. SEMBUNYIKAN TANDA CROSSHAIR (+)
+            if (crosshair) {
+                crosshair.style.display = "none";
+            }
+
+            // 3. MUNCULKAN PANEL ABOUT ME
             aboutPanel.classList.remove("hidden");
-            aboutPanel.style.display = "flex";
+            aboutPanel.style.setProperty("display", "flex", "important");
 
             if (interactionPrompt) interactionPrompt.classList.add("hidden");
             nearestProject = null;
             nearestAboutBoard = false;
 
+            // Lepas kursor agar bisa ngeklik tombol
             if (document.exitPointerLock) {
                 document.exitPointerLock();
             }
         }
 
+        // PENGELOLA TEKANAN TOMBOL "E"
         function interactWithProject() {
             if (projectOpen) return;
 
@@ -1036,22 +1053,29 @@ if (typeof THREE === "undefined") {
                 openAbout();
                 return;
             }
+
             if (nearestProject) {
                 openProject(nearestProject.userData.projectId);
             }
         }
 
-        // FUNGSI UNIVERSAL MENUTUP SEMUA PANEL
+        // FUNGSI UNTUK MENUTUP SEMUA PANEL & KEMBALIKAN KE GAMEPLAY
         function closeAllPanels() {
             projectOpen = false;
 
+            // 1. Sembunyikan kedua panel
             if (projectPanel) {
                 projectPanel.classList.add("hidden");
-                projectPanel.style.display = "none";
+                projectPanel.style.setProperty("display", "none", "important");
             }
             if (aboutPanel) {
                 aboutPanel.classList.add("hidden");
-                aboutPanel.style.display = "none";
+                aboutPanel.style.setProperty("display", "none", "important");
+            }
+
+            // 2. Kembalikan crosshair (+) jika ada di game
+            if (crosshair) {
+                crosshair.style.display = "";
             }
 
             nearestProject = null;
@@ -1061,13 +1085,13 @@ if (typeof THREE === "undefined") {
                 interactionPrompt.classList.add("hidden");
             }
 
-            // Kembalikan pointer lock ke canvas
+            // 3. Kunci kembali kursor ke kanvas permainan
             if (canvas && canvas.requestPointerLock) {
                 canvas.requestPointerLock();
             }
         }
 
-        // Tangkap SEMUA tombol kembali di kedua modal
+        // PASANG EVENT LISTENER KE SEMUA TOMBOL KEMBALI
         document.querySelectorAll(
             ".back-button, #about-back-button, #project-back-button, [data-back], .close-button, #about-panel button, #about-panel a, #project-panel button"
         ).forEach((btn) => {
@@ -1089,7 +1113,7 @@ if (typeof THREE === "undefined") {
             }
         });
 
-        // Tombol Escape di keyboard untuk keluar dari modal
+        // Tombol ESC di keyboard untuk keluar dari modal
         document.addEventListener("keydown", (e) => {
             if (e.code === "Escape" && projectOpen) {
                 closeAllPanels();
