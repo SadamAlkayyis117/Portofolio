@@ -897,7 +897,7 @@ if (typeof THREE === "undefined") {
         // Papan About Me ditaruh di sisi KIRI jalan (X: -4.5, Z: 2.0)
         // Sehingga jalan setapak lurus (X: 0) TIDAK TERHALANG SAMA SEKALI!
         // ============================================================
-        createIntroBoard(-4.5, 2.0);
+        createIntroBoard(-4.5, -1.0);
 
         createProjectSign("smartvoc", 5, -3);
         createProjectSign("blockfight", -5, -12);
