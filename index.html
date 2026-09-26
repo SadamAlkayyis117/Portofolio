@@ -125,53 +125,21 @@
              Hidden until player presses E
         ================================================== -->
 
-        <section
-            id="project-panel"
-            class="project-panel hidden">
-
+        <section id="about-panel" class="project-panel hidden">
             <div class="project-window">
-
-                <!-- Close / Back -->
-
-                <button
-                    id="about-back-button"
-                    class="back-button"
-                    type="button">
-
+                <button id="about-back-button" class="back-button" type="button">
                     ← Back to World
-
                 </button>
 
-
-                <!-- About header -->
-
                 <div class="project-header">
-
-                    <p class="eyebrow">
-                        ABOUT ME
-                    </p>
-
-                    <h2>
-                        Sadam Alkayyis
-                    </h2>
-
-                    <p>
-                        Creative Developer × UI/UX Designer
-                    </p>
-
+                    <p class="eyebrow">ABOUT ME</p>
+                    <h2>Sadam Alkayyis</h2>
+                    <p>Creative Developer × UI/UX Designer</p>
                 </div>
 
-
-                <!-- About content -->
-
                 <div class="about-content">
-
                     <div class="about-section">
-
-                        <h3>
-                            Hello, I'm Sadam.
-                        </h3>
-
+                        <h3>Hello, I'm Sadam.</h3>
                         <p>
                             I am an Informatics graduate with a strong interest
                             in game development, UI/UX design, and creative
@@ -179,7 +147,6 @@
                             and visual design to create interactive experiences
                             that are functional, engaging, and visually appealing.
                         </p>
-
                         <p>
                             My experience includes developing interactive
                             applications and games, designing user interfaces
@@ -188,49 +155,21 @@
                             interested in projects where technology and
                             creativity can work together.
                         </p>
-
                     </div>
 
-
                     <div class="about-section">
-
-                        <h3>
-                            What I Do
-                        </h3>
-
+                        <h3>What I Do</h3>
                         <div class="about-tags">
-
-                            <span>
-                                Game Development
-                            </span>
-
-                            <span>
-                                UI/UX Design
-                            </span>
-
-                            <span>
-                                Prototyping
-                            </span>
-
-                            <span>
-                                Creative Development
-                            </span>
-
-                            <span>
-                                Graphic Design
-                            </span>
-
+                            <span>Game Development</span>
+                            <span>UI/UX Design</span>
+                            <span>Prototyping</span>
+                            <span>Creative Development</span>
+                            <span>Graphic Design</span>
                         </div>
-
                     </div>
 
-
                     <div class="about-section">
-
-                        <h3>
-                            My Approach
-                        </h3>
-
+                        <h3>My Approach</h3>
                         <p>
                             I like learning by building things. Whether it is
                             a game, interface, prototype, or visual project,
@@ -238,7 +177,6 @@
                             then turning the idea into something that people
                             can actually interact with.
                         </p>
-
                         <p>
                             This portfolio is designed in the same spirit.
                             Instead of simply presenting a collection of
@@ -246,16 +184,10 @@
                             environment where you can explore my work like
                             a small game world.
                         </p>
-
                     </div>
 
-
                     <div class="about-section">
-
-                        <h3>
-                            Explore My Work
-                        </h3>
-
+                        <h3>Explore My Work</h3>
                         <p>
                             Explore the world to discover my projects,
                             including game development, UI/UX design,
@@ -263,153 +195,65 @@
                             additional information, previews, and links
                             to the work.
                         </p>
-
                     </div>
-
                 </div>
-
             </div>
+        </section>
 
-                <!-- Close / Back -->
 
-                <button
-                    id="project-back-button"
-                    class="back-button"
-                    type="button">
-
+        <!-- =================================================
+             2. PROJECT PANEL (TERPISAH SENDIRI)
+             Muncul HANYA ketika menekan E di plang Project
+        ================================================== -->
+        <section id="project-panel" class="project-panel hidden">
+            <div class="project-window">
+                <button id="project-back-button" class="back-button" type="button">
                     ← Back to World
-
                 </button>
 
-
-                <!-- Project header -->
-
                 <div class="project-header">
-
-                    <p
-                        id="project-category"
-                        class="eyebrow">
-
-                        GAME DEVELOPMENT
-
-                    </p>
-
-                    <h2 id="project-title">
-                        SmartVoc
-                    </h2>
-
+                    <p id="project-category" class="eyebrow">GAME DEVELOPMENT</p>
+                    <h2 id="project-title">SmartVoc</h2>
                     <p id="project-description">
-                        3D open-world English learning RPG
-                        developed for university students.
+                        3D open-world English learning RPG developed for university students.
                     </p>
-
                 </div>
-
-
-                <!-- Main project media -->
 
                 <div class="project-media">
-
-                    <div
-                        id="project-video-placeholder"
-                        class="media-placeholder">
-
-                        <span>
-                            GAMEPLAY CLIP
-                        </span>
-
+                    <div id="project-video-placeholder" class="media-placeholder">
+                        <span>GAMEPLAY CLIP</span>
                     </div>
-
                 </div>
-
-
-                <!-- Screenshots -->
 
                 <div class="project-gallery">
-
-                    <h3>
-                        Project Preview
-                    </h3>
-
-                    <div
-                        id="project-screenshots"
-                        class="screenshot-grid">
-                    </div>
-
+                    <h3>Project Preview</h3>
+                    <div id="project-screenshots" class="screenshot-grid"></div>
                 </div>
-
-
-                <!-- Project information -->
 
                 <div class="project-details">
-
                     <div>
-
-                        <h3>
-                            About the Project
-                        </h3>
-
-                        <p id="project-about">
-                            Project information will appear here.
-                        </p>
-
+                        <h3>About the Project</h3>
+                        <p id="project-about">Project information will appear here.</p>
                     </div>
-
-
                     <div>
-
-                        <h3>
-                            Technologies
-                        </h3>
-
-                        <p id="project-technologies">
-                            Godot Engine · GDScript · Blender
-                        </p>
-
+                        <h3>Technologies</h3>
+                        <p id="project-technologies">Godot Engine · GDScript · Blender</p>
                     </div>
-
-
                     <div>
-
-                        <h3>
-                            My Contribution
-                        </h3>
-
-                        <p id="project-contribution">
-                            Game Design · Programming · UI/UX
-                        </p>
-
+                        <h3>My Contribution</h3>
+                        <p id="project-contribution">Game Design · Programming · UI/UX</p>
                     </div>
-
                 </div>
-
-
-                <!-- Project links -->
 
                 <div class="project-links">
-
-                    <a
-                        id="project-github"
-                        href="#"
-                        target="_blank"
-                        rel="noopener noreferrer">
-
+                    <a id="project-github" href="#" target="_blank" rel="noopener noreferrer">
                         View GitHub →
-
                     </a>
-
-                    <a
-                        id="project-demo"
-                        href="#"
-                        target="_blank"
-                        rel="noopener noreferrer">
-
+                    <a id="project-demo" href="#" target="_blank" rel="noopener noreferrer">
                         View Demo →
-
                     </a>
-
                 </div>
-
+            </div>
         </section>
 
 
