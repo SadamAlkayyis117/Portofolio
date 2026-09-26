@@ -1,6 +1,7 @@
 // =====================================================
 // SADAM ALKAYYIS - INTERACTIVE 3D PORTFOLIO
-// CIRCULAR OPEN WORLD + LET'S CONNECT + MOBILE CONTROLS
+// CIRCULAR OPEN WORLD + LET'S CONNECT + MOBILE PORTRAIT
+// FULL FIXED & TESTED
 // =====================================================
 
 console.log("=== PORTFOLIO SCRIPT START ===");
@@ -725,12 +726,19 @@ if (typeof THREE === "undefined") {
         const startButton = document.getElementById("start-button");
         if (startButton) {
             startButton.addEventListener("click", () => {
-                if (startScreen) {startScreen.classList.add("hidden");}
-                if (isTouchDevice) {requestLandscapeOrientation();} else {canvas.requestPointerLock();}
+                if (startScreen) {
+                    startScreen.classList.add("hidden");
+                }
+                if (isTouchDevice) {
+                    updateMobileOrientation();
+                } else {
+                    canvas.requestPointerLock();
+                }
             });
         }
+
         // ============================================================
-        // MOBILE DEVICE SUPPORT VARIABLES & HANDLERS
+        // MOBILE DEVICE SUPPORT (PORTRAIT ORIENTED)
         // ============================================================
 
         const isTouchDevice =
@@ -754,29 +762,34 @@ if (typeof THREE === "undefined") {
         let mobileLookPointerId = null;
         let mobileLookLastX = 0;
         let mobileLookLastY = 0;
-        const mobileLookSensitivity = 0.006;
+        const mobileLookSensitivity = 0.007;
 
-        function isMobileLandscape() {
-            return window.innerWidth > window.innerHeight;
+        function isPortraitMode() {
+            return window.innerHeight >= window.innerWidth;
         }
 
         function updateMobileOrientation() {
             if (!isTouchDevice) return;
-            const landscape = isMobileLandscape();
-            if (rotateDeviceScreen) {
-                rotateDeviceScreen.classList.toggle("active", !landscape);
-            }
-            if (mobileControls) {
-                mobileControls.classList.toggle("active", landscape);
-            }
-        }
 
-        async function requestLandscapeOrientation() {
-            if (!isTouchDevice) return;
-            try {if (screen.orientation && screen.orientation.lock) {await screen.orientation.lock("landscape");}
-                } catch (error) {console.log("Landscape orientation lock tidak tersedia. Menggunakan deteksi orientasi otomatis.");
-                                }
-            updateMobileOrientation();
+            const portrait = isPortraitMode();
+
+            // Layar peringatan putar ke tegak jika pengguna memegang HP miring (landscape)
+            if (rotateDeviceScreen) {
+                rotateDeviceScreen.classList.toggle("active", !portrait);
+            }
+
+            // Kontrol joystick & tombol aktif saat tegak (portrait)
+            if (mobileControls) {
+                mobileControls.classList.toggle("active", portrait);
+            }
+
+            // Penyesuaian FOV kamera agar tidak sempit di layar HP
+            if (portrait) {
+                camera.fov = 75;
+            } else {
+                camera.fov = 65;
+            }
+            camera.updateProjectionMatrix();
         }
 
         function resetMobileJoystick() {
@@ -900,6 +913,9 @@ if (typeof THREE === "undefined") {
             setupMobileCameraLook();
             updateMobileOrientation();
             window.addEventListener("resize", updateMobileOrientation);
+            window.addEventListener("orientationchange", () => {
+                setTimeout(updateMobileOrientation, 150);
+            });
             if (canvas) {
                 canvas.style.touchAction = "none";
             }
@@ -932,9 +948,8 @@ if (typeof THREE === "undefined") {
             if (keys["KeyA"] || keys["ArrowLeft"]) moveDirection.sub(cameraRight);
             if (keys["KeyD"] || keys["ArrowRight"]) moveDirection.add(cameraRight);
 
-            // 2. Mobile Joystick Input (X = Right/Left, Y = Forward/Backward)
+            // 2. Mobile Joystick Input
             if (isTouchDevice && (Math.abs(mobileMoveX) > 0.05 || Math.abs(mobileMoveY) > 0.05)) {
-                // Catatan: mobileMoveY negatif saat analog didorong ke atas (maju)
                 moveDirection.addScaledVector(cameraForward, -mobileMoveY);
                 moveDirection.addScaledVector(cameraRight, mobileMoveX);
             }
@@ -1819,6 +1834,9 @@ if (typeof THREE === "undefined") {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
+            if (isTouchDevice) {
+                updateMobileOrientation();
+            }
         });
 
         // =============================================
