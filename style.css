@@ -1668,126 +1668,84 @@ body {
    MOBILE LANDSCAPE
 ===================================================== */
 
-@media (pointer: coarse) and (orientation: landscape) {
-
+@media (pointer: coarse) {
     .mobile-controls {
         display: block;
     }
 
-    .virtual-joystick {
-        left: 24px;
-        bottom: 24px;
+    .pc-controls-preview {
+        display: none;
+    }
 
-        width: 135px;
-        height: 135px;
+    .mobile-controls-preview {
+        display: flex;
+    }
+
+    .pc-controls-hint {
+        display: none;
+    }
+
+    #game-canvas {
+        cursor: default;
+    }
+}
+
+/* =====================================================
+   MOBILE PORTRAIT (HP TEGAK - UTAMA)
+   Semua kontrol aktif dan proporsional untuk 1/2 jempol!
+===================================================== */
+@media (pointer: coarse) and (orientation: portrait) {
+    .mobile-controls {
+        display: block !important;
+    }
+
+    .rotate-device-screen {
+        display: none !important; /* Jangan tampilkan peringatan saat tegak */
+    }
+
+    #game-hud {
+        visibility: visible;
+    }
+
+    .virtual-joystick {
+        left: 20px;
+        bottom: 30px;
+        width: 130px;
+        height: 130px;
     }
 
     .mobile-action-buttons {
-        right: 24px;
-        bottom: 24px;
-
-        flex-direction: row;
-
+        right: 20px;
+        bottom: 30px;
+        display: flex;
+        flex-direction: column;
         gap: 12px;
     }
 
     .mobile-action-button {
-        width: 70px;
-        height: 70px;
+        width: 68px;
+        height: 68px;
     }
 
     .mobile-controls-hint {
-        bottom: 8px;
-    }
-
-    .touch-look-hint {
-        opacity: 0;
-    }
-
-    .hud-name {
-        top: 15px;
-        left: 18px;
-    }
-
-    #time-mode {
-        top: 12px;
-        right: 18px;
+        bottom: 12px;
     }
 }
 
-
 /* =====================================================
-   MOBILE PORTRAIT
+   MOBILE LANDSCAPE (HP MIRING)
+   Jika dipegang miring, ingatkan untuk tegak (portrait)
 ===================================================== */
-
-@media (pointer: coarse) and (orientation: portrait) {
-
+@media (pointer: coarse) and (orientation: landscape) {
     .mobile-controls {
-        display: none;
+        display: none !important;
     }
 
     .rotate-device-screen {
-        display: flex;
+        display: flex !important; /* Muncul jika user miringkan HP */
     }
 
     #game-hud {
         visibility: hidden;
-    }
-}
-
-
-/* =====================================================
-   VERY SMALL LANDSCAPE PHONES
-===================================================== */
-
-@media (
-    pointer: coarse
-) and (
-    orientation: landscape
-) and (
-    max-height: 500px
-) {
-
-    .virtual-joystick {
-        left: 16px;
-        bottom: 14px;
-
-        width: 115px;
-        height: 115px;
-    }
-
-    .joystick-base::before {
-        inset: 14px;
-    }
-
-    .joystick-knob {
-        width: 48px;
-        height: 48px;
-    }
-
-    .mobile-action-buttons {
-        right: 16px;
-        bottom: 14px;
-    }
-
-    .mobile-action-button {
-        width: 60px;
-        height: 60px;
-    }
-
-    .mobile-button-label {
-        font-size: 7px;
-    }
-
-    .mobile-button-key,
-    .mobile-button-icon {
-        width: 25px;
-        height: 25px;
-
-        font-size: 15px;
-    }
-
-    .mobile-controls-hint {
-        display: none;
     }
 }
