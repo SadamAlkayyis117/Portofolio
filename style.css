@@ -24,6 +24,10 @@ body {
 
     background: #000;
     color: #fff;
+
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    user-select: none;
 }
 
 
@@ -36,6 +40,7 @@ body {
 
     width: 100%;
     height: 100vh;
+    height: 100dvh;
 
     overflow: hidden;
 }
@@ -89,6 +94,8 @@ body {
             rgba(20, 30, 45, 0.15),
             rgba(0, 0, 0, 0.72)
         );
+
+    pointer-events: auto;
 }
 
 .start-content {
@@ -131,7 +138,7 @@ body {
 
 
 /* =====================================================
-   CONTROLS
+   CONTROLS PREVIEW
 ===================================================== */
 
 .controls-preview {
@@ -172,6 +179,15 @@ body {
     font-size: 12px;
 
     color: #999;
+}
+
+
+/* =====================================================
+   DESKTOP / MOBILE CONTROL PREVIEW
+===================================================== */
+
+.mobile-controls-preview {
+    display: none;
 }
 
 
@@ -244,7 +260,7 @@ body {
     letter-spacing: 2px;
 
     text-shadow:
-        0 2px 10px rgba(0,0,0,0.6);
+        0 2px 10px rgba(0, 0, 0, 0.6);
 }
 
 #time-mode {
@@ -273,7 +289,7 @@ body {
 
     box-shadow:
         0 8px 30px
-        rgba(0,0,0,0.2);
+        rgba(0, 0, 0, 0.2);
 }
 
 
@@ -311,7 +327,7 @@ body {
 
     box-shadow:
         0 10px 35px
-        rgba(0,0,0,0.3);
+        rgba(0, 0, 0, 0.3);
 }
 
 .interaction-prompt .key {
@@ -343,7 +359,7 @@ body {
     bottom: 25px;
 
     color:
-        rgba(255,255,255,0.65);
+        rgba(255, 255, 255, 0.65);
 
     font-size: 11px;
 }
@@ -354,12 +370,12 @@ body {
     padding: 5px 8px;
 
     border: 1px solid
-        rgba(255,255,255,0.25);
+        rgba(255, 255, 255, 0.25);
 
     border-radius: 4px;
 
     background:
-        rgba(0,0,0,0.25);
+        rgba(0, 0, 0, 0.25);
 }
 
 
@@ -369,6 +385,461 @@ body {
 
 .hidden {
     display: none !important;
+}
+
+
+/* =====================================================
+   MOBILE CONTROLS
+   Hidden by default on PC.
+===================================================== */
+
+.mobile-controls {
+    display: none;
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 8;
+
+    pointer-events: none;
+
+    overflow: hidden;
+
+    touch-action: none;
+}
+
+
+/* =====================================================
+   TOUCH LOOK AREA
+===================================================== */
+
+.touch-look-area {
+    position: absolute;
+
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 35%;
+
+    pointer-events: auto;
+
+    touch-action: none;
+}
+
+.touch-look-hint {
+    position: absolute;
+
+    top: 50%;
+    right: 12%;
+
+    transform: translateY(-50%);
+
+    padding: 8px 12px;
+
+    border: 1px solid
+        rgba(255, 255, 255, 0.12);
+
+    border-radius: 8px;
+
+    background:
+        rgba(0, 0, 0, 0.18);
+
+    color:
+        rgba(255, 255, 255, 0.28);
+
+    font-size: 9px;
+
+    letter-spacing: 2px;
+
+    pointer-events: none;
+
+    opacity: 0;
+
+    transition:
+        opacity 0.3s ease;
+}
+
+
+/* =====================================================
+   VIRTUAL JOYSTICK
+===================================================== */
+
+.virtual-joystick {
+    position: absolute;
+
+    left: 28px;
+    bottom: 32px;
+
+    width: 145px;
+    height: 145px;
+
+    pointer-events: auto;
+
+    touch-action: none;
+}
+
+.joystick-base {
+    position: relative;
+
+    width: 100%;
+    height: 100%;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.22);
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(79, 209, 197, 0.10),
+            rgba(0, 0, 0, 0.32)
+        );
+
+    box-shadow:
+        inset 0 0 30px
+        rgba(0, 0, 0, 0.25),
+
+        0 10px 30px
+        rgba(0, 0, 0, 0.25);
+
+    backdrop-filter: blur(8px);
+
+    touch-action: none;
+}
+
+.joystick-base::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 18px;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.08);
+
+    border-radius: 50%;
+}
+
+.joystick-knob {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 58px;
+    height: 58px;
+
+    transform:
+        translate(-50%, -50%);
+
+    border:
+        1px solid
+        rgba(79, 209, 197, 0.65);
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle at 35% 30%,
+            rgba(255, 255, 255, 0.32),
+            rgba(79, 209, 197, 0.18)
+        );
+
+    box-shadow:
+        0 5px 20px
+        rgba(0, 0, 0, 0.35);
+
+    backdrop-filter: blur(8px);
+
+    touch-action: none;
+
+    transition:
+        background 0.15s ease,
+        border-color 0.15s ease;
+}
+
+.joystick-knob.active {
+    border-color:
+        rgba(79, 209, 197, 0.95);
+
+    background:
+        radial-gradient(
+            circle at 35% 30%,
+            rgba(255, 255, 255, 0.42),
+            rgba(79, 209, 197, 0.30)
+        );
+}
+
+
+/* =====================================================
+   MOBILE ACTION BUTTONS
+===================================================== */
+
+.mobile-action-buttons {
+    position: absolute;
+
+    right: 25px;
+    bottom: 30px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 14px;
+
+    pointer-events: auto;
+}
+
+.mobile-action-button {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 76px;
+    height: 76px;
+
+    padding: 8px;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.22);
+
+    border-radius: 50%;
+
+    background:
+        rgba(5, 12, 15, 0.58);
+
+    color: white;
+
+    box-shadow:
+        0 8px 25px
+        rgba(0, 0, 0, 0.25);
+
+    backdrop-filter: blur(10px);
+
+    cursor: pointer;
+
+    touch-action: manipulation;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition:
+        transform 0.12s ease,
+        background 0.12s ease,
+        border-color 0.12s ease;
+}
+
+.mobile-action-button:active {
+    transform: scale(0.91);
+
+    background:
+        rgba(79, 209, 197, 0.18);
+
+    border-color:
+        rgba(79, 209, 197, 0.7);
+}
+
+.mobile-button-key {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 30px;
+    height: 30px;
+
+    margin-bottom: 3px;
+
+    border:
+        1px solid
+        rgba(79, 209, 197, 0.55);
+
+    border-radius: 7px;
+
+    color: #4fd1c5;
+
+    font-size: 15px;
+
+    font-weight: 800;
+
+    background:
+        rgba(79, 209, 197, 0.08);
+}
+
+.mobile-button-icon {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 30px;
+    height: 30px;
+
+    margin-bottom: 3px;
+
+    font-size: 20px;
+}
+
+.mobile-button-label {
+    font-size: 8px;
+
+    font-weight: 700;
+
+    letter-spacing: 0.5px;
+
+    color:
+        rgba(255, 255, 255, 0.75);
+
+    white-space: nowrap;
+}
+
+
+/* =====================================================
+   MOBILE CONTROLS HINT
+===================================================== */
+
+.mobile-controls-hint {
+    position: absolute;
+
+    left: 50%;
+    bottom: 16px;
+
+    transform: translateX(-50%);
+
+    display: flex;
+
+    gap: 8px;
+
+    pointer-events: none;
+
+    opacity: 0.65;
+}
+
+.mobile-controls-hint span {
+    padding: 5px 9px;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.12);
+
+    border-radius: 5px;
+
+    background:
+        rgba(0, 0, 0, 0.18);
+
+    color:
+        rgba(255, 255, 255, 0.65);
+
+    font-size: 8px;
+
+    white-space: nowrap;
+}
+
+
+/* =====================================================
+   ROTATE DEVICE SCREEN
+===================================================== */
+
+.rotate-device-screen {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 200;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 30px;
+
+    text-align: center;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(79, 209, 197, 0.10),
+            rgba(3, 7, 9, 0.98)
+        );
+
+    color: white;
+
+    pointer-events: auto;
+}
+
+.rotate-device-content {
+    width: min(420px, 90%);
+}
+
+.rotate-icon {
+    width: 74px;
+    height: 74px;
+
+    margin: 0 auto 25px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border:
+        1px solid
+        rgba(79, 209, 197, 0.4);
+
+    border-radius: 18px;
+
+    color: #4fd1c5;
+
+    font-size: 40px;
+
+    background:
+        rgba(79, 209, 197, 0.08);
+
+    box-shadow:
+        0 15px 40px
+        rgba(0, 0, 0, 0.3);
+
+    animation:
+        rotate-device-animation 2s
+        ease-in-out infinite;
+}
+
+.rotate-device-content h2 {
+    margin-bottom: 15px;
+
+    font-size:
+        clamp(30px, 7vw, 48px);
+
+    letter-spacing: -1.5px;
+}
+
+.rotate-device-content p:last-child {
+    color: #9da5a8;
+
+    font-size: 14px;
+
+    line-height: 1.7;
+}
+
+@keyframes rotate-device-animation {
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+
+    50% {
+        transform: rotate(90deg);
+    }
 }
 
 
@@ -393,11 +864,13 @@ body {
             rgba(79, 209, 197, 0.08),
             transparent 35%
         ),
+
         radial-gradient(
             circle at 90% 90%,
             rgba(30, 80, 100, 0.10),
             transparent 35%
         ),
+
         rgba(4, 8, 12, 0.96);
 
     backdrop-filter: blur(18px);
@@ -407,6 +880,10 @@ body {
     scrollbar-color:
         rgba(79, 209, 197, 0.6)
         transparent;
+
+    -webkit-overflow-scrolling: touch;
+
+    pointer-events: auto;
 }
 
 
@@ -442,12 +919,12 @@ body {
     padding: 9px 14px;
 
     border: 1px solid
-        rgba(255,255,255,0.16);
+        rgba(255, 255, 255, 0.16);
 
     border-radius: 7px;
 
     background:
-        rgba(255,255,255,0.045);
+        rgba(255, 255, 255, 0.045);
 
     color: #d8d8d8;
 
@@ -529,7 +1006,7 @@ body {
 
     border:
         1px solid
-        rgba(255,255,255,0.12);
+        rgba(255, 255, 255, 0.12);
 
     border-radius: 14px;
 
@@ -542,7 +1019,7 @@ body {
 
     box-shadow:
         0 25px 70px
-        rgba(0,0,0,0.45);
+        rgba(0, 0, 0, 0.45);
 }
 
 .project-media::before {
@@ -559,8 +1036,8 @@ body {
     background:
         linear-gradient(
             180deg,
-            rgba(0,0,0,0.02),
-            rgba(0,0,0,0.3)
+            rgba(0, 0, 0, 0.02),
+            rgba(0, 0, 0, 0.3)
         );
 }
 
@@ -578,15 +1055,15 @@ body {
 
     border:
         1px solid
-        rgba(255,255,255,0.15);
+        rgba(255, 255, 255, 0.15);
 
     border-radius: 5px;
 
     background:
-        rgba(0,0,0,0.45);
+        rgba(0, 0, 0, 0.45);
 
     color:
-        rgba(255,255,255,0.7);
+        rgba(255, 255, 255, 0.7);
 
     font-size: 9px;
 
@@ -652,7 +1129,7 @@ body {
 
     border:
         1px solid
-        rgba(255,255,255,0.12);
+        rgba(255, 255, 255, 0.12);
 
     border-radius: 10px;
 
@@ -672,7 +1149,7 @@ body {
 
     box-shadow:
         0 15px 35px
-        rgba(0,0,0,0.3);
+        rgba(0, 0, 0, 0.3);
 }
 
 
@@ -700,15 +1177,15 @@ body {
 
     border:
         1px solid
-        rgba(255,255,255,0.10);
+        rgba(255, 255, 255, 0.10);
 
     border-radius: 12px;
 
     background:
         linear-gradient(
             145deg,
-            rgba(255,255,255,0.055),
-            rgba(255,255,255,0.018)
+            rgba(255, 255, 255, 0.055),
+            rgba(255, 255, 255, 0.018)
         );
 
     backdrop-filter: blur(10px);
@@ -763,7 +1240,7 @@ body {
 
     border-top:
         1px solid
-        rgba(255,255,255,0.10);
+        rgba(255, 255, 255, 0.10);
 }
 
 .project-links a {
@@ -894,8 +1371,8 @@ body {
     background:
         radial-gradient(
             circle at center,
-            rgba(79,209,197,0.08),
-            rgba(0,0,0,0.94)
+            rgba(79, 209, 197, 0.08),
+            rgba(0, 0, 0, 0.94)
         );
 
     color: white;
@@ -937,7 +1414,7 @@ body {
 
     border:
         1px solid
-        rgba(255,255,255,0.15);
+        rgba(255, 255, 255, 0.15);
 
     border-radius: 7px;
 
@@ -946,7 +1423,7 @@ body {
     text-decoration: none;
 
     background:
-        rgba(255,255,255,0.04);
+        rgba(255, 255, 255, 0.04);
 
     transition:
         border-color 0.2s ease,
@@ -958,7 +1435,7 @@ body {
     transform: translateY(-2px);
 
     border-color:
-        rgba(79,209,197,0.5);
+        rgba(79, 209, 197, 0.5);
 
     color: #4fd1c5;
 }
@@ -1023,7 +1500,7 @@ body {
 
 
 /* =====================================================
-   MOBILE
+   TABLET / SMALL DESKTOP
 ===================================================== */
 
 @media (max-width: 800px) {
@@ -1062,18 +1539,11 @@ body {
 }
 
 
+/* =====================================================
+   MOBILE
+===================================================== */
+
 @media (max-width: 600px) {
-
-    .controls-preview {
-        gap: 10px;
-    }
-
-    .controls-preview strong {
-        font-size: 13px;
-
-        padding:
-            8px 10px;
-    }
 
     .start-content {
         padding: 20px;
@@ -1081,6 +1551,36 @@ body {
 
     .start-content h1 {
         letter-spacing: -2px;
+    }
+
+    .pc-controls-preview {
+        display: none;
+    }
+
+    .mobile-controls-preview {
+        display: flex;
+    }
+
+    .controls-preview {
+        gap: 10px;
+
+        margin:
+            28px 0;
+    }
+
+    .controls-preview div {
+        min-width: 70px;
+    }
+
+    .controls-preview strong {
+        font-size: 11px;
+
+        padding:
+            8px 9px;
+    }
+
+    .controls-preview span {
+        font-size: 10px;
     }
 
     .hud-name {
@@ -1094,12 +1594,13 @@ body {
         top: 15px;
         right: 15px;
 
-        padding: 8px 11px;
+        padding:
+            8px 11px;
 
         font-size: 11px;
     }
 
-    .controls-hint {
+    .pc-controls-hint {
         display: none;
     }
 
@@ -1125,5 +1626,168 @@ body {
 
     .project-links a {
         width: 100%;
+    }
+}
+
+
+/* =====================================================
+   TOUCH DEVICES
+   The mobile control layer is enabled only when the
+   device reports a coarse pointer.
+===================================================== */
+
+@media (pointer: coarse) {
+
+    .mobile-controls {
+        display: block;
+    }
+
+    .pc-controls-preview {
+        display: none;
+    }
+
+    .mobile-controls-preview {
+        display: flex;
+    }
+
+    .pc-controls-hint {
+        display: none;
+    }
+
+    #game-canvas {
+        cursor: default;
+    }
+
+    .interaction-prompt {
+        display: none !important;
+    }
+}
+
+
+/* =====================================================
+   MOBILE LANDSCAPE
+===================================================== */
+
+@media (pointer: coarse) and (orientation: landscape) {
+
+    .mobile-controls {
+        display: block;
+    }
+
+    .virtual-joystick {
+        left: 24px;
+        bottom: 24px;
+
+        width: 135px;
+        height: 135px;
+    }
+
+    .mobile-action-buttons {
+        right: 24px;
+        bottom: 24px;
+
+        flex-direction: row;
+
+        gap: 12px;
+    }
+
+    .mobile-action-button {
+        width: 70px;
+        height: 70px;
+    }
+
+    .mobile-controls-hint {
+        bottom: 8px;
+    }
+
+    .touch-look-hint {
+        opacity: 0;
+    }
+
+    .hud-name {
+        top: 15px;
+        left: 18px;
+    }
+
+    #time-mode {
+        top: 12px;
+        right: 18px;
+    }
+}
+
+
+/* =====================================================
+   MOBILE PORTRAIT
+===================================================== */
+
+@media (pointer: coarse) and (orientation: portrait) {
+
+    .mobile-controls {
+        display: none;
+    }
+
+    .rotate-device-screen {
+        display: flex;
+    }
+
+    #game-hud {
+        visibility: hidden;
+    }
+}
+
+
+/* =====================================================
+   VERY SMALL LANDSCAPE PHONES
+===================================================== */
+
+@media (
+    pointer: coarse
+) and (
+    orientation: landscape
+) and (
+    max-height: 500px
+) {
+
+    .virtual-joystick {
+        left: 16px;
+        bottom: 14px;
+
+        width: 115px;
+        height: 115px;
+    }
+
+    .joystick-base::before {
+        inset: 14px;
+    }
+
+    .joystick-knob {
+        width: 48px;
+        height: 48px;
+    }
+
+    .mobile-action-buttons {
+        right: 16px;
+        bottom: 14px;
+    }
+
+    .mobile-action-button {
+        width: 60px;
+        height: 60px;
+    }
+
+    .mobile-button-label {
+        font-size: 7px;
+    }
+
+    .mobile-button-key,
+    .mobile-button-icon {
+        width: 25px;
+        height: 25px;
+
+        font-size: 15px;
+    }
+
+    .mobile-controls-hint {
+        display: none;
     }
 }
