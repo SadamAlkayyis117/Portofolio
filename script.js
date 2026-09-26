@@ -1,6 +1,6 @@
 // =====================================================
 // SADAM ALKAYYIS - INTERACTIVE 3D PORTFOLIO
-// FULL FIXED & TESTED - STEP 7
+// CIRCULAR OPEN WORLD VERSION (100% FIXED & TESTED)
 // =====================================================
 
 console.log("=== PORTFOLIO SCRIPT START ===");
@@ -15,16 +15,18 @@ if (typeof THREE === "undefined") {
     if (!canvas) {
         console.error("Canvas #game-canvas tidak ditemukan.");
     } else {
+
         // =============================================
         // 1. SCENE, FOG, CAMERA & RENDERER
         // =============================================
         const scene = new THREE.Scene();
+
         const daySkyColor = new THREE.Color(0x87ceeb);
         const nightSkyColor = new THREE.Color(0x071426);
         const dayFogColor = new THREE.Color(0x87ceeb);
         const nightFogColor = new THREE.Color(0x071426);
 
-        scene.background = new THREE.Color(0x87ceeb);
+        scene.background = daySkyColor;
         scene.fog = new THREE.Fog(0x87ceeb, 30, 100);
 
         const camera = new THREE.PerspectiveCamera(
@@ -38,13 +40,20 @@ if (typeof THREE === "undefined") {
             canvas: canvas,
             antialias: true
         });
+
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
         // =============================================
-        // 2. LIGHTING & ATMOSPHERE VISUALS
+        // 2. MAP CONFIGURATION
+        // =============================================
+        const MAP_RADIUS = 48;
+        const PLAYER_BOUNDARY = MAP_RADIUS - 1.2;
+
+        // =============================================
+        // 3. LIGHTING & ATMOSPHERE
         // =============================================
         const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x557755, 2);
         scene.add(hemisphereLight);
@@ -54,10 +63,10 @@ if (typeof THREE === "undefined") {
         sunLight.castShadow = true;
         sunLight.shadow.mapSize.width = 2048;
         sunLight.shadow.mapSize.height = 2048;
-        sunLight.shadow.camera.left = -50;
-        sunLight.shadow.camera.right = 50;
-        sunLight.shadow.camera.top = 50;
-        sunLight.shadow.camera.bottom = -50;
+        sunLight.shadow.camera.left = -60;
+        sunLight.shadow.camera.right = 60;
+        sunLight.shadow.camera.top = 60;
+        sunLight.shadow.camera.bottom = -60;
         scene.add(sunLight);
 
         const moonLight = new THREE.DirectionalLight(0x9db7ff, 0);
@@ -70,6 +79,7 @@ if (typeof THREE === "undefined") {
         const nightAmbient = new THREE.HemisphereLight(0x506080, 0x10151f, 0);
         scene.add(nightAmbient);
 
+        // SUN
         const sunVisual = new THREE.Mesh(
             new THREE.SphereGeometry(2.5, 24, 24),
             new THREE.MeshBasicMaterial({ color: 0xffdd66 })
@@ -77,6 +87,7 @@ if (typeof THREE === "undefined") {
         sunVisual.position.set(25, 35, -30);
         scene.add(sunVisual);
 
+        // MOON
         const moonVisual = new THREE.Mesh(
             new THREE.SphereGeometry(2.2, 24, 24),
             new THREE.MeshBasicMaterial({ color: 0xdde7ff })
@@ -85,9 +96,10 @@ if (typeof THREE === "undefined") {
         moonVisual.visible = false;
         scene.add(moonVisual);
 
+        // STARS
         const starGeometry = new THREE.BufferGeometry();
         const starPositions = [];
-        for (let i = 0; i < 250; i++) {
+        for (let i = 0; i < 300; i++) {
             const x = (Math.random() - 0.5) * 160;
             const y = 20 + Math.random() * 50;
             const z = (Math.random() - 0.5) * 160;
@@ -106,18 +118,24 @@ if (typeof THREE === "undefined") {
         stars.visible = false;
         scene.add(stars);
 
+        // FIREFLIES
         const fireflies = [];
         function createFireflies() {
-            for (let i = 0; i < 45; i++) {
-                const material = new THREE.MeshBasicMaterial({ color: 0xbaff80 });
+            for (let i = 0; i < 55; i++) {
+                const material = new THREE.MeshBasicMaterial({
+                    color: 0xbaff80,
+                    transparent: true
+                });
                 const firefly = new THREE.Mesh(
                     new THREE.SphereGeometry(0.045, 6, 6),
                     material
                 );
+                const angle = Math.random() * Math.PI * 2;
+                const radius = 5 + Math.random() * 38;
                 firefly.position.set(
-                    (Math.random() - 0.5) * 60,
+                    Math.cos(angle) * radius,
                     0.8 + Math.random() * 3,
-                    -Math.random() * 45
+                    Math.sin(angle) * radius
                 );
                 firefly.userData.phase = Math.random() * Math.PI * 2;
                 firefly.userData.speed = 0.5 + Math.random();
@@ -129,7 +147,7 @@ if (typeof THREE === "undefined") {
         createFireflies();
 
         // =============================================
-        // 3. DAY / NIGHT TOGGLE SYSTEM
+        // 4. DAY / NIGHT SYSTEM
         // =============================================
         let isNight = false;
         const timeModeUI = document.getElementById("time-mode");
@@ -181,33 +199,81 @@ if (typeof THREE === "undefined") {
             } else {
                 setNightMode();
             }
-            console.log(isNight ? "🌙 NIGHT MODE" : "☀️ DAY MODE");
         }
 
         setDayMode();
 
         // =============================================
-        // 4. GROUND & PATH
+        // 5. CIRCULAR GROUND & PATHS
         // =============================================
         const ground = new THREE.Mesh(
-            new THREE.PlaneGeometry(100, 100),
-            new THREE.MeshStandardMaterial({ color: 0x4f7d3a })
+            new THREE.CircleGeometry(MAP_RADIUS, 96),
+            new THREE.MeshStandardMaterial({
+                color: 0x4f7d3a,
+                roughness: 0.9
+            })
         );
         ground.rotation.x = -Math.PI / 2;
         ground.receiveShadow = true;
         scene.add(ground);
 
-        const path = new THREE.Mesh(
-            new THREE.PlaneGeometry(6, 60),
-            new THREE.MeshStandardMaterial({ color: 0xb89b6a })
+        const mapBoundary = new THREE.Mesh(
+            new THREE.RingGeometry(MAP_RADIUS - 0.8, MAP_RADIUS, 96),
+            new THREE.MeshStandardMaterial({
+                color: 0x315526,
+                side: THREE.DoubleSide,
+                roughness: 1
+            })
         );
-        path.rotation.x = -Math.PI / 2;
-        path.position.set(0, 0.02, -20);
-        path.receiveShadow = true;
-        scene.add(path);
+        mapBoundary.rotation.x = -Math.PI / 2;
+        mapBoundary.position.y = 0.03;
+        scene.add(mapBoundary);
+
+        const centralPlaza = new THREE.Mesh(
+            new THREE.CircleGeometry(5.5, 48),
+            new THREE.MeshStandardMaterial({
+                color: 0xb89b6a,
+                roughness: 0.9
+            })
+        );
+        centralPlaza.rotation.x = -Math.PI / 2;
+        centralPlaza.position.y = 0.025;
+        centralPlaza.receiveShadow = true;
+        scene.add(centralPlaza);
+
+        const pathMaterial = new THREE.MeshStandardMaterial({
+            color: 0xb89b6a,
+            roughness: 0.95
+        });
+
+        function createRadialPath(angle, length = 40, width = 5) {
+            const path = new THREE.Mesh(
+                new THREE.PlaneGeometry(width, length),
+                pathMaterial
+            );
+            path.rotation.x = -Math.PI / 2;
+            path.rotation.z = THREE.MathUtils.degToRad(angle);
+            path.position.y = 0.02;
+            scene.add(path);
+            return path;
+        }
+
+        createRadialPath(0, 82, 5);
+        createRadialPath(90, 82, 5);
+        createRadialPath(180, 82, 5);
+        createRadialPath(270, 82, 5);
+
+        const outerPath = new THREE.Mesh(
+            new THREE.RingGeometry(31, 34, 96),
+            pathMaterial
+        );
+        outerPath.rotation.x = -Math.PI / 2;
+        outerPath.position.y = 0.021;
+        outerPath.receiveShadow = true;
+        scene.add(outerPath);
 
         // =============================================
-        // 5. CLOUDS, BIRDS & BUTTERFLIES
+        // 6. CLOUDS, BIRDS & BUTTERFLIES
         // =============================================
         const clouds = [];
         function createCloud(x, y, z, scale = 1) {
@@ -247,8 +313,8 @@ if (typeof THREE === "undefined") {
         function updateClouds(delta) {
             clouds.forEach((cloudData) => {
                 cloudData.object.position.x += cloudData.speed * delta;
-                if (cloudData.object.position.x > 45) {
-                    cloudData.object.position.x = -45;
+                if (cloudData.object.position.x > 55) {
+                    cloudData.object.position.x = -55;
                 }
             });
         }
@@ -278,6 +344,7 @@ if (typeof THREE === "undefined") {
         createBird(-25, 15, -15);
         createBird(-35, 18, -30);
         createBird(-15, 20, -5);
+        createBird(20, 17, 15);
 
         function updateBirds(delta) {
             birds.forEach((bird) => {
@@ -286,8 +353,8 @@ if (typeof THREE === "undefined") {
                 const flap = Math.sin(clock.elapsedTime * 8 + bird.phase) * 0.35;
                 bird.leftWing.rotation.z = flap;
                 bird.rightWing.rotation.z = -flap;
-                if (bird.object.position.x > 40) {
-                    bird.object.position.x = -40;
+                if (bird.object.position.x > 55) {
+                    bird.object.position.x = -55;
                 }
             });
         }
@@ -320,6 +387,8 @@ if (typeof THREE === "undefined") {
         createButterfly(8, 1.5, -14);
         createButterfly(-9, 1.7, -27);
         createButterfly(6, 1.6, -25);
+        createButterfly(20, 1.5, 10);
+        createButterfly(-22, 1.8, 12);
 
         function updateButterflies(delta) {
             butterflies.forEach((butterfly) => {
@@ -340,12 +409,11 @@ if (typeof THREE === "undefined") {
                 firefly.position.y += Math.sin(t * 2) * 0.002;
                 const glow = 0.5 + Math.sin(t * 4) * 0.5;
                 firefly.material.opacity = glow;
-                firefly.material.transparent = true;
             });
         }
 
         // =============================================
-        // 6. COLLISION SYSTEM
+        // 7. COLLISION SYSTEM
         // =============================================
         const collisionObjects = [];
         const npcCollisionObjects = [];
@@ -420,8 +488,16 @@ if (typeof THREE === "undefined") {
             }
         }
 
+        function polarPosition(angle, radius) {
+            const rad = THREE.MathUtils.degToRad(angle);
+            return {
+                x: Math.cos(rad) * radius,
+                z: Math.sin(rad) * radius
+            };
+        }
+
         // =============================================
-        // 7. HOUSES & TREES
+        // 8. HOUSES & TREES
         // =============================================
         function createHouse(x, z, width, depth, wallColor, roofColor) {
             const house = new THREE.Group();
@@ -482,9 +558,17 @@ if (typeof THREE === "undefined") {
             return house;
         }
 
-        createHouse(-7, -8, 6, 6, 0xc08b5c, 0x7a3328);
-        createHouse(7, -15, 6, 7, 0x9eaf78, 0x4d5c38);
-        createHouse(-7, -28, 7, 6, 0xd1a06b, 0x65402c);
+        const house1 = polarPosition(45, 25);
+        createHouse(house1.x, house1.z, 6, 6, 0xc08b5c, 0x7a3328);
+
+        const house2 = polarPosition(135, 25);
+        createHouse(house2.x, house2.z, 6, 7, 0x9eaf78, 0x4d5c38);
+
+        const house3 = polarPosition(225, 25);
+        createHouse(house3.x, house3.z, 7, 6, 0xd1a06b, 0x65402c);
+
+        const house4 = polarPosition(315, 25);
+        createHouse(house4.x, house4.z, 6, 6, 0xb87858, 0x55352c);
 
         function createTree(x, z) {
             const trunk = new THREE.Mesh(
@@ -506,17 +590,19 @@ if (typeof THREE === "undefined") {
             addCollisionBox(x, z, 1.2, 1.2);
         }
 
-        createTree(-10, -5);
-        createTree(10, -7);
-        createTree(-12, -18);
-        createTree(12, -22);
-        createTree(4, -25);
+        const treePositions = [
+            [15, 8], [27, 4], [31, 15], [22, 27], [5, 31],
+            [-12, 30], [-25, 24], [-31, 12], [-29, -4], [-25, -18],
+            [-10, -30], [8, -31], [24, -25], [32, -12], [10, 20],
+            [-15, 17], [17, -15], [-17, -12]
+        ];
+        treePositions.forEach(([x, z]) => createTree(x, z));
 
         // =============================================
-        // 8. PLAYER & THIRD PERSON CAMERA
+        // 9. PLAYER
         // =============================================
         const player = new THREE.Group();
-        player.position.set(0, 0, 6);
+        player.position.set(0, 0, 6); // Player mulai di Z: 6
         scene.add(player);
 
         const body = new THREE.Mesh(
@@ -537,6 +623,7 @@ if (typeof THREE === "undefined") {
 
         const legGeo = new THREE.BoxGeometry(0.25, 0.8, 0.3);
         const legMat = new THREE.MeshStandardMaterial({ color: 0x202020 });
+
         const leftLeg = new THREE.Mesh(legGeo, legMat);
         leftLeg.position.set(-0.2, 0.4, 0);
         leftLeg.castShadow = true;
@@ -558,6 +645,9 @@ if (typeof THREE === "undefined") {
         rightArm.castShadow = true;
         player.add(rightArm);
 
+        // =============================================
+        // 10. THIRD PERSON CAMERA & CONTROLS
+        // =============================================
         let cameraYaw = 0;
         let cameraPitch = 0.18;
         let cameraDistance = 6.0;
@@ -584,12 +674,14 @@ if (typeof THREE === "undefined") {
         document.addEventListener("pointerlockchange", () => {
             mouseLocked = document.pointerLockElement === canvas;
         });
+
         document.addEventListener("mousemove", (e) => {
             if (!mouseLocked || projectOpen) return;
             cameraYaw -= e.movementX * 0.0025;
             cameraPitch -= e.movementY * 0.0025;
             cameraPitch = THREE.MathUtils.clamp(cameraPitch, -0.65, 0.85);
         });
+
         canvas.addEventListener("wheel", (e) => {
             if (projectOpen) return;
             e.preventDefault();
@@ -606,6 +698,9 @@ if (typeof THREE === "undefined") {
             });
         }
 
+        // =============================================
+        // 11. PLAYER MOVEMENT & ANIMATION
+        // =============================================
         const moveDirection = new THREE.Vector3();
         const cameraForward = new THREE.Vector3();
         const cameraRight = new THREE.Vector3();
@@ -646,8 +741,17 @@ if (typeof THREE === "undefined") {
                 player.rotation.y += diff * Math.min(1, delta * 10);
             }
 
-            player.position.x = THREE.MathUtils.clamp(player.position.x, -45, 45);
-            player.position.z = THREE.MathUtils.clamp(player.position.z, -45, 45);
+            // CIRCULAR WORLD LIMIT
+            const distanceFromCenter = Math.sqrt(
+                player.position.x * player.position.x +
+                player.position.z * player.position.z
+            );
+
+            if (distanceFromCenter > PLAYER_BOUNDARY) {
+                const angle = Math.atan2(player.position.z, player.position.x);
+                player.position.x = Math.cos(angle) * PLAYER_BOUNDARY;
+                player.position.z = Math.sin(angle) * PLAYER_BOUNDARY;
+            }
         }
 
         function updatePlayerAnimation(delta) {
@@ -681,7 +785,7 @@ if (typeof THREE === "undefined") {
         }
 
         // =============================================
-        // 9. PROJECT & ABOUT BOARDS
+        // 12. PROJECT DATA
         // =============================================
         const projects = {
             smartvoc: {
@@ -726,10 +830,13 @@ if (typeof THREE === "undefined") {
             }
         };
 
+        // =============================================
+        // 13. ABOUT BOARD (INTERACTION RADIUS & CREATION)
+        // =============================================
         const projectSigns = [];
         const aboutBoard = {
             group: null,
-            interactionRadius: 6.0 // Diperluas agar mudah diinteraksi dari jalan
+            interactionRadius: 6.0
         };
 
         function createIntroTexture() {
@@ -776,18 +883,19 @@ if (typeof THREE === "undefined") {
             return texture;
         }
 
-        // Papan About Me ditaruh di sisi kiri jalan dengan posisi pas
         function createIntroBoard(x, z) {
             const boardGroup = new THREE.Group();
             boardGroup.position.set(x, 0, z);
             boardGroup.userData.type = "about";
-            boardGroup.rotation.y = Math.PI / 6;
+
+            // Hadapkan langsung ke player
+            boardGroup.rotation.y = 0;
 
             const boardWidth = 4.8;
             const boardHeight = 2.8;
             const boardThickness = 0.22;
             const boardCenterY = 3.2;
-            const postHeight = boardCenterY - (boardHeight / 2);
+            const postHeight = boardCenterY - boardHeight / 2;
 
             const postMaterial = new THREE.MeshStandardMaterial({
                 color: 0x2b2b2b,
@@ -814,8 +922,8 @@ if (typeof THREE === "undefined") {
             board.receiveShadow = true;
             boardGroup.add(board);
 
-            // Collision box tipis agar tidak menghalangi pemain mendekat
-            addCollisionBox(x, z, 1.5, 0.8);
+            // Collision box tipis di belakang papan agar tidak memblokir tombol E
+            addCollisionBox(x, z, 3.2, 0.6);
             aboutBoard.group = boardGroup;
             scene.add(boardGroup);
             return boardGroup;
@@ -860,8 +968,8 @@ if (typeof THREE === "undefined") {
             const boardWidth = 3.6;
             const boardHeight = 1.8;
             const boardThickness = 0.2;
-            const boardCenterY = 3.8; 
-            const postHeight = boardCenterY - (boardHeight / 2);
+            const boardCenterY = 3.8;
+            const postHeight = boardCenterY - boardHeight / 2;
 
             const post = new THREE.Mesh(
                 new THREE.CylinderGeometry(0.14, 0.16, postHeight, 12),
@@ -873,7 +981,9 @@ if (typeof THREE === "undefined") {
 
             const board = new THREE.Mesh(
                 new THREE.BoxGeometry(boardWidth, boardHeight, boardThickness),
-                new THREE.MeshStandardMaterial({ map: createSignTexture(data.title, data.category) })
+                new THREE.MeshStandardMaterial({
+                    map: createSignTexture(data.title, data.category)
+                })
             );
             board.position.set(0, boardCenterY, 0.05);
             board.castShadow = true;
@@ -881,28 +991,34 @@ if (typeof THREE === "undefined") {
 
             addCollisionBox(x, z, 1.2, 1.2);
             sign.userData.projectId = projectId;
-            sign.userData.interactionRadius = 4.0;
+            sign.userData.interactionRadius = 5.0;
             projectSigns.push(sign);
             scene.add(sign);
-
             return sign;
         }
 
-        // Posisi Papan
-        createIntroBoard(-4.5, 1.5); // Di kiri jalan dekat start
-        createProjectSign("smartvoc", 5, -3);
-        createProjectSign("blockfight", -5, -12);
-        createProjectSign("uiux", 5, -22);
-        createProjectSign("graphic", -5, -32);
+        // =============================================
+        // 14. PENEMPATAN PAPAN DUNIA GLOBE
+        // =============================================
+        // Player mulai di (0, 6) -> About Board ditaruh di (0, 1.5) tepat di depan player!
+        createIntroBoard(0, 1.5);
+
+        // SMARTVOC - EAST
+        createProjectSign("smartvoc", 20, 0);
+
+        // BLOCKFIGHT - SOUTH
+        createProjectSign("blockfight", 0, -23);
+
+        // UI/UX - WEST
+        createProjectSign("uiux", -20, 0);
+
+        // GRAPHIC DESIGN - NORTH
+        createProjectSign("graphic", 0, 23);
 
         // =============================================
-        // 10. MODAL & INTERACTION SYSTEM (SEMPURNA)
+        // 15. MODAL & INTERACTION SYSTEM (TERISOLASI)
         // =============================================
         const interactionPrompt = document.getElementById("interaction-prompt");
-        const projectPanel = document.getElementById("project-panel");
-        const aboutPanel = document.getElementById("about-panel");
-        const crosshair = document.getElementById("crosshair");
-
         let nearestProject = null;
         let nearestAboutBoard = false;
         let projectOpen = false;
@@ -915,17 +1031,17 @@ if (typeof THREE === "undefined") {
                 return;
             }
 
-            // 1. Deteksi Papan About Me
+            // 1. Cek Interaksi About Me
             nearestAboutBoard = false;
             if (aboutBoard.group) {
                 const dx = player.position.x - aboutBoard.group.position.x;
                 const dz = player.position.z - aboutBoard.group.position.z;
                 const dist = Math.sqrt(dx * dx + dz * dz);
 
-                // Radius dibuat lega (6 meter) agar pemain dari jalan sudah bisa berinteraksi
-                if (dist < 6.0) {
+                if (dist < aboutBoard.interactionRadius) {
                     nearestAboutBoard = true;
                     nearestProject = null;
+
                     if (interactionPrompt) {
                         interactionPrompt.classList.remove("hidden");
                         const key = interactionPrompt.querySelector(".key");
@@ -937,7 +1053,7 @@ if (typeof THREE === "undefined") {
                 }
             }
 
-            // 2. Deteksi Plang Proyek
+            // 2. Cek Interaksi Project Signs
             let closest = null;
             let closestDistance = Infinity;
 
@@ -966,7 +1082,7 @@ if (typeof THREE === "undefined") {
             }
         }
 
-        // BUKA MODAL PROYEK (HANYA PROYEK, ABOUT ME HARUS HILANG TOTAL)
+        // BUKA MODAL PROJECT (HANYA PROJECT, ABOUT ME MATI TOTAL)
         function openProject(projectId) {
             const data = projects[projectId];
             if (!data) return;
@@ -975,7 +1091,14 @@ if (typeof THREE === "undefined") {
             const projectPanel = document.getElementById("project-panel");
             const aboutPanel = document.getElementById("about-panel");
 
-            if (aboutPanel) aboutPanel.classList.add("hidden"); // Pastikan About Me sembunyi!
+            // Matikan About Me
+            if (aboutPanel) {
+                aboutPanel.classList.add("hidden");
+                aboutPanel.style.display = "none";
+            }
+
+            // Kursor canvas ubah ke normal saat modal buka
+            canvas.style.cursor = "default";
 
             const title = document.getElementById("project-title");
             const desc = document.getElementById("project-description");
@@ -994,13 +1117,17 @@ if (typeof THREE === "undefined") {
             if (gh) gh.href = data.github;
             if (dm) dm.href = data.demo;
 
-            if (projectPanel) projectPanel.classList.remove("hidden");
+            if (projectPanel) {
+                projectPanel.classList.remove("hidden");
+                projectPanel.style.display = "block";
+            }
+
             if (interactionPrompt) interactionPrompt.classList.add("hidden");
 
             if (document.exitPointerLock) document.exitPointerLock();
         }
 
-        // BUKA MODAL ABOUT ME (HANYA ABOUT ME, PROYEK HARUS HILANG TOTAL)
+        // BUKA MODAL ABOUT ME (HANYA ABOUT ME, PROJECT MATI TOTAL)
         function openAbout() {
             const projectPanel = document.getElementById("project-panel");
             const aboutPanel = document.getElementById("about-panel");
@@ -1008,9 +1135,18 @@ if (typeof THREE === "undefined") {
 
             projectOpen = true;
 
-            if (projectPanel) projectPanel.classList.add("hidden"); // Pastikan Project sembunyi!
+            // Matikan Project
+            if (projectPanel) {
+                projectPanel.classList.add("hidden");
+                projectPanel.style.display = "none";
+            }
+
+            // Kursor canvas ubah ke normal saat modal buka
+            canvas.style.cursor = "default";
 
             aboutPanel.classList.remove("hidden");
+            aboutPanel.style.display = "block";
+
             if (interactionPrompt) interactionPrompt.classList.add("hidden");
 
             nearestProject = null;
@@ -1019,37 +1155,55 @@ if (typeof THREE === "undefined") {
             if (document.exitPointerLock) document.exitPointerLock();
         }
 
-        // PENGELOLA TEKANAN TOMBOL "E"
         function interactWithProject() {
             if (projectOpen) return;
+
             if (nearestAboutBoard) {
                 openAbout();
                 return;
             }
+
             if (nearestProject) {
                 openProject(nearestProject.userData.projectId);
             }
         }
 
+        // TUTUP SEMUA MODAL & KEMBALIKAN KONTROL POINTER LOCK
         function closeAllPanels() {
             projectOpen = false;
+
             const projectPanel = document.getElementById("project-panel");
             const aboutPanel = document.getElementById("about-panel");
 
-            if (projectPanel) projectPanel.classList.add("hidden");
-            if (aboutPanel) aboutPanel.classList.add("hidden");
+            if (projectPanel) {
+                projectPanel.classList.add("hidden");
+                projectPanel.style.display = "none";
+            }
+
+            if (aboutPanel) {
+                aboutPanel.classList.add("hidden");
+                aboutPanel.style.display = "none";
+            }
+
+            // Kembalikan kursor crosshair ke canvas gameplay
+            canvas.style.cursor = "crosshair";
 
             nearestProject = null;
             nearestAboutBoard = false;
 
-            if (interactionPrompt) interactionPrompt.classList.add("hidden");
+            if (interactionPrompt) {
+                interactionPrompt.classList.add("hidden");
+            }
 
             if (canvas && canvas.requestPointerLock) {
                 canvas.requestPointerLock();
             }
         }
 
-        document.querySelectorAll(".back-button, #about-back-button, #project-back-button").forEach((btn) => {
+        // Pasang event listener ke semua tombol Back
+        document.querySelectorAll(
+            ".back-button, #about-back-button, #project-back-button"
+        ).forEach((btn) => {
             btn.addEventListener("click", (e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -1064,7 +1218,7 @@ if (typeof THREE === "undefined") {
         });
 
         // =============================================
-        // 11. NPC SYSTEM (DENGAN ANIMASI KHUSUS & ALAT)
+        // 16. NPC SYSTEM
         // =============================================
         function createNPC(x, z, color, pathLength, activity) {
             const npc = new THREE.Group();
@@ -1122,6 +1276,7 @@ if (typeof THREE === "undefined") {
             npc.userData.activity = activity;
             npc.userData.activityTime = Math.random() * 10;
             npc.userData.startX = x;
+            npc.userData.startZ = z;
             npc.userData.pathLength = pathLength;
             npc.userData.speed = 1.2;
             npc.userData.direction = 1;
@@ -1173,9 +1328,9 @@ if (typeof THREE === "undefined") {
             return npc;
         }
 
-        const npc1 = createNPC(1, -7, 0xd94c4c, 4, "WALK");
-        const npc2 = createNPC(5, -10, 0xf0a83c, 0, "SWEEP");
-        const npc3 = createNPC(-4, -24, 0x8e5bd9, 0, "WATER");
+        const npc1 = createNPC(7, -7, 0xd94c4c, 4, "WALK");
+        const npc2 = createNPC(15, 4, 0xf0a83c, 0, "SWEEP");
+        const npc3 = createNPC(-14, -5, 0x8e5bd9, 0, "WATER");
 
         const npcs = [npc1, npc2, npc3];
         npcs.forEach((npc) => addNPCCollider(npc));
@@ -1237,10 +1392,12 @@ if (typeof THREE === "undefined") {
         }
 
         // =============================================
-        // 12. LOADING & RESIZE
+        // 17. LOADING & RESIZE
         // =============================================
         const loadingScreen = document.getElementById("loading-screen");
-        if (loadingScreen) loadingScreen.classList.add("hidden");
+        if (loadingScreen) {
+            loadingScreen.classList.add("hidden");
+        }
 
         window.addEventListener("resize", () => {
             camera.aspect = window.innerWidth / window.innerHeight;
@@ -1249,7 +1406,7 @@ if (typeof THREE === "undefined") {
         });
 
         // =============================================
-        // 13. ANIMATION LOOP
+        // 18. ANIMATION LOOP
         // =============================================
         const clock = new THREE.Clock();
         updateCamera(0.016);
@@ -1268,10 +1425,12 @@ if (typeof THREE === "undefined") {
             updateBirds(delta);
             updateButterflies(delta);
             updateFireflies();
+
             renderer.render(scene, camera);
         }
 
         animate();
-        console.log("=== 3D WORLD RUNNING ===");
+
+        console.log("=== CIRCULAR 3D WORLD RUNNING ===");
     }
 }
