@@ -734,6 +734,78 @@ if (typeof THREE === "undefined") {
         };
 
         const projectSigns = [];
+        const aboutBoard = {
+            group: null,
+            interactionRadius: 4
+        };
+
+        function createIntroTexture() {
+            const canvasTex = document.createElement("canvas");
+            canvasTex.width = 1024;
+            canvasTex.height = 600;
+            const ctx = canvasTex.getContext("2d");
+            // Background
+            ctx.fillStyle = "#111111";
+            ctx.fillRect(0, 0, 1024, 600);
+            // Border
+            ctx.strokeStyle = "#4fd1c5";
+            ctx.lineWidth = 14;
+            ctx.strokeRect(12, 12, 1000, 576);
+            // Small title
+            ctx.fillStyle = "#38bdf8";
+            ctx.font = "bold 30px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText(
+                "WELCOME TO MY PORTFOLIO",
+                512,
+                75
+            );
+            // Name
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "bold 68px Arial";
+            ctx.fillText(
+                "SADAM ALKAYYIS",
+                512,
+                165
+            );
+            // Role
+            ctx.fillStyle = "#a3e635";
+            ctx.font = "bold 30px Arial";
+            ctx.fillText(
+                "CREATIVE DEVELOPER • UI/UX DESIGNER",
+                512,
+                225
+            );
+            // Short introduction
+            ctx.fillStyle = "#dddddd";
+            ctx.font = "26px Arial";
+            ctx.fillText(
+                "Informatics Graduate passionate about",
+                512,
+                305
+            );
+            ctx.fillText("game development, UI/UX and creative digital projects.", 512, 345);
+            // Interaction instruction
+            ctx.fillStyle = "#4fd1c5";
+            ctx.font = "bold 28px Arial";
+            ctx.fillText(
+                "PRESS E TO LEARN MORE ABOUT ME",
+                512,
+                445
+            );
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "23px Arial";
+            ctx.fillText(
+                "EXPLORE • DISCOVER • CREATE",
+                512,
+                500
+            );
+            const texture =
+                new THREE.CanvasTexture(canvasTex);
+            if (THREE.SRGBColorSpace) {texture.colorSpace = THREE.SRGBColorSpace;}
+            return texture;
+        }
+        
 
         function createSignTexture(title, category) {
             const canvasTex = document.createElement("canvas");
