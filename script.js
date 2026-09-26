@@ -805,6 +805,81 @@ if (typeof THREE === "undefined") {
             if (THREE.SRGBColorSpace) {texture.colorSpace = THREE.SRGBColorSpace;}
             return texture;
         }
+
+        function createIntroBoard(x, z) {
+            const boardGroup = new THREE.Group();
+            boardGroup.position.set(x, 0, z);
+            boardGroup.userData.type = "about";
+            const boardWidth = 5.2;
+            const boardHeight = 3.0;
+            const boardThickness = 0.22;
+            const boardCenterY = 3.3;
+            const postHeight =
+                boardCenterY -
+                (boardHeight / 2);
+            const postMaterial =
+                new THREE.MeshStandardMaterial({
+                    color: 0x2b2b2b,
+                    roughness: 0.6
+                });
+            const postGeometry =
+                new THREE.CylinderGeometry(
+                    0.16,
+                    0.18,
+                    postHeight,
+                    12
+                );
+            const leftPost =
+                new THREE.Mesh(
+                    postGeometry,
+                    postMaterial
+                );
+            leftPost.position.set(
+                -1.8,
+                postHeight / 2,
+                0
+            );
+            leftPost.castShadow = true;
+            boardGroup.add(leftPost);
+            const rightPost =
+                new THREE.Mesh(
+                    postGeometry,
+                    postMaterial
+                );
+            rightPost.position.set(
+                1.8,
+                postHeight / 2,
+                0
+            );
+            rightPost.castShadow = true;
+            boardGroup.add(rightPost);
+            const boardMaterial =
+                new THREE.MeshStandardMaterial({
+                    map: createIntroTexture()
+                });
+            const board =
+                new THREE.Mesh(
+                    new THREE.BoxGeometry(
+                        boardWidth,
+                        boardHeight,
+                        boardThickness
+                    ),
+                    boardMaterial
+                );
+            board.position.set(0, boardCenterY, 0);
+            board.castShadow = true;
+            board.receiveShadow = true;
+            boardGroup.add(board);
+            const baseMaterial = new THREE.MeshStandardMaterial({color: 0x444444});
+            const base = new THREE.Mesh(new THREE.BoxGeometry(4.5, 0.18, 0.8), baseMaterial);
+            base.position.set(0, 0.09, 0);
+            base.castShadow = true;
+            boardGroup.add(base);
+            addCollisionBox(x, z, 2.0, 1.0);
+            aboutBoard.group = boardGroup;
+            scene.add(boardGroup);
+            return boardGroup;
+        }
         
 
         function createSignTexture(title, category) {
@@ -875,7 +950,8 @@ if (typeof THREE === "undefined") {
 
             return sign;
         }
-
+        
+        createIntroBoard(0, -1);
         createProjectSign("smartvoc", 5, -3);
         createProjectSign("blockfight", -5, -12);
         createProjectSign("uiux", 5, -22);
@@ -891,8 +967,35 @@ if (typeof THREE === "undefined") {
             if (projectOpen) {
                 if (interactionPrompt) interactionPrompt.classList.add("hidden");
                 nearestProject = null;
+                nearestAboutBoard = false;
                 return;
             }
+            nearestAboutBoard = false;
+            if (aboutBoard.group) {const dx = player.position.x - aboutBoard.group.position.x;
+                                   const dz = player.position.z - aboutBoard.group.position.z;
+                                   const distance = Math.sqrt(dx * dx + dz * dz);
+                                   if (distance < aboutBoard.interactionRadius) 
+                                   {
+                                       nearestAboutBoard = true;
+                                       nearestProject = null;
+                                       if (interactionPrompt) {
+                                           interactionPrompt.classList.remove(
+                                               "hidden"
+                                           );
+                                           const key =
+                                               interactionPrompt.querySelector(
+                                                   ".key"
+                                               );
+                                           const text =
+                                               interactionPrompt.querySelector(
+                                                   "span:last-child"
+                                               );
+                                           if (key) {key.textContent = "E";}
+                                           if (text) {text.textContent = "About Me";}
+                                       }
+                                       return;
+                                   }
+                                  }
 
             let closest = null;
             let closestDistance = Infinity;
@@ -915,7 +1018,8 @@ if (typeof THREE === "undefined") {
         }
 
         const projectPanel = document.getElementById("project-panel");
-        const backButton = document.querySelector(".back-button");
+        const backButton = document.getElementById("project-back-button");
+        const aboutBackButton = document.getElementById("about-back-button");
         let projectOpen = false;
 
         function openProject(projectId) {
@@ -944,16 +1048,50 @@ if (typeof THREE === "undefined") {
             if (interactionPrompt) interactionPrompt.classList.add("hidden");
             if (document.pointerLockElement) document.exitPointerLock();
         }
-
-        function interactWithProject() {
-            if (projectOpen || !nearestProject) return;
-            openProject(nearestProject.userData.projectId);
+        function openAbout() {
+            const aboutPanel =
+                document.getElementById(
+                    "about-panel"
+                );
+            if (!aboutPanel) return;
+            projectOpen = true;
+            aboutPanel.classList.remove(
+                "hidden"
+            );
+            if (interactionPrompt) {
+                interactionPrompt.classList.add(
+                    "hidden"
+                );
+            }
+            nearestProject = null;
+            nearestAboutBoard = false;
+            if (document.pointerLockElement) {
+                document.exitPointerLock();
+            }
         }
 
+        function interactWithProject() {
+            if (projectOpen) return;
+            if (nearestAboutBoard) {openAbout(); return;}
+            if (!nearestProject) return;
+            openProject(nearestProject.userData.projectId);
+        }
         function closeProject() {
             projectOpen = false;
             if (projectPanel) projectPanel.classList.add("hidden");
             nearestProject = null;
+            canvas.requestPointerLock();
+        }
+        function closeAbout() {
+            const aboutPanel =
+                document.getElementById("about-panel");
+            if (aboutPanel) {aboutPanel.classList.add("hidden");}
+            projectOpen = false;
+            nearestProject = null;
+            nearestAboutBoard = false;
+            if (interactionPrompt) {
+                interactionPrompt.classList.add("hidden");
+            }
             canvas.requestPointerLock();
         }
 
@@ -963,9 +1101,12 @@ if (typeof THREE === "undefined") {
                 closeProject();
             });
         }
-        document.addEventListener("keydown", (e) => {
-            if (e.code === "Escape" && projectOpen) closeProject();
-        });
+        if (aboutBackButton) {
+            aboutBackButton.addEventListener("click",(e) => {e.preventDefault(); closeAbout();});}
+        document.addEventListener("keydown", (e) => {if (e.code !== "Escape") return;
+                                                     const aboutPanel = document.getElementById("about-panel");
+                                                     if (projectOpen && aboutPanel && !aboutPanel.classList.contains("hidden")) {closeAbout(); return;}
+                                                     if (projectOpen) {closeProject();}});
 
         // =============================================
         // 11. NPC SYSTEM (DENGAN ANIMASI KHUSUS & ALAT)
