@@ -725,14 +725,10 @@ if (typeof THREE === "undefined") {
         const startButton = document.getElementById("start-button");
         if (startButton) {
             startButton.addEventListener("click", () => {
-                if (startScreen) startScreen.classList.add("hidden");
-                canvas.requestPointerLock();
-                if (typeof requestLandscapeOrientation === "function") {
-                    requestLandscapeOrientation();
-                }
+                if (startScreen) {startScreen.classList.add("hidden");}
+                if (isTouchDevice) {requestLandscapeOrientation();} else {canvas.requestPointerLock();}
             });
         }
-
         // ============================================================
         // MOBILE DEVICE SUPPORT VARIABLES & HANDLERS
         // ============================================================
@@ -777,13 +773,9 @@ if (typeof THREE === "undefined") {
 
         async function requestLandscapeOrientation() {
             if (!isTouchDevice) return;
-            try {
-                if (screen.orientation && screen.orientation.lock) {
-                    await screen.orientation.lock("landscape");
-                }
-            } catch (error) {
-                console.log("Landscape orientation lock tidak tersedia:", error);
-            }
+            try {if (screen.orientation && screen.orientation.lock) {await screen.orientation.lock("landscape");}
+                } catch (error) {console.log("Landscape orientation lock tidak tersedia. Menggunakan deteksi orientasi otomatis.");
+                                }
             updateMobileOrientation();
         }
 
