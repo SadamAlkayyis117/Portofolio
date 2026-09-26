@@ -1001,15 +1001,15 @@ if (typeof THREE === "undefined") {
         }
 
         function openAbout() {
+            const aboutPanel = document.getElementById("about-panel");
             if (!aboutPanel) return;
             projectOpen = true;
 
             aboutPanel.classList.remove("hidden");
-            if (projectPanel) projectPanel.classList.add("hidden");
-            if (interactionPrompt) interactionPrompt.classList.add("hidden");
+            aboutPanel.style.display = "flex"; // Munculkan
 
-            nearestProject = null;
-            nearestAboutBoard = false;
+            if (projectPanel) projectPanel.style.display = "none";
+            if (interactionPrompt) interactionPrompt.classList.add("hidden");
 
             if (document.exitPointerLock) {
                 document.exitPointerLock();
@@ -1033,13 +1033,19 @@ if (typeof THREE === "undefined") {
         function closeAllPanels() {
             projectOpen = false;
 
+            const projectPanel = document.getElementById("project-panel");
+            const aboutPanel = document.getElementById("about-panel");
+
+            // 1. Sembunyikan Panel Proyek
             if (projectPanel) {
                 projectPanel.classList.add("hidden");
-                projectPanel.style.display = "none"; // Paksa sembunyikan
+                projectPanel.style.display = "none"; // Paksa sembunyikan via CSS
             }
+
+            // 2. Sembunyikan Panel About Me
             if (aboutPanel) {
                 aboutPanel.classList.add("hidden");
-                aboutPanel.style.display = "none";   // Paksa sembunyikan
+                aboutPanel.style.display = "none"; // Paksa sembunyikan via CSS
             }
 
             nearestProject = null;
@@ -1049,15 +1055,15 @@ if (typeof THREE === "undefined") {
                 interactionPrompt.classList.add("hidden");
             }
 
-            // Kembalikan kontrol pointer lock ke game canvas
+            // 3. Kunci kembali mouse ke game setelah modal tertutup
             if (canvas && canvas.requestPointerLock) {
                 canvas.requestPointerLock();
             }
         }
 
-        // Event listener ke SEMUA tombol kembali yang ada di halaman
+        // BIND KE SEMUA TOMBOL KEMBALI DI HALAMAN (Termasuk class .back-button atau ID apa pun)
         document.querySelectorAll(
-            ".back-button, #about-back-button, #project-back-button, [data-back]"
+            ".back-button, #about-back-button, #project-back-button, [data-back], .close-button"
         ).forEach((btn) => {
             btn.addEventListener("click", (e) => {
                 e.preventDefault();
@@ -1066,7 +1072,7 @@ if (typeof THREE === "undefined") {
             });
         });
 
-        // Tombol ESC di keyboard untuk menutup panel
+        // Tombol ESC di keyboard juga otomatis menutup panel
         document.addEventListener("keydown", (e) => {
             if (e.code === "Escape" && projectOpen) {
                 closeAllPanels();
