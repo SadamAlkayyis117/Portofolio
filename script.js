@@ -1,7 +1,7 @@
 // =====================================================
 // SADAM ALKAYYIS - INTERACTIVE 3D PORTFOLIO
 // CIRCULAR OPEN WORLD + LET'S CONNECT + MOBILE PORTRAIT
-// FULL FIXED & TESTED
+// FULL FIXED & TESTED (DAY/NIGHT SKY FIX)
 // =====================================================
 
 console.log("=== PORTFOLIO SCRIPT START ===");
@@ -28,7 +28,8 @@ if (typeof THREE === "undefined") {
         const dayFogColor = new THREE.Color(0x87ceeb);
         const nightFogColor = new THREE.Color(0x071426);
 
-        scene.background = daySkyColor;
+        // FIX: Gunakan clone() agar scene.background tidak merusak variabel daySkyColor
+        scene.background = daySkyColor.clone();
         scene.fog = new THREE.Fog(0x87ceeb, 30, 100);
 
         const camera = new THREE.PerspectiveCamera(
@@ -147,7 +148,7 @@ if (typeof THREE === "undefined") {
         createFireflies();
 
         // =============================================
-        // 4. DAY / NIGHT SYSTEM
+        // 4. DAY / NIGHT SYSTEM (FIXED COLOR PRESERVATION)
         // =============================================
 
         let isNight = false;
@@ -171,8 +172,10 @@ if (typeof THREE === "undefined") {
 
         function setDayMode() {
             isNight = false;
-            scene.background.copy(daySkyColor);
-            scene.fog.color.copy(dayFogColor);
+
+            // Pastikan warna dikembalikan tepat ke warna biru siang
+            scene.background.setHex(0x87ceeb);
+            scene.fog.color.setHex(0x87ceeb);
 
             sunLight.intensity = 3.0;
             hemisphereLight.intensity = 2.0;
@@ -189,8 +192,10 @@ if (typeof THREE === "undefined") {
 
         function setNightMode() {
             isNight = true;
-            scene.background.copy(nightSkyColor);
-            scene.fog.color.copy(nightFogColor);
+
+            // Pastikan warna diubah tepat ke warna gelap malam
+            scene.background.setHex(0x071426);
+            scene.fog.color.setHex(0x071426);
 
             sunLight.intensity = 0.25;
             hemisphereLight.intensity = 0.35;
@@ -773,17 +778,14 @@ if (typeof THREE === "undefined") {
 
             const portrait = isPortraitMode();
 
-            // Layar peringatan putar ke tegak jika pengguna memegang HP miring (landscape)
             if (rotateDeviceScreen) {
                 rotateDeviceScreen.classList.toggle("active", !portrait);
             }
 
-            // Kontrol joystick & tombol aktif saat tegak (portrait)
             if (mobileControls) {
                 mobileControls.classList.toggle("active", portrait);
             }
 
-            // Penyesuaian FOV kamera agar tidak sempit di layar HP
             if (portrait) {
                 camera.fov = 75;
             } else {
