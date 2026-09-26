@@ -915,17 +915,17 @@ if (typeof THREE === "undefined") {
                 return;
             }
 
-            // 1. Cek Interaksi About Me
+            // 1. Deteksi Papan About Me
             nearestAboutBoard = false;
             if (aboutBoard.group) {
                 const dx = player.position.x - aboutBoard.group.position.x;
                 const dz = player.position.z - aboutBoard.group.position.z;
-                const distance = Math.sqrt(dx * dx + dz * dz);
+                const dist = Math.sqrt(dx * dx + dz * dz);
 
-                if (distance < aboutBoard.interactionRadius) {
+                // Radius dibuat lega (6 meter) agar pemain dari jalan sudah bisa berinteraksi
+                if (dist < 6.0) {
                     nearestAboutBoard = true;
                     nearestProject = null;
-
                     if (interactionPrompt) {
                         interactionPrompt.classList.remove("hidden");
                         const key = interactionPrompt.querySelector(".key");
@@ -933,11 +933,11 @@ if (typeof THREE === "undefined") {
                         if (key) key.textContent = "E";
                         if (text) text.textContent = "About Me";
                     }
-                    return; // Prioritas About Me saat berada dekat papan
+                    return;
                 }
             }
 
-            // 2. Cek Interaksi Plang Proyek
+            // 2. Deteksi Plang Proyek
             let closest = null;
             let closestDistance = Infinity;
 
@@ -972,18 +972,11 @@ if (typeof THREE === "undefined") {
             if (!data) return;
             projectOpen = true;
 
-            // 1. SEMBUNYIKAN PANEL ABOUT ME SECARA TOTAL
-            if (aboutPanel) {
-                aboutPanel.classList.add("hidden");
-                aboutPanel.style.setProperty("display", "none", "important");
-            }
+            const projectPanel = document.getElementById("project-panel");
+            const aboutPanel = document.getElementById("about-panel");
 
-            // 2. SEMBUNYIKAN TANDA CROSSHAIR (+) AGAR TIDAK MELAYANG DI TENGAH MODAL
-            if (crosshair) {
-                crosshair.style.display = "none";
-            }
+            if (aboutPanel) aboutPanel.classList.add("hidden"); // Pastikan About Me sembunyi!
 
-            // 3. ISI DATA PROYEK
             const title = document.getElementById("project-title");
             const desc = document.getElementById("project-description");
             const about = document.getElementById("project-about");
@@ -1001,119 +994,69 @@ if (typeof THREE === "undefined") {
             if (gh) gh.href = data.github;
             if (dm) dm.href = data.demo;
 
-            // 4. MUNCULKAN PANEL PROYEK
-            if (projectPanel) {
-                projectPanel.classList.remove("hidden");
-                projectPanel.style.setProperty("display", "flex", "important");
-            }
-
+            if (projectPanel) projectPanel.classList.remove("hidden");
             if (interactionPrompt) interactionPrompt.classList.add("hidden");
 
-            // Lepas kursor agar bisa ngeklik tombol
-            if (document.exitPointerLock) {
-                document.exitPointerLock();
-            }
+            if (document.exitPointerLock) document.exitPointerLock();
         }
 
         // BUKA MODAL ABOUT ME (HANYA ABOUT ME, PROYEK HARUS HILANG TOTAL)
         function openAbout() {
+            const projectPanel = document.getElementById("project-panel");
+            const aboutPanel = document.getElementById("about-panel");
             if (!aboutPanel) return;
+
             projectOpen = true;
 
-            // 1. SEMBUNYIKAN PANEL PROYEK SECARA TOTAL
-            if (projectPanel) {
-                projectPanel.classList.add("hidden");
-                projectPanel.style.setProperty("display", "none", "important");
-            }
+            if (projectPanel) projectPanel.classList.add("hidden"); // Pastikan Project sembunyi!
 
-            // 2. SEMBUNYIKAN TANDA CROSSHAIR (+)
-            if (crosshair) {
-                crosshair.style.display = "none";
-            }
-
-            // 3. MUNCULKAN PANEL ABOUT ME
             aboutPanel.classList.remove("hidden");
-            aboutPanel.style.setProperty("display", "flex", "important");
-
             if (interactionPrompt) interactionPrompt.classList.add("hidden");
+
             nearestProject = null;
             nearestAboutBoard = false;
 
-            // Lepas kursor agar bisa ngeklik tombol
-            if (document.exitPointerLock) {
-                document.exitPointerLock();
-            }
+            if (document.exitPointerLock) document.exitPointerLock();
         }
 
         // PENGELOLA TEKANAN TOMBOL "E"
         function interactWithProject() {
             if (projectOpen) return;
-
             if (nearestAboutBoard) {
                 openAbout();
                 return;
             }
-
             if (nearestProject) {
                 openProject(nearestProject.userData.projectId);
             }
         }
 
-        // FUNGSI UNTUK MENUTUP SEMUA PANEL & KEMBALIKAN KE GAMEPLAY
         function closeAllPanels() {
             projectOpen = false;
+            const projectPanel = document.getElementById("project-panel");
+            const aboutPanel = document.getElementById("about-panel");
 
-            // 1. Sembunyikan kedua panel
-            if (projectPanel) {
-                projectPanel.classList.add("hidden");
-                projectPanel.style.setProperty("display", "none", "important");
-            }
-            if (aboutPanel) {
-                aboutPanel.classList.add("hidden");
-                aboutPanel.style.setProperty("display", "none", "important");
-            }
-
-            // 2. Kembalikan crosshair (+) jika ada di game
-            if (crosshair) {
-                crosshair.style.display = "";
-            }
+            if (projectPanel) projectPanel.classList.add("hidden");
+            if (aboutPanel) aboutPanel.classList.add("hidden");
 
             nearestProject = null;
             nearestAboutBoard = false;
 
-            if (interactionPrompt) {
-                interactionPrompt.classList.add("hidden");
-            }
+            if (interactionPrompt) interactionPrompt.classList.add("hidden");
 
-            // 3. Kunci kembali kursor ke kanvas permainan
             if (canvas && canvas.requestPointerLock) {
                 canvas.requestPointerLock();
             }
         }
 
-        // PASANG EVENT LISTENER KE SEMUA TOMBOL KEMBALI
-        document.querySelectorAll(
-            ".back-button, #about-back-button, #project-back-button, [data-back], .close-button, #about-panel button, #about-panel a, #project-panel button"
-        ).forEach((btn) => {
-            const txt = (btn.textContent || "").toLowerCase();
-            if (
-                btn.classList.contains("back-button") ||
-                btn.id.includes("back") ||
-                btn.id.includes("close") ||
-                txt.includes("back") ||
-                txt.includes("world") ||
-                txt.includes("kembali") ||
-                txt.includes("tutup")
-            ) {
-                btn.addEventListener("click", (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    closeAllPanels();
-                });
-            }
+        document.querySelectorAll(".back-button, #about-back-button, #project-back-button").forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                closeAllPanels();
+            });
         });
 
-        // Tombol ESC di keyboard untuk keluar dari modal
         document.addEventListener("keydown", (e) => {
             if (e.code === "Escape" && projectOpen) {
                 closeAllPanels();
