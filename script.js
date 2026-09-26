@@ -1,6 +1,6 @@
 // =====================================================
 // SADAM ALKAYYIS - INTERACTIVE 3D PORTFOLIO
-// STEP 6 - FULL FIXED (ABOUT ME MOVED + CLEAN BACK TO WORLD)
+// FULL FIXED & TESTED
 // =====================================================
 
 console.log("=== PORTFOLIO SCRIPT START ===");
@@ -779,14 +779,12 @@ if (typeof THREE === "undefined") {
             return texture;
         }
 
-        // FUNGSI MEMBUAT PAPAN ABOUT ME (DIPASANG DI PINGGIR JALAN)
+        // Papan About Me ditaruh menyamping di kiri jalan
         function createIntroBoard(x, z) {
             const boardGroup = new THREE.Group();
             boardGroup.position.set(x, 0, z);
             boardGroup.userData.type = "about";
-
-            // Hadapkan sedikit menyerong ke arah jalan masuk (sekitar 25 derajat)
-            boardGroup.rotation.y = Math.PI / 8;
+            boardGroup.rotation.y = Math.PI / 8; // Miring menghadap player
 
             const boardWidth = 4.8;
             const boardHeight = 2.8;
@@ -892,11 +890,7 @@ if (typeof THREE === "undefined") {
             return sign;
         }
 
-        // ============================================================
-        // PERBAIKAN POSISI:
-        // Papan About Me ditaruh di sisi KIRI jalan (X: -4.5, Z: 2.0)
-        // Sehingga jalan setapak lurus (X: 0) TIDAK TERHALANG SAMA SEKALI!
-        // ============================================================
+        // Papan About Me ditaruh di sisi kiri jalan (tidak memblokir jalan lurus)
         createIntroBoard(-4.5, -1.0);
 
         createProjectSign("smartvoc", 5, -3);
@@ -905,11 +899,15 @@ if (typeof THREE === "undefined") {
         createProjectSign("graphic", -5, -32);
 
         // =============================================
-        // 10. MODAL / UI INTERACTION
+        // 10. MODAL / UI INTERACTION (FIXED 100%)
         // =============================================
         const interactionPrompt = document.getElementById("interaction-prompt");
+        const projectPanel = document.getElementById("project-panel");
+        const aboutPanel = document.getElementById("about-panel");
+
         let nearestProject = null;
         let nearestAboutBoard = false;
+        let projectOpen = false;
 
         function updateProjectDetection() {
             if (projectOpen) {
@@ -919,14 +917,17 @@ if (typeof THREE === "undefined") {
                 return;
             }
 
+            // 1. Cek interaksi About Me
             nearestAboutBoard = false;
             if (aboutBoard.group) {
                 const dx = player.position.x - aboutBoard.group.position.x;
                 const dz = player.position.z - aboutBoard.group.position.z;
                 const distance = Math.sqrt(dx * dx + dz * dz);
+
                 if (distance < aboutBoard.interactionRadius) {
                     nearestAboutBoard = true;
                     nearestProject = null;
+
                     if (interactionPrompt) {
                         interactionPrompt.classList.remove("hidden");
                         const key = interactionPrompt.querySelector(".key");
@@ -938,6 +939,7 @@ if (typeof THREE === "undefined") {
                 }
             }
 
+            // 2. Cek interaksi Plang Proyek
             let closest = null;
             let closestDistance = Infinity;
 
@@ -952,6 +954,7 @@ if (typeof THREE === "undefined") {
             }
 
             nearestProject = closest;
+
             if (interactionPrompt) {
                 if (nearestProject) {
                     interactionPrompt.classList.remove("hidden");
@@ -965,14 +968,16 @@ if (typeof THREE === "undefined") {
             }
         }
 
-        const projectPanel = document.getElementById("project-panel");
-        const aboutPanel = document.getElementById("about-panel");
-        let projectOpen = false;
-
         function openProject(projectId) {
             const data = projects[projectId];
             if (!data) return;
             projectOpen = true;
+
+            // Tutup total panel About Me jika terbuka
+            if (aboutPanel) {
+                aboutPanel.classList.add("hidden");
+                aboutPanel.style.display = "none";
+            }
 
             const title = document.getElementById("project-title");
             const desc = document.getElementById("project-description");
@@ -991,8 +996,10 @@ if (typeof THREE === "undefined") {
             if (gh) gh.href = data.github;
             if (dm) dm.href = data.demo;
 
-            if (projectPanel) projectPanel.classList.remove("hidden");
-            if (aboutPanel) aboutPanel.classList.add("hidden");
+            if (projectPanel) {
+                projectPanel.classList.remove("hidden");
+                projectPanel.style.display = "flex";
+            }
             if (interactionPrompt) interactionPrompt.classList.add("hidden");
 
             if (document.exitPointerLock) {
@@ -1001,15 +1008,21 @@ if (typeof THREE === "undefined") {
         }
 
         function openAbout() {
-            const aboutPanel = document.getElementById("about-panel");
             if (!aboutPanel) return;
             projectOpen = true;
 
-            aboutPanel.classList.remove("hidden");
-            aboutPanel.style.display = "flex"; // Munculkan
+            // Tutup total panel Project jika terbuka
+            if (projectPanel) {
+                projectPanel.classList.add("hidden");
+                projectPanel.style.display = "none";
+            }
 
-            if (projectPanel) projectPanel.style.display = "none";
+            aboutPanel.classList.remove("hidden");
+            aboutPanel.style.display = "flex";
+
             if (interactionPrompt) interactionPrompt.classList.add("hidden");
+            nearestProject = null;
+            nearestAboutBoard = false;
 
             if (document.exitPointerLock) {
                 document.exitPointerLock();
@@ -1018,6 +1031,7 @@ if (typeof THREE === "undefined") {
 
         function interactWithProject() {
             if (projectOpen) return;
+
             if (nearestAboutBoard) {
                 openAbout();
                 return;
@@ -1027,25 +1041,17 @@ if (typeof THREE === "undefined") {
             }
         }
 
-        // =============================================
-        // FUNGSI UNIVERSAL UNTUK MENUTUP SEMUA PANEL
-        // =============================================
+        // FUNGSI UNIVERSAL MENUTUP SEMUA PANEL
         function closeAllPanels() {
             projectOpen = false;
 
-            const projectPanel = document.getElementById("project-panel");
-            const aboutPanel = document.getElementById("about-panel");
-
-            // 1. Sembunyikan Panel Proyek
             if (projectPanel) {
                 projectPanel.classList.add("hidden");
-                projectPanel.style.display = "none"; // Paksa sembunyikan via CSS
+                projectPanel.style.display = "none";
             }
-
-            // 2. Sembunyikan Panel About Me
             if (aboutPanel) {
                 aboutPanel.classList.add("hidden");
-                aboutPanel.style.display = "none"; // Paksa sembunyikan via CSS
+                aboutPanel.style.display = "none";
             }
 
             nearestProject = null;
@@ -1055,24 +1061,35 @@ if (typeof THREE === "undefined") {
                 interactionPrompt.classList.add("hidden");
             }
 
-            // 3. Kunci kembali mouse ke game setelah modal tertutup
+            // Kembalikan pointer lock ke canvas
             if (canvas && canvas.requestPointerLock) {
                 canvas.requestPointerLock();
             }
         }
 
-        // BIND KE SEMUA TOMBOL KEMBALI DI HALAMAN (Termasuk class .back-button atau ID apa pun)
+        // Tangkap SEMUA tombol kembali di kedua modal
         document.querySelectorAll(
-            ".back-button, #about-back-button, #project-back-button, [data-back], .close-button"
+            ".back-button, #about-back-button, #project-back-button, [data-back], .close-button, #about-panel button, #about-panel a, #project-panel button"
         ).forEach((btn) => {
-            btn.addEventListener("click", (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                closeAllPanels();
-            });
+            const txt = (btn.textContent || "").toLowerCase();
+            if (
+                btn.classList.contains("back-button") ||
+                btn.id.includes("back") ||
+                btn.id.includes("close") ||
+                txt.includes("back") ||
+                txt.includes("world") ||
+                txt.includes("kembali") ||
+                txt.includes("tutup")
+            ) {
+                btn.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    closeAllPanels();
+                });
+            }
         });
 
-        // Tombol ESC di keyboard juga otomatis menutup panel
+        // Tombol Escape di keyboard untuk keluar dari modal
         document.addEventListener("keydown", (e) => {
             if (e.code === "Escape" && projectOpen) {
                 closeAllPanels();
@@ -1080,7 +1097,7 @@ if (typeof THREE === "undefined") {
         });
 
         // =============================================
-        // 11. NPC SYSTEM (ANIMASI & PERLENGKAPAN)
+        // 11. NPC SYSTEM (DENGAN ANIMASI KHUSUS & ALAT)
         // =============================================
         function createNPC(x, z, color, pathLength, activity) {
             const npc = new THREE.Group();
@@ -1104,7 +1121,7 @@ if (typeof THREE === "undefined") {
             npc.add(npcHead);
 
             const npcLegGeo = new THREE.BoxGeometry(0.23, 0.75, 0.28);
-            const npcLegMat = new THREE.MeshStandardMaterial({ color: 0x222222 });
+            const npcLegMat = new THREE.MeshStandardMaterial({ color: 0x202020 });
 
             const npcLeftLeg = new THREE.Mesh(npcLegGeo, npcLegMat);
             npcLeftLeg.position.set(-0.19, 0.38, 0);
