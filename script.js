@@ -946,7 +946,7 @@ if (typeof THREE === "undefined") {
 
             // 2. Arah Kanan Kamera yang BENAR: (+cos(yaw), 0, -sin(yaw))
             cameraRight.set(
-                Math.cos(cameraYaw), 
+                -Math.cos(cameraYaw), 
                 0, 
                 Math.sin(cameraYaw)
             ).normalize();
