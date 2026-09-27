@@ -1,7 +1,7 @@
 // =====================================================
 // SADAM ALKAYYIS - INTERACTIVE 3D PORTFOLIO
 // CIRCULAR OPEN WORLD + LET'S CONNECT + MOBILE PORTRAIT
-// FULL FIXED & TESTED (DAY/NIGHT SKY FIX)
+// FULL FIXED & TESTED (MOVEMENT & ANALOG DIRECTION FIX)
 // =====================================================
 
 console.log("=== PORTFOLIO SCRIPT START ===");
@@ -28,7 +28,6 @@ if (typeof THREE === "undefined") {
         const dayFogColor = new THREE.Color(0x87ceeb);
         const nightFogColor = new THREE.Color(0x071426);
 
-        // FIX: Gunakan clone() agar scene.background tidak merusak variabel daySkyColor
         scene.background = daySkyColor.clone();
         scene.fog = new THREE.Fog(0x87ceeb, 30, 100);
 
@@ -148,7 +147,7 @@ if (typeof THREE === "undefined") {
         createFireflies();
 
         // =============================================
-        // 4. DAY / NIGHT SYSTEM (FIXED COLOR PRESERVATION)
+        // 4. DAY / NIGHT SYSTEM (FIXED COLOR RESTORE)
         // =============================================
 
         let isNight = false;
@@ -172,8 +171,6 @@ if (typeof THREE === "undefined") {
 
         function setDayMode() {
             isNight = false;
-
-            // Pastikan warna dikembalikan tepat ke warna biru siang
             scene.background.setHex(0x87ceeb);
             scene.fog.color.setHex(0x87ceeb);
 
@@ -192,8 +189,6 @@ if (typeof THREE === "undefined") {
 
         function setNightMode() {
             isNight = true;
-
-            // Pastikan warna diubah tepat ke warna gelap malam
             scene.background.setHex(0x071426);
             scene.fog.color.setHex(0x071426);
 
@@ -819,6 +814,7 @@ if (typeof THREE === "undefined") {
                 deltaY *= scale;
             }
 
+            // X positif = kanan, X negatif = kiri
             mobileMoveX = deltaX / joystickRadius;
             mobileMoveY = deltaY / joystickRadius;
 
@@ -924,7 +920,7 @@ if (typeof THREE === "undefined") {
         }
 
         // =============================================
-        // 11. PLAYER MOVEMENT & ANIMATION (KEYBOARD + JOYSTICK)
+        // 11. PLAYER MOVEMENT & ANIMATION (FIXED DIRECTION)
         // =============================================
 
         const moveDirection = new THREE.Vector3();
@@ -941,16 +937,20 @@ if (typeof THREE === "undefined") {
 
             moveDirection.set(0, 0, 0);
 
+            // Arah maju kamera (Z dan X di bidang horizontal)
             cameraForward.set(Math.sin(cameraYaw), 0, Math.cos(cameraYaw)).normalize();
-            cameraRight.set(Math.cos(cameraYaw), 0, -Math.sin(cameraYaw)).normalize();
+
+            // FIX: Vektor Kanan Tegak Lurus yang BENAR (-cos(yaw), 0, sin(yaw))
+            cameraRight.set(-Math.cos(cameraYaw), 0, Math.sin(cameraYaw)).normalize();
 
             // 1. Keyboard Input
             if (keys["KeyW"] || keys["ArrowUp"]) moveDirection.add(cameraForward);
             if (keys["KeyS"] || keys["ArrowDown"]) moveDirection.sub(cameraForward);
-            if (keys["KeyA"] || keys["ArrowLeft"]) moveDirection.sub(cameraRight);
-            if (keys["KeyD"] || keys["ArrowRight"]) moveDirection.add(cameraRight);
+            if (keys["KeyA"] || keys["ArrowLeft"]) moveDirection.sub(cameraRight); // Kiri
+            if (keys["KeyD"] || keys["ArrowRight"]) moveDirection.add(cameraRight); // Kanan
 
             // 2. Mobile Joystick Input
+            // -mobileMoveY = Maju/Mundur, mobileMoveX = Kanan/Kiri
             if (isTouchDevice && (Math.abs(mobileMoveX) > 0.05 || Math.abs(mobileMoveY) > 0.05)) {
                 moveDirection.addScaledVector(cameraForward, -mobileMoveY);
                 moveDirection.addScaledVector(cameraRight, mobileMoveX);
