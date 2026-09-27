@@ -941,7 +941,7 @@ if (typeof THREE === "undefined") {
             cameraForward.set(Math.sin(cameraYaw), 0, Math.cos(cameraYaw)).normalize();
 
             // FIX: Vektor Kanan Tegak Lurus yang BENAR (-cos(yaw), 0, sin(yaw))
-            cameraRight.set(-Math.cos(cameraYaw), 0, Math.sin(cameraYaw)).normalize();
+            cameraRight.set(Math.cos(cameraYaw), 0, -Math.sin(cameraYaw)).normalize();
 
             // 1. Keyboard Input
             if (keys["KeyW"] || keys["ArrowUp"]) moveDirection.add(cameraForward);
