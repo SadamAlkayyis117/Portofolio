@@ -948,7 +948,7 @@ if (typeof THREE === "undefined") {
             cameraRight.set(
                 Math.cos(cameraYaw), 
                 0, 
-                -Math.sin(cameraYaw)
+                Math.sin(cameraYaw)
             ).normalize();
 
             // 3. Keyboard Input
