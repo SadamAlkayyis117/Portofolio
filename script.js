@@ -937,20 +937,29 @@ if (typeof THREE === "undefined") {
 
             moveDirection.set(0, 0, 0);
 
-            // Arah maju kamera (Z dan X di bidang horizontal)
-            cameraForward.set(Math.sin(cameraYaw), 0, Math.cos(cameraYaw)).normalize();
+            // 1. Arah Maju Kamera: (sin(yaw), 0, cos(yaw))
+            cameraForward.set(
+                Math.sin(cameraYaw), 
+                0, 
+                Math.cos(cameraYaw)
+            ).normalize();
 
-            // FIX: Vektor Kanan Tegak Lurus yang BENAR (-cos(yaw), 0, sin(yaw))
-            cameraRight.set(-Math.cos(cameraYaw), 0, Math.sin(cameraYaw)).normalize();
+            // 2. Arah Kanan Kamera yang BENAR: (+cos(yaw), 0, -sin(yaw))
+            cameraRight.set(
+                Math.cos(cameraYaw), 
+                0, 
+                -Math.sin(cameraYaw)
+            ).normalize();
 
-            // 1. Keyboard Input
+            // 3. Keyboard Input
             if (keys["KeyW"] || keys["ArrowUp"]) moveDirection.add(cameraForward);
             if (keys["KeyS"] || keys["ArrowDown"]) moveDirection.sub(cameraForward);
-            if (keys["KeyA"] || keys["ArrowLeft"]) moveDirection.sub(cameraRight); // Kiri
-            if (keys["KeyD"] || keys["ArrowRight"]) moveDirection.add(cameraRight); // Kanan
+            if (keys["KeyA"] || keys["ArrowLeft"]) moveDirection.sub(cameraRight); // Ke Kiri
+            if (keys["KeyD"] || keys["ArrowRight"]) moveDirection.add(cameraRight); // Ke Kanan
 
-            // 2. Mobile Joystick Input
-            // -mobileMoveY = Maju/Mundur, mobileMoveX = Kanan/Kiri
+            // 4. Mobile Joystick Input
+            // -mobileMoveY = Maju (karena tarik analog ke atas deltaY-nya negatif)
+            // +mobileMoveX = Kanan (tarik analog ke kanan deltaX-nya positif)
             if (isTouchDevice && (Math.abs(mobileMoveX) > 0.05 || Math.abs(mobileMoveY) > 0.05)) {
                 moveDirection.addScaledVector(cameraForward, -mobileMoveY);
                 moveDirection.addScaledVector(cameraRight, mobileMoveX);
