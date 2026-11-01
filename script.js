@@ -1041,8 +1041,8 @@ if (typeof THREE === "undefined") {
                 about: "SmartVoc began with the idea of making English vocabulary learning more engaging through an interactive game experience. Instead of relying on conventional lessons and repetitive multiple-choice exercises, I designed a 3D open-world RPG where players can explore the environment, interact with characters, complete activities, and learn through gameplay. The project is specifically designed for university students, with learning materials covering basic, intermediate, and advanced English vocabulary. I developed a progression system in which players interact with teacher NPCs to access learning activities and exercises, complete assessments to unlock new vocabulary, and use an in-game dictionary to review words, meanings, parts of speech, synonyms, antonyms, collocations, and vocabulary categories. The learning content is organized into a structured progression of 100 levels, with 10 vocabulary entries per level and assessment checkpoints throughout the journey. My development process involved shaping the initial concept and learning flow, designing the gameplay loop and progression mechanics, building the 3D game environment, implementing player interactions and gameplay systems, organizing vocabulary content through JSON data, and integrating the learning interface with the game. I also worked on the visual presentation and user interface to make the learning features accessible within the game world. The result is SmartVoc, a playable educational RPG that combines exploration, game mechanics, and structured vocabulary learning in one experience.",
                 technologies: "Godot Engine • GDScript • Blender • JSON",
                 contribution: "Game design, gameplay programming, UI implementation.",
-                github: "https://github.com/SadamAlkayyis117",
-                demo: "#",
+                github: "https://github.com/SadamAlkayyis117/SMARTVOC-",
+                demo: "https://edutree.itch.io/smartvoc",
 
                 video: "https://www.youtube-nocookie.com/embed/vLz0PdW_uFM",
 
@@ -1526,8 +1526,16 @@ if (typeof THREE === "undefined") {
 
             const gh = document.getElementById("project-github");
             const dm = document.getElementById("project-demo");
-            if (gh) gh.href = data.github;
-            if (dm) dm.href = data.demo;
+            if (gh) {
+                gh.href = data.github || "#";
+                gh.textContent = "View GitHub →";
+            }
+            if (dm) {
+                dm.href = data.demo || "#";
+                dm.textContent = projectId === "smartvoc"
+                    ? "Go to Download →"
+                    : "View Demo →";
+            }
 
             if (projectPanel) {
                 projectPanel.classList.remove("hidden");
