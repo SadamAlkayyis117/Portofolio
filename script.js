@@ -1042,7 +1042,17 @@ if (typeof THREE === "undefined") {
                 technologies: "Godot Engine • GDScript • Blender • JSON",
                 contribution: "Game design, gameplay programming, UI implementation.",
                 github: "https://github.com/SadamAlkayyis117",
-                demo: "#"
+                demo: "#",
+
+                video: "https://www.youtube-nocookie.com/embed/vLz0PdW_uFM",
+
+                screenshots: [
+                    "assets/smartvoc/smartvoc-01.png",
+                    "assets/smartvoc/smartvoc-02.png",
+                    "assets/smartvoc/smartvoc-03.png",
+                    "assets/smartvoc/smartvoc-04.png",
+                    "assets/smartvoc/smartvoc-05.png"
+                ]
             },
             blockfight: {
                 title: "BlockFight",
@@ -1471,6 +1481,48 @@ if (typeof THREE === "undefined") {
             if (about) about.textContent = data.about;
             if (tech) tech.textContent = data.technologies;
             if (cont) cont.textContent = data.contribution;
+
+            const videoContainer = document.getElementById("project-video-placeholder");
+            if (videoContainer) {
+                videoContainer.innerHTML = "";
+
+                if (data.video) {
+                    const iframe = document.createElement("iframe");
+                    iframe.src = data.video;
+                    iframe.title = `${data.title} Gameplay Trailer`;
+                    iframe.allow =
+                        "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+                    iframe.allowFullscreen = true;
+                    iframe.loading = "lazy";
+                    videoContainer.appendChild(iframe);
+                } else {
+                    videoContainer.textContent = "VIDEO COMING SOON";
+                }
+            }
+
+            // SCREENSHOT GALLERY CONTAINER
+            const screenshotContainer = document.getElementById("project-screenshots");
+            if (screenshotContainer) {
+                screenshotContainer.innerHTML = "";
+
+                if (Array.isArray(data.screenshots)) {
+                    data.screenshots.forEach((imagePath, index) => {
+                        const link = document.createElement("a");
+                        const image = document.createElement("img");
+
+                        link.href = imagePath;
+                        link.target = "_blank";
+                        link.rel = "noopener noreferrer";
+
+                        image.src = imagePath;
+                        image.alt = `${data.title} Gameplay Screenshot ${index + 1}`;
+                        image.loading = "lazy";
+
+                        link.appendChild(image);
+                        screenshotContainer.appendChild(link);
+                    });
+                }
+            }
 
             const gh = document.getElementById("project-github");
             const dm = document.getElementById("project-demo");
