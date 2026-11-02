@@ -1088,47 +1088,47 @@ if (typeof THREE === "undefined") {
                     {
                         title: "Banner Diklatsar",
                         category: "poster",
-                        image: "images/banner-diklatsar.jpg"
+                        image: "images/banner-diklatsar.png"
                     },
                     {
                         title: "Penempuhan Brevet",
                         category: "poster",
-                        image: "images/penempuhan-brevet.jpg"
+                        image: "images/penempuhan-brevet.png"
                     },
                     {
                         title: "Countdown Diklatsar",
                         category: "promotion",
-                        image: "images/countdown-diklatsar.jpg"
+                        image: "images/countdown-diklatsar.png"
                     },
                     {
                         title: "Hari Jadi Garut",
                         category: "promotion",
-                        image: "images/hari-jadi-garut.jpg"
+                        image: "images/hari-jadi-garut.png"
                     },
                     {
                         title: "Certificate of Completion",
                         category: "document",
-                        image: "images/certificate.jpg"
+                        image: "images/certificate.png"
                     },
                     {
                         title: "Business Model Canvas SafeGas",
                         category: "infographic",
-                        image: "images/safegas-bmc.jpg"
+                        image: "images/safegas-bmc.png"
                     },
                     {
                         title: "Feed Instagram E Florist",
                         category: "social-media",
-                        image: "images/e-florist.jpg"
+                        image: "images/e-florist.png"
                     },
                     {
                         title: "Jersey Werewolf",
                         category: "mockup",
-                        image: "images/jersey-werewolf.jpg"
+                        image: "images/jersey-werewolf.png"
                     },
                     {
                         title: "Logo SAVIE.ID",
                         category: "branding",
-                        image: "images/savie-logo.jpg"
+                        image: "images/savie-logo.png"
                     }
                 ]
             }
