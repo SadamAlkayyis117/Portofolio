@@ -1437,124 +1437,137 @@ if (typeof THREE === "undefined") {
 
         let currentGraphicIndex = 0;
         let currentGraphicWorks = [];
-
         function renderGraphicDesignGallery(works) {
             const gallery = document.getElementById("graphic-design-gallery");
             if (!gallery) return;
-
             gallery.innerHTML = "";
-
             works.forEach((work, index) => {
-                const item = document.createElement("div");
+                // 1. Buat kontainer kartu dengan class .design-card yang sesuai dengan CSS
+                const card = document.createElement("div");
+                card.className = "design-card";
+                card.dataset.category = work.category;
+                card.dataset.title = work.title;
+                
+                // 2. Badge Kategori di pojok kartu
+                const badge = document.createElement("div");
+                badge.className = "design-card-badge";
+                badge.textContent = work.category;
+                
+                // 3. Kontainer Media Gambar (mengunci ukuran & aspect ratio)
+                const mediaContainer = document.createElement("div");
+                mediaContainer.className = "design-card-media";
+                
                 const image = document.createElement("img");
-                const overlay = document.createElement("div");
-                const title = document.createElement("h3");
-                const category = document.createElement("p");
-
-                item.className = "graphic-design-item";
-                item.dataset.category = work.category;
-                item.dataset.title = work.title;
-
                 image.src = work.image;
                 image.alt = work.title;
                 image.loading = "lazy";
-
-                overlay.className = "graphic-design-overlay";
-
-                title.textContent = work.title;
+                
+                mediaContainer.appendChild(image);
+                
+                // 4. Gradient Overlay
+                const overlay = document.createElement("div");
+                overlay.className = "design-card-overlay";
+                
+                // 5. Informasi Judul Desain
+                const info = document.createElement("div");
+                info.className = "design-card-info";
+                
+                const category = document.createElement("span");
+                category.className = "design-card-category";
                 category.textContent = work.category.toUpperCase();
-
-                overlay.appendChild(title);
-                overlay.appendChild(category);
-
-                item.appendChild(image);
-                item.appendChild(overlay);
-
-                item.addEventListener("click", () => {
+                
+                const title = document.createElement("h3");
+                title.className = "design-card-title";
+                title.textContent = work.title;
+                
+                info.appendChild(category);
+                info.appendChild(title);
+                
+                // Gabungkan elemen ke dalam kartu
+                card.appendChild(badge);
+                card.appendChild(mediaContainer);
+                card.appendChild(overlay);
+                card.appendChild(info);
+                
+                // Event klik untuk membuka lightbox gambar penuh
+                card.addEventListener("click", () => {
                     openGraphicDesignViewer(index, works);
                 });
-
-                gallery.appendChild(item);
+                gallery.appendChild(card);
             });
         }
-
         function initializeGraphicDesignFilters(works) {
             const filterButtons = document.querySelectorAll("#graphic-design-filters button");
             if (!filterButtons.length) return;
-
+            
             filterButtons.forEach((button) => {
                 button.onclick = () => {
-                    const selectedCategory = button.dataset.filter || "all";
-
+                    // Perbaikan: gunakan dataset.category yang sesuai dengan HTML
+                    const selectedCategory = button.dataset.category || button.dataset.filter || "all";
+                    
                     filterButtons.forEach((btn) => {
                         btn.classList.remove("active");
                     });
-
+                    
                     button.classList.add("active");
-
                     const filteredWorks =
                         selectedCategory === "all"
-                            ? works
-                            : works.filter((work) => work.category === selectedCategory);
-
+                        ? works
+                        : works.filter((work) => work.category === selectedCategory);
+                    
                     renderGraphicDesignGallery(filteredWorks);
                 };
             });
         }
-
+        
         function openGraphicDesignViewer(index, works) {
             currentGraphicIndex = index;
             currentGraphicWorks = works;
-
             const viewer = document.getElementById("graphic-design-viewer");
             if (!viewer) return;
-
+            
             updateGraphicDesignViewer();
             viewer.classList.remove("hidden");
             viewer.style.display = "flex";
         }
-
+        
         function updateGraphicDesignViewer() {
             const activeWork = currentGraphicWorks[currentGraphicIndex];
             if (!activeWork) return;
-
+            
             const viewerImage = document.getElementById("graphic-design-viewer-image");
             const viewerTitle = document.getElementById("graphic-design-viewer-title");
             const viewerCategory = document.getElementById("graphic-design-viewer-category");
-
+            
             if (viewerImage) {
                 viewerImage.src = activeWork.image;
                 viewerImage.alt = activeWork.title;
             }
-
             if (viewerTitle) {
                 viewerTitle.textContent = activeWork.title;
             }
-
             if (viewerCategory) {
                 viewerCategory.textContent = activeWork.category.toUpperCase();
             }
         }
-
+        
         function closeGraphicDesignViewer() {
             const viewer = document.getElementById("graphic-design-viewer");
             if (!viewer) return;
-
             viewer.classList.add("hidden");
             viewer.style.display = "none";
         }
-
+        
         function navigateGraphicDesignViewer(direction) {
             if (!currentGraphicWorks.length) return;
-
+            
             currentGraphicIndex += direction;
-
+            
             if (currentGraphicIndex < 0) {
                 currentGraphicIndex = currentGraphicWorks.length - 1;
             } else if (currentGraphicIndex >= currentGraphicWorks.length) {
                 currentGraphicIndex = 0;
             }
-
             updateGraphicDesignViewer();
         }
 
