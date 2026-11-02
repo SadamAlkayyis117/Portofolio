@@ -1,7 +1,7 @@
 // =====================================================
 // SADAM ALKAYYIS - INTERACTIVE 3D PORTFOLIO
 // CIRCULAR OPEN WORLD + LET'S CONNECT + MOBILE PORTRAIT
-// FULL FIXED & TESTED (MOVEMENT & ANALOG DIRECTION FIX)
+// FULL FIXED & TESTED (GRAPHIC DESIGN SHOWCASE & LIGHTBOX)
 // =====================================================
 
 console.log("=== PORTFOLIO SCRIPT START ===");
@@ -944,7 +944,7 @@ if (typeof THREE === "undefined") {
                 Math.cos(cameraYaw)
             ).normalize();
 
-            // 2. Arah Kanan Kamera yang BENAR: (+cos(yaw), 0, -sin(yaw))
+            // 2. Arah Kanan Kamera yang BENAR: (-cos(yaw), 0, sin(yaw))
             cameraRight.set(
                 -Math.cos(cameraYaw), 
                 0, 
@@ -1078,11 +1078,59 @@ if (typeof THREE === "undefined") {
                 title: "GRAPHIC DESIGN",
                 category: "GRAPHIC DESIGN",
                 description: "Visual design projects covering illustration, branding and digital artwork.",
-                about: "A selection of graphic design work created across various projects.",
+                about: "A selection of graphic design work created across various projects, featuring posters, promotional materials, certificates, infographics, social media content, and branding.",
                 technologies: "CorelDRAW • Adobe Photoshop • Digital Illustration",
                 contribution: "Graphic design, illustration, composition, layout.",
                 github: "#",
-                demo: "#"
+                demo: "#",
+
+                graphicWorks: [
+                    {
+                        title: "Banner Diklatsar",
+                        category: "poster",
+                        image: "images/banner-diklatsar.jpg"
+                    },
+                    {
+                        title: "Penempuhan Brevet",
+                        category: "poster",
+                        image: "images/penempuhan-brevet.jpg"
+                    },
+                    {
+                        title: "Countdown Diklatsar",
+                        category: "promotion",
+                        image: "images/countdown-diklatsar.jpg"
+                    },
+                    {
+                        title: "Hari Jadi Garut",
+                        category: "promotion",
+                        image: "images/hari-jadi-garut.jpg"
+                    },
+                    {
+                        title: "Certificate of Completion",
+                        category: "document",
+                        image: "images/certificate.jpg"
+                    },
+                    {
+                        title: "Business Model Canvas SafeGas",
+                        category: "infographic",
+                        image: "images/safegas-bmc.jpg"
+                    },
+                    {
+                        title: "Feed Instagram E Florist",
+                        category: "social-media",
+                        image: "images/e-florist.jpg"
+                    },
+                    {
+                        title: "Jersey Werewolf",
+                        category: "mockup",
+                        image: "images/jersey-werewolf.jpg"
+                    },
+                    {
+                        title: "Logo SAVIE.ID",
+                        category: "branding",
+                        image: "images/savie-logo.jpg"
+                    }
+                ]
             }
         };
 
@@ -1364,7 +1412,134 @@ if (typeof THREE === "undefined") {
         createFinishArea();
 
         // =============================================
-        // 16. MODAL & INTERACTION SYSTEM
+        // 16. GRAPHIC DESIGN GALLERY & LIGHTBOX SYSTEM
+        // =============================================
+
+        let currentGraphicIndex = 0;
+        let currentGraphicWorks = [];
+
+        function renderGraphicDesignGallery(works) {
+            const gallery = document.getElementById("graphic-design-gallery");
+            if (!gallery) return;
+
+            gallery.innerHTML = "";
+
+            works.forEach((work, index) => {
+                const item = document.createElement("div");
+                const image = document.createElement("img");
+                const overlay = document.createElement("div");
+                const title = document.createElement("h3");
+                const category = document.createElement("p");
+
+                item.className = "graphic-design-item";
+                item.dataset.category = work.category;
+                item.dataset.title = work.title;
+
+                image.src = work.image;
+                image.alt = work.title;
+                image.loading = "lazy";
+
+                overlay.className = "graphic-design-overlay";
+
+                title.textContent = work.title;
+                category.textContent = work.category.toUpperCase();
+
+                overlay.appendChild(title);
+                overlay.appendChild(category);
+
+                item.appendChild(image);
+                item.appendChild(overlay);
+
+                item.addEventListener("click", () => {
+                    openGraphicDesignViewer(index, works);
+                });
+
+                gallery.appendChild(item);
+            });
+        }
+
+        function initializeGraphicDesignFilters(works) {
+            const filterButtons = document.querySelectorAll("#graphic-design-filters button");
+            if (!filterButtons.length) return;
+
+            filterButtons.forEach((button) => {
+                button.onclick = () => {
+                    const selectedCategory = button.dataset.filter || "all";
+
+                    filterButtons.forEach((btn) => {
+                        btn.classList.remove("active");
+                    });
+
+                    button.classList.add("active");
+
+                    const filteredWorks =
+                        selectedCategory === "all"
+                            ? works
+                            : works.filter((work) => work.category === selectedCategory);
+
+                    renderGraphicDesignGallery(filteredWorks);
+                };
+            });
+        }
+
+        function openGraphicDesignViewer(index, works) {
+            currentGraphicIndex = index;
+            currentGraphicWorks = works;
+
+            const viewer = document.getElementById("graphic-design-viewer");
+            if (!viewer) return;
+
+            updateGraphicDesignViewer();
+            viewer.classList.remove("hidden");
+            viewer.style.display = "flex";
+        }
+
+        function updateGraphicDesignViewer() {
+            const activeWork = currentGraphicWorks[currentGraphicIndex];
+            if (!activeWork) return;
+
+            const viewerImage = document.getElementById("graphic-design-viewer-image");
+            const viewerTitle = document.getElementById("graphic-design-viewer-title");
+            const viewerCategory = document.getElementById("graphic-design-viewer-category");
+
+            if (viewerImage) {
+                viewerImage.src = activeWork.image;
+                viewerImage.alt = activeWork.title;
+            }
+
+            if (viewerTitle) {
+                viewerTitle.textContent = activeWork.title;
+            }
+
+            if (viewerCategory) {
+                viewerCategory.textContent = activeWork.category.toUpperCase();
+            }
+        }
+
+        function closeGraphicDesignViewer() {
+            const viewer = document.getElementById("graphic-design-viewer");
+            if (!viewer) return;
+
+            viewer.classList.add("hidden");
+            viewer.style.display = "none";
+        }
+
+        function navigateGraphicDesignViewer(direction) {
+            if (!currentGraphicWorks.length) return;
+
+            currentGraphicIndex += direction;
+
+            if (currentGraphicIndex < 0) {
+                currentGraphicIndex = currentGraphicWorks.length - 1;
+            } else if (currentGraphicIndex >= currentGraphicWorks.length) {
+                currentGraphicIndex = 0;
+            }
+
+            updateGraphicDesignViewer();
+        }
+
+        // =============================================
+        // 17. MODAL & INTERACTION SYSTEM
         // =============================================
 
         const interactionPrompt = document.getElementById("interaction-prompt");
@@ -1462,10 +1637,37 @@ if (typeof THREE === "undefined") {
             projectOpen = true;
             const projectPanel = document.getElementById("project-panel");
             const aboutPanel = document.getElementById("about-panel");
+            const graphicPanel = document.getElementById("graphic-design-panel");
 
             if (aboutPanel) {
                 aboutPanel.classList.add("hidden");
                 aboutPanel.style.display = "none";
+            }
+
+            // CEK KHUSUS GRAPHIC DESIGN GALLERY
+            if (projectId === "graphic") {
+                const works = data.graphicWorks || [];
+                renderGraphicDesignGallery(works);
+                initializeGraphicDesignFilters(works);
+
+                if (graphicPanel) {
+                    if (projectPanel) {
+                        projectPanel.classList.add("hidden");
+                        projectPanel.style.display = "none";
+                    }
+                    graphicPanel.classList.remove("hidden");
+                    graphicPanel.style.display = "block";
+
+                    canvas.style.cursor = "default";
+                    if (interactionPrompt) interactionPrompt.classList.add("hidden");
+                    if (document.exitPointerLock) document.exitPointerLock();
+                    return;
+                }
+            } else {
+                if (graphicPanel) {
+                    graphicPanel.classList.add("hidden");
+                    graphicPanel.style.display = "none";
+                }
             }
 
             canvas.style.cursor = "default";
@@ -1550,6 +1752,7 @@ if (typeof THREE === "undefined") {
         function openAbout() {
             const projectPanel = document.getElementById("project-panel");
             const aboutPanel = document.getElementById("about-panel");
+            const graphicPanel = document.getElementById("graphic-design-panel");
             if (!aboutPanel) return;
 
             projectOpen = true;
@@ -1558,6 +1761,13 @@ if (typeof THREE === "undefined") {
                 projectPanel.classList.add("hidden");
                 projectPanel.style.display = "none";
             }
+
+            if (graphicPanel) {
+                graphicPanel.classList.add("hidden");
+                graphicPanel.style.display = "none";
+            }
+
+            closeGraphicDesignViewer();
 
             canvas.style.cursor = "default";
             aboutPanel.classList.remove("hidden");
@@ -1579,6 +1789,8 @@ if (typeof THREE === "undefined") {
 
             const projectPanel = document.getElementById("project-panel");
             const aboutPanel = document.getElementById("about-panel");
+            const graphicPanel = document.getElementById("graphic-design-panel");
+
             if (projectPanel) {
                 projectPanel.classList.add("hidden");
                 projectPanel.style.display = "none";
@@ -1587,6 +1799,12 @@ if (typeof THREE === "undefined") {
                 aboutPanel.classList.add("hidden");
                 aboutPanel.style.display = "none";
             }
+            if (graphicPanel) {
+                graphicPanel.classList.add("hidden");
+                graphicPanel.style.display = "none";
+            }
+
+            closeGraphicDesignViewer();
 
             const finishScreen = document.getElementById("finish-screen");
             const githubLink = document.getElementById("github-link");
@@ -1633,6 +1851,7 @@ if (typeof THREE === "undefined") {
 
             const projectPanel = document.getElementById("project-panel");
             const aboutPanel = document.getElementById("about-panel");
+            const graphicPanel = document.getElementById("graphic-design-panel");
 
             if (projectPanel) {
                 projectPanel.classList.add("hidden");
@@ -1643,6 +1862,13 @@ if (typeof THREE === "undefined") {
                 aboutPanel.classList.add("hidden");
                 aboutPanel.style.display = "none";
             }
+
+            if (graphicPanel) {
+                graphicPanel.classList.add("hidden");
+                graphicPanel.style.display = "none";
+            }
+
+            closeGraphicDesignViewer();
 
             canvas.style.cursor = "crosshair";
             nearestProject = null;
@@ -1664,6 +1890,14 @@ if (typeof THREE === "undefined") {
                 finishScreen.style.display = "none";
             }
 
+            const graphicPanel = document.getElementById("graphic-design-panel");
+            if (graphicPanel) {
+                graphicPanel.classList.add("hidden");
+                graphicPanel.style.display = "none";
+            }
+
+            closeGraphicDesignViewer();
+
             projectOpen = false;
             player.position.set(0, 0, 6);
             player.rotation.y = 0;
@@ -1684,13 +1918,52 @@ if (typeof THREE === "undefined") {
             }
         }
 
-        document.querySelectorAll(".back-button, #about-back-button, #project-back-button").forEach((btn) => {
+        // Back button listeners
+        document.querySelectorAll(".back-button, #about-back-button, #project-back-button, #graphic-design-back-button").forEach((btn) => {
             btn.addEventListener("click", (e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 closeAllPanels();
             });
         });
+
+        // Event listener Lightbox Viewer Graphic Design
+        const viewerCloseBtn = document.getElementById("graphic-design-viewer-close");
+        const viewerPrevBtn = document.getElementById("graphic-design-viewer-prev");
+        const viewerNextBtn = document.getElementById("graphic-design-viewer-next");
+        const graphicViewerModal = document.getElementById("graphic-design-viewer");
+
+        if (viewerCloseBtn) {
+            viewerCloseBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                closeGraphicDesignViewer();
+            });
+        }
+
+        if (viewerPrevBtn) {
+            viewerPrevBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                navigateGraphicDesignViewer(-1);
+            });
+        }
+
+        if (viewerNextBtn) {
+            viewerNextBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                navigateGraphicDesignViewer(1);
+            });
+        }
+
+        if (graphicViewerModal) {
+            graphicViewerModal.addEventListener("click", (e) => {
+                if (e.target === graphicViewerModal) {
+                    closeGraphicDesignViewer();
+                }
+            });
+        }
 
         const restartButton = document.getElementById("restart-button");
         if (restartButton) {
@@ -1702,6 +1975,24 @@ if (typeof THREE === "undefined") {
         }
 
         document.addEventListener("keydown", (e) => {
+            const viewer = document.getElementById("graphic-design-viewer");
+            const isViewerActive = viewer && !viewer.classList.contains("hidden") && viewer.style.display !== "none";
+
+            if (isViewerActive) {
+                if (e.code === "Escape") {
+                    closeGraphicDesignViewer();
+                    return;
+                }
+                if (e.code === "ArrowLeft") {
+                    navigateGraphicDesignViewer(-1);
+                    return;
+                }
+                if (e.code === "ArrowRight") {
+                    navigateGraphicDesignViewer(1);
+                    return;
+                }
+            }
+
             if (e.code === "Escape") {
                 if (finishOpen) {
                     restartPortfolio();
@@ -1712,7 +2003,7 @@ if (typeof THREE === "undefined") {
         });
 
         // =============================================
-        // 17. NPC SYSTEM
+        // 18. NPC SYSTEM
         // =============================================
 
         function createNPC(x, z, color, pathLength, activity) {
@@ -1893,7 +2184,7 @@ if (typeof THREE === "undefined") {
         }
 
         // =============================================
-        // 18. LOADING & RESIZE
+        // 19. LOADING & RESIZE
         // =============================================
 
         const loadingScreen = document.getElementById("loading-screen");
@@ -1911,7 +2202,7 @@ if (typeof THREE === "undefined") {
         });
 
         // =============================================
-        // 19. ANIMATION LOOP
+        // 20. ANIMATION LOOP
         // =============================================
 
         const clock = new THREE.Clock();
