@@ -618,7 +618,92 @@
             </div>
 
         </section>
-
+        <!-- =================================================
+        GRAPHIC DESIGN GALLERY
+        ================================================== -->
+        <section
+            id="graphic-design-panel"
+            class="project-panel hidden">
+            <div class="project-window">
+                <button
+                    id="graphic-design-back-button"
+                    class="back-button"
+                    type="button">
+                    ← Back to World
+                </button>
+                <div class="project-header">
+                    <p class="eyebrow">
+                        VISUAL DESIGN PORTFOLIO
+                    </p>
+                    <h2>
+                        Graphic Design
+                    </h2>
+                    <p>
+                        A collection of visual works, branding,
+                        promotional designs, mockups, and more.
+                    </p>
+                </div>
+                <!-- CATEGORY FILTER -->
+                <div
+                    id="graphic-design-filters"
+                    class="graphic-design-filters">
+                    <button class="active" data-category="all">
+                        All Works
+                    </button>
+                    <button data-category="poster">
+                        Poster & Banner
+                    </button>
+                    <button data-category="branding">
+                        Branding
+                    </button>
+                    <button data-category="document">
+                        Document
+                    </button>
+                    <button data-category="mockup">
+                        Mockup
+                    </button>
+                    <button data-category="social-media">
+                        Social Media
+                    </button>
+                </div>
+                <!-- IMAGE GALLERY -->
+                <div
+                    id="graphic-design-gallery"
+                    class="graphic-design-gallery">
+                    <!-- Images will be added through JavaScript -->
+                </div>
+            </div>
+        </section>
+        
+        <div
+            id="graphic-design-viewer"
+            class="graphic-design-viewer hidden">
+            <button
+                id="graphic-design-viewer-close"
+                type="button"
+                aria-label="Close image">
+                
+                </button>
+            <button
+                id="graphic-design-viewer-prev"
+                type="button"
+                aria-label="Previous image">
+                ‹
+            </button>
+            <div class="graphic-design-viewer-content">
+                <img
+                    id="graphic-design-viewer-image"
+                    src=""
+                    alt="Graphic design preview">
+                <p id="graphic-design-viewer-caption"></p>
+            </div>
+            <button
+                id="graphic-design-viewer-next"
+                type="button"
+                aria-label="Next image">
+                ›
+            </button>
+        </div>
 
         <!-- =================================================
              FINISH SCREEN
