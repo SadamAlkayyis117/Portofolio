@@ -711,36 +711,42 @@
         <div
             id="graphic-design-viewer"
             class="graphic-design-viewer hidden">
-
+            
             <button
                 id="graphic-design-viewer-close"
+                class="viewer-close"
                 type="button"
                 aria-label="Close image">
                 ✕
+            
             </button>
-
             <button
                 id="graphic-design-viewer-prev"
+                class="viewer-nav viewer-prev"
                 type="button"
                 aria-label="Previous image">
                 ‹
             </button>
-
-            <div class="graphic-design-viewer-content">
-                <img
-                    id="graphic-design-viewer-image"
-                    src=""
-                    alt="Graphic design preview">
-                <p id="graphic-design-viewer-caption"></p>
+            <div class="viewer-dialog">
+                <div class="viewer-image-container">
+                    <img
+                        id="graphic-design-viewer-image"
+                        src=""
+                        alt="Graphic design preview">
+                </div>
+                <div class="viewer-caption">
+                    <span id="graphic-design-viewer-category" class="viewer-category"></span>
+                    <h3 id="graphic-design-viewer-title"></h3>
+                    <p id="graphic-design-viewer-caption">Klik luar atau tombol ✕ untuk menutup.</p>
+                </div>
             </div>
-
             <button
                 id="graphic-design-viewer-next"
+                class="viewer-nav viewer-next"
                 type="button"
                 aria-label="Next image">
                 ›
             </button>
-
         </div>
 
         <!-- =================================================
