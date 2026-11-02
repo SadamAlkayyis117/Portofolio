@@ -1698,33 +1698,6 @@ body {
     }
 }
 
-
-/* =====================================================
-   MOBILE LANDSCAPE
-===================================================== */
-
-@media (pointer: coarse) {
-    .mobile-controls {
-        display: block;
-    }
-
-    .pc-controls-preview {
-        display: none;
-    }
-
-    .mobile-controls-preview {
-        display: flex;
-    }
-
-    .pc-controls-hint {
-        display: none;
-    }
-
-    #game-canvas {
-        cursor: default;
-    }
-}
-
 /* =====================================================
    MOBILE PORTRAIT (HP TEGAK - UTAMA)
    Semua kontrol aktif dan proporsional untuk 1/2 jempol!
