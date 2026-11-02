@@ -1154,6 +1154,39 @@ if (typeof THREE === "undefined") {
             }
         };
 
+        const uiuxWorks = [
+            {
+                id: "road-monitoring",
+                title: "Road Monitoring",
+                category: "Monitoring System",
+                description:
+                    "Road monitoring interface design focused on presenting road conditions and monitoring information.",
+                cover: "images/uiux/road-monitoring.png",
+                figmaUrl:
+                    "https://www.figma.com/proto/0zbnbupHJdKBAltZJQAJyA/Road-Monitoring?node-id=107-2&viewport=462%2C34%2C0.05&t=BMZyPnOIoZdcqDFh-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=107%3A2&page-id=0%3A1"
+            },
+            {
+                id: "pasar-ikan",
+                title: "Website Pasar Ikan",
+                category: "Website Design",
+                description:
+                    "Website interface concept for an online fish market platform.",
+                cover: "images/uiux/pasar-ikan.png",
+                figmaUrl:
+                    "https://www.figma.com/proto/2efuijKTRiOixMWDKMpmPV/Prototype-Website-Pasar-Ikan?node-id=8-41&p=f&viewport=2274%2C1007%2C0.06&t=t8qAa0iUpmAmyNrr-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=8%3A41&page-id=0%3A1"
+            },
+            {
+                id: "valentine-moto",
+                title: "Valentine Moto",
+                category: "Website Design",
+                description:
+                    "Creative website interface with a Valentine-themed visual concept.",
+                cover: "images/uiux/valentine-moto.png",
+                figmaUrl:
+                    "https://www.figma.com/proto/fGetYqjtp6Kf3OnEkslBVf/Prototype-valentine-moto?node-id=1-2&viewport=797%2C766%2C0.09&t=w6IBqRYzOJDJIJXD-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=1%3A2&page-id=0%3A1"
+            }
+        ];
+
         // =============================================
         // 13. ABOUT BOARD & PROJECT SIGNS
         // =============================================
@@ -1570,6 +1603,169 @@ if (typeof THREE === "undefined") {
             }
             updateGraphicDesignViewer();
         }
+        function renderUIUXProjects() {
+            const container = document.getElementById("uiux-project-grid");
+
+            if (!container) return;
+
+            container.innerHTML = "";
+
+            uiuxWorks.forEach((project) => {
+                const card = document.createElement("article");
+                card.className = "uiux-project-card";
+
+                const cover = document.createElement("div");
+                cover.className = "uiux-card-cover";
+
+                const image = document.createElement("img");
+                image.src = project.cover;
+                image.alt = project.title;
+                image.loading = "lazy";
+
+                image.onerror = () => {
+                    console.warn("Cover UI/UX tidak ditemukan:", project.cover);
+                };
+
+                const content = document.createElement("div");
+                content.className = "uiux-card-content";
+
+                const category = document.createElement("div");
+                category.className = "uiux-card-category";
+                category.textContent = project.category;
+
+                const title = document.createElement("h3");
+                title.textContent = project.title;
+
+                const description = document.createElement("p");
+                description.textContent = project.description;
+
+                const button = document.createElement("button");
+                button.className = "uiux-explore-button";
+                button.type = "button";
+                button.textContent = "Explore Prototype ↗";
+
+                button.addEventListener("click", () => {
+                    openUIUXViewer(project);
+                });
+
+                cover.appendChild(image);
+
+                content.append(
+                    category,
+                    title,
+                    description,
+                    button
+                );
+
+                card.append(cover, content);
+                container.appendChild(card);
+            });
+        }
+
+        function getFigmaEmbedUrl(figmaUrl) {
+            const url = new URL(figmaUrl);
+
+            if (
+                url.hostname !== "figma.com" &&
+                !url.hostname.endsWith(".figma.com")
+            ) {
+                throw new Error("Invalid Figma URL");
+            }
+
+            if (!url.pathname.startsWith("/proto/")) {
+                throw new Error("Figma URL must be a prototype link");
+            }
+
+            url.hostname = "embed.figma.com";
+
+            url.searchParams.set("embed-host", "sadam-portfolio");
+            url.searchParams.set("footer", "false");
+            url.searchParams.set("viewport-controls", "true");
+
+            return url.toString();
+        }
+
+        function openUIUXViewer(project) {
+            const viewer = document.getElementById("uiux-viewer");
+            const iframe = document.getElementById("uiux-figma-frame");
+            const title = document.getElementById("uiux-viewer-title");
+            const externalLink = document.getElementById("uiux-open-figma");
+
+            if (!viewer || !iframe || !title || !externalLink) {
+                console.error("UI/UX viewer HTML tidak ditemukan.");
+                return;
+            }
+
+            title.textContent = project.title;
+            externalLink.href = project.figmaUrl;
+
+            try {
+                iframe.src = getFigmaEmbedUrl(project.figmaUrl);
+            } catch (error) {
+                console.error("Figma embed error:", error);
+                return;
+            }
+
+            viewer.classList.remove("hidden");
+        }
+
+        function closeUIUXViewer() {
+            const viewer = document.getElementById("uiux-viewer");
+            const iframe = document.getElementById("uiux-figma-frame");
+
+            if (!viewer || !iframe) return;
+
+            viewer.classList.add("hidden");
+            iframe.src = "";
+        }
+
+        function openUIUXShowcase() {
+            const panel = document.getElementById("uiux-showcase-panel");
+
+            if (!panel) {
+                console.error("UI/UX showcase panel tidak ditemukan.");
+                return;
+            }
+
+            renderUIUXProjects();
+
+            panel.classList.remove("hidden");
+            panel.style.display = "block";
+
+            canvas.style.cursor = "default";
+
+            if (interactionPrompt) {
+                interactionPrompt.classList.add("hidden");
+            }
+
+            if (document.exitPointerLock) {
+                document.exitPointerLock();
+            }
+        }
+
+        // UI/UX VIEWER EVENT LISTENERS
+
+        const uiuxViewerClose = document.getElementById("uiux-viewer-close");
+
+        if (uiuxViewerClose) {
+            uiuxViewerClose.addEventListener("click", (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                closeUIUXViewer();
+            });
+        }
+
+        document.addEventListener("keydown", (event) => {
+            const viewer = document.getElementById("uiux-viewer");
+
+            if (
+                event.key === "Escape" &&
+                viewer &&
+                !viewer.classList.contains("hidden")
+            ) {
+                closeUIUXViewer();
+            }
+        });
 
         // =============================================
         // 17. MODAL & INTERACTION SYSTEM
@@ -1675,6 +1871,22 @@ if (typeof THREE === "undefined") {
             if (aboutPanel) {
                 aboutPanel.classList.add("hidden");
                 aboutPanel.style.display = "none";
+            }
+            if (projectId === "uiux") {
+                const uiuxPanel = document.getElementById("uiux-showcase-panel");
+
+                if (projectPanel) {
+                    projectPanel.classList.add("hidden");
+                    projectPanel.style.display = "none";
+                }
+
+                if (graphicPanel) {
+                    graphicPanel.classList.add("hidden");
+                    graphicPanel.style.display = "none";
+                }
+
+                openUIUXShowcase();
+                return;
             }
 
             // CEK KHUSUS GRAPHIC DESIGN GALLERY
@@ -1885,6 +2097,7 @@ if (typeof THREE === "undefined") {
             const projectPanel = document.getElementById("project-panel");
             const aboutPanel = document.getElementById("about-panel");
             const graphicPanel = document.getElementById("graphic-design-panel");
+            const uiuxPanel = document.getElementById("uiux-showcase-panel");
 
             if (projectPanel) {
                 projectPanel.classList.add("hidden");
@@ -1900,6 +2113,13 @@ if (typeof THREE === "undefined") {
                 graphicPanel.classList.add("hidden");
                 graphicPanel.style.display = "none";
             }
+
+            if (uiuxPanel) {
+                uiuxPanel.classList.add("hidden");
+                uiuxPanel.style.display = "none";
+            }
+
+            closeUIUXViewer();
 
             closeGraphicDesignViewer();
 
