@@ -1,4 +1,11 @@
 /* =====================================================
+   SADAM ALKAYYIS - 3D INTERACTIVE PORTFOLIO STYLESHEET
+   Includes: 3D World, Start Overlay, Virtual Joystick,
+   Touch Look Controls, Mobile Portrait / Landscape Modes,
+   Project Modal, Creative Design Showcase Masonry & Lightbox
+===================================================== */
+
+/* =====================================================
    GLOBAL
 ===================================================== */
 
@@ -1075,15 +1082,18 @@ body {
 }
 
 .project-media iframe {
-    position: absolute;
-    inset: 0;
+    position: relative;
     z-index: 1;
+
+    display: block;
 
     width: 100%;
     height: 100%;
 
     border: none;
     border-radius: inherit;
+
+    background: #000;
 }
 
 .media-placeholder {
@@ -1102,29 +1112,6 @@ body {
     letter-spacing: 3px;
 
     font-weight: 700;
-}
-.project-media iframe {
-    position: relative;
-    z-index: 1;
-
-    display: block;
-
-    width: 100%;
-    height: 100%;
-
-    border: none;
-    border-radius: inherit;
-
-    background: #000;
-}
-
-/* =====================================================
-   PROJECT SCREENSHOT GALLERY
-===================================================== */
-
-.screenshot-grid img {
-    cursor: pointer;
-    object-fit: cover;
 }
 
 
@@ -1161,6 +1148,8 @@ body {
     aspect-ratio: 16 / 10;
 
     object-fit: cover;
+
+    cursor: pointer;
 
     border:
         1px solid
@@ -1320,6 +1309,378 @@ body {
 
     border-color:
         rgba(79, 209, 197, 0.7);
+}
+
+
+/* =====================================================
+   CREATIVE DESIGN SHOWCASE
+   Dedicated Graphic Design Gallery
+===================================================== */
+
+#graphic-design-panel {
+    background:
+        radial-gradient(
+            ellipse at 50% -15%,
+            rgba(79, 209, 197, 0.09),
+            transparent 45%
+        ),
+        #080b0d;
+}
+
+/* =====================================================
+   GRAPHIC DESIGN WINDOW
+===================================================== */
+
+#graphic-design-panel .project-window {
+    width: min(1440px, 92%);
+    padding: 32px 0 100px;
+}
+
+/* =====================================================
+   GRAPHIC DESIGN HEADER
+===================================================== */
+
+#graphic-design-panel .project-header {
+    max-width: 900px;
+    margin: 45px 0 48px;
+}
+
+#graphic-design-panel .project-header .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: #4fd1c5;
+    font-size: 10px;
+    letter-spacing: 3.5px;
+}
+
+#graphic-design-panel .project-header .eyebrow::before {
+    content: "";
+    width: 28px;
+    height: 1px;
+    background: #4fd1c5;
+}
+
+#graphic-design-panel .project-header h2 {
+    font-size: clamp(48px, 7vw, 88px);
+    line-height: 0.95;
+    letter-spacing: -5px;
+    font-weight: 800;
+    margin-bottom: 22px;
+}
+
+#graphic-design-panel .project-header > p:last-child {
+    max-width: 620px;
+    color: #929b9e;
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+/* =====================================================
+   CATEGORY FILTER
+===================================================== */
+
+#graphic-design-filters {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 9px;
+
+    margin: 0 0 35px;
+    padding: 0 0 20px;
+
+    border-bottom: 1px solid
+        rgba(255, 255, 255, 0.09);
+}
+
+#graphic-design-filters button {
+    position: relative;
+
+    padding: 10px 16px;
+
+    border: 1px solid
+        rgba(255, 255, 255, 0.10);
+
+    border-radius: 5px;
+
+    background:
+        rgba(255, 255, 255, 0.025);
+
+    color: #929b9e;
+
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+
+    cursor: pointer;
+
+    transition:
+        color 0.25s ease,
+        background 0.25s ease,
+        border-color 0.25s ease,
+        transform 0.25s ease;
+}
+
+#graphic-design-filters button:hover {
+    color: #fff;
+
+    border-color:
+        rgba(79, 209, 197, 0.4);
+
+    background:
+        rgba(79, 209, 197, 0.06);
+
+    transform: translateY(-2px);
+}
+
+#graphic-design-filters button.active {
+    color: #071414;
+
+    background: #4fd1c5;
+
+    border-color: #4fd1c5;
+
+    box-shadow:
+        0 5px 20px
+        rgba(79, 209, 197, 0.12);
+}
+
+/* =====================================================
+   MASONRY GALLERY
+===================================================== */
+
+#graphic-design-gallery {
+    columns: 3 280px;
+    column-gap: 22px;
+}
+
+.design-card {
+    break-inside: avoid;
+    margin-bottom: 22px;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 12px;
+    background: #0f1418;
+    overflow: hidden;
+    cursor: pointer;
+    transition:
+        transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.design-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(79, 209, 197, 0.45);
+    box-shadow:
+        0 16px 36px rgba(0, 0, 0, 0.45),
+        0 0 20px rgba(79, 209, 197, 0.12);
+}
+
+.design-card-media {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: #090d10;
+}
+
+.design-card-media img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    transition: transform 0.45s ease;
+}
+
+.design-card:hover .design-card-media img {
+    transform: scale(1.03);
+}
+
+.design-card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0) 30%,
+        rgba(5, 10, 14, 0.85) 100%
+    );
+    opacity: 0.8;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.design-card:hover .design-card-overlay {
+    opacity: 0.95;
+}
+
+.design-card-info {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 18px 20px;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.design-card-category {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #4fd1c5;
+}
+
+.design-card-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.3px;
+    line-height: 1.3;
+}
+
+.design-card-meta {
+    font-size: 12px;
+    color: #9da5a8;
+    margin-top: 2px;
+}
+
+
+/* =====================================================
+   FULLSCREEN LIGHTBOX VIEWER
+===================================================== */
+
+#graphic-design-viewer {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    background: rgba(4, 7, 10, 0.94);
+    backdrop-filter: blur(20px);
+    pointer-events: auto;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+#graphic-design-viewer.hidden {
+    display: none !important;
+}
+
+.viewer-dialog {
+    position: relative;
+    max-width: min(1200px, 94vw);
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.viewer-image-container {
+    position: relative;
+    max-width: 100%;
+    max-height: 76vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: #0a0e11;
+}
+
+.viewer-image-container img {
+    display: block;
+    max-width: 100%;
+    max-height: 76vh;
+    object-fit: contain;
+}
+
+.viewer-caption {
+    margin-top: 18px;
+    text-align: center;
+    max-width: 700px;
+}
+
+.viewer-caption h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 4px;
+}
+
+.viewer-caption p {
+    font-size: 13px;
+    color: #9da5a8;
+}
+
+.viewer-close {
+    position: absolute;
+    top: 24px;
+    right: 28px;
+    z-index: 1001;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.06);
+    color: #ffffff;
+    font-size: 22px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(8px);
+}
+
+.viewer-close:hover {
+    background: rgba(79, 209, 197, 0.2);
+    border-color: #4fd1c5;
+    color: #4fd1c5;
+    transform: scale(1.06);
+}
+
+.viewer-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1001;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(5, 10, 15, 0.65);
+    color: #ffffff;
+    font-size: 24px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(8px);
+}
+
+.viewer-nav:hover {
+    background: rgba(79, 209, 197, 0.25);
+    border-color: #4fd1c5;
+    color: #4fd1c5;
+    transform: translateY(-50%) scale(1.08);
+}
+
+.viewer-prev {
+    left: 24px;
+}
+
+.viewer-next {
+    right: 24px;
 }
 
 
@@ -1571,6 +1932,20 @@ body {
     .project-media {
         border-radius: 10px;
     }
+
+    #graphic-design-panel .project-window {
+        padding: 24px 0 80px;
+    }
+
+    #graphic-design-panel .project-header h2 {
+        font-size: 46px;
+        letter-spacing: -2px;
+    }
+
+    #graphic-design-gallery {
+        columns: 2 240px;
+        column-gap: 16px;
+    }
 }
 
 
@@ -1662,6 +2037,37 @@ body {
     .project-links a {
         width: 100%;
     }
+
+    #graphic-design-panel .project-header h2 {
+        font-size: 36px;
+    }
+
+    #graphic-design-gallery {
+        columns: 1 100%;
+        column-gap: 0;
+    }
+
+    .viewer-nav {
+        width: 38px;
+        height: 38px;
+        font-size: 18px;
+    }
+
+    .viewer-prev {
+        left: 10px;
+    }
+
+    .viewer-next {
+        right: 10px;
+    }
+
+    .viewer-close {
+        top: 15px;
+        right: 15px;
+        width: 38px;
+        height: 38px;
+        font-size: 18px;
+    }
 }
 
 
@@ -1698,10 +2104,12 @@ body {
     }
 }
 
+
 /* =====================================================
    MOBILE PORTRAIT (HP TEGAK - UTAMA)
    Semua kontrol aktif dan proporsional untuk 1/2 jempol!
 ===================================================== */
+
 @media (pointer: coarse) and (orientation: portrait) {
     .mobile-controls {
         display: block !important;
@@ -1740,10 +2148,12 @@ body {
     }
 }
 
+
 /* =====================================================
    MOBILE LANDSCAPE (HP MIRING)
    Jika dipegang miring, ingatkan untuk tegak (portrait)
 ===================================================== */
+
 @media (pointer: coarse) and (orientation: landscape) {
     .mobile-controls {
         display: none !important;
@@ -1755,5 +2165,22 @@ body {
 
     #game-hud {
         visibility: hidden;
+    }
+}
+
+
+/* =====================================================
+   ACCESSIBILITY: REDUCED MOTION
+===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .design-card,
+    .design-card:hover,
+    .design-card-media img,
+    .design-card:hover .design-card-media img,
+    .rotate-icon {
+        transition: none !important;
+        animation: none !important;
+        transform: none !important;
     }
 }
