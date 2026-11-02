@@ -1093,7 +1093,7 @@ if (typeof THREE === "undefined") {
                     {
                         title: "Penempuhan Brevet",
                         category: "poster",
-                        image: "images/penempuhan-brevet.png"
+                        image: "images/banner-penempuhan.png"
                     },
                     {
                         title: "Countdown Diklatsar",
@@ -1108,22 +1108,42 @@ if (typeof THREE === "undefined") {
                     {
                         title: "Certificate of Completion",
                         category: "document",
-                        image: "images/certificate.png"
+                        image: "images/certificate-design.png"
                     },
                     {
                         title: "Business Model Canvas SafeGas",
                         category: "infographic",
-                        image: "images/safegas-bmc.png"
+                        image: "images/bmc-safegas.png"
                     },
                     {
                         title: "Feed Instagram E Florist",
                         category: "social-media",
-                        image: "images/e-florist.png"
+                        image: "images/feed-instagram.png"
                     },
                     {
                         title: "Jersey Werewolf",
                         category: "mockup",
-                        image: "images/jersey-werewolf.png"
+                        image: "images/jersey-werewolf-design.png"
+                    },
+                                        {
+                        title: "Mockup Jersey Werewolf",
+                        category: "mockup",
+                        image: "images/jersey-werewolf-mockup.png"
+                    },
+                    {
+                        title: "Peta Perjalanan",
+                        category: "mockup",
+                        image: "images/peta-perjalanan.png"
+                    },
+                    {
+                        title: "Sticker AWN",
+                        category: "branding",
+                        image: "images/sticker-awn.png"
+                    },
+                    {
+                        title: "Twibbon Diksar",
+                        category: "branding",
+                        image: "images/twibbon-diksar.png"
                     },
                     {
                         title: "Logo SAVIE.ID",
