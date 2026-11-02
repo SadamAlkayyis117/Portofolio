@@ -1087,12 +1087,12 @@ if (typeof THREE === "undefined") {
                 graphicWorks: [
                     {
                         title: "Banner Diklatsar",
-                        category: "poster",
+                        category: "promotion",
                         image: "images/banner-diklatsar.png"
                     },
                     {
                         title: "Penempuhan Brevet",
-                        category: "poster",
+                        category: "promotion",
                         image: "images/banner-penempuhan.png"
                     },
                     {
@@ -1102,7 +1102,7 @@ if (typeof THREE === "undefined") {
                     },
                     {
                         title: "Hari Jadi Garut",
-                        category: "promotion",
+                        category: "social-media",
                         image: "images/hari-jadi-garut.png"
                     },
                     {
@@ -1132,7 +1132,7 @@ if (typeof THREE === "undefined") {
                     },
                     {
                         title: "Peta Perjalanan",
-                        category: "mockup",
+                        category: "infographic",
                         image: "images/peta-perjalanan.png"
                     },
                     {
