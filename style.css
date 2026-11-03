@@ -2223,3 +2223,395 @@ body {
         transform: none !important;
     }
 }
+
+
+/* =====================================================
+   UI/UX SHOWCASE
+   Dedicated Figma Project Gallery
+===================================================== */
+
+#uiux-showcase-panel {
+    z-index: 25;
+
+    background:
+        radial-gradient(
+            ellipse at 50% -15%,
+            rgba(79, 209, 197, 0.09),
+            transparent 45%
+        ),
+        #080b0d;
+}
+
+/* UI/UX WINDOW */
+
+.uiux-window {
+    width: min(1440px, 92%);
+
+    padding:
+        32px
+        0
+        100px;
+}
+
+/* UI/UX PROJECT GRID */
+
+.uiux-project-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 25px;
+}
+
+/* PROJECT CARD */
+
+.uiux-project-card {
+    position: relative;
+
+    overflow: hidden;
+
+    border: 1px solid
+        rgba(255, 255, 255, 0.10);
+
+    border-radius: 13px;
+
+    background: #101619;
+
+    transition:
+        transform 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.uiux-project-card:hover {
+    transform: translateY(-5px);
+
+    border-color:
+        rgba(79, 209, 197, 0.5);
+
+    box-shadow:
+        0 18px 45px
+        rgba(0, 0, 0, 0.35);
+}
+
+/* PROJECT COVER */
+
+.uiux-card-cover {
+    position: relative;
+
+    width: 100%;
+
+    aspect-ratio: 16 / 10;
+
+    overflow: hidden;
+
+    background: #090d10;
+}
+
+.uiux-card-cover img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    transition:
+        transform 0.5s ease;
+}
+
+.uiux-project-card:hover .uiux-card-cover img {
+    transform: scale(1.04);
+}
+
+/* PROJECT INFORMATION */
+
+.uiux-card-content {
+    padding: 22px;
+}
+
+.uiux-card-category {
+    margin-bottom: 10px;
+
+    color: #4fd1c5;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+}
+
+.uiux-card-content h3 {
+    margin-bottom: 10px;
+
+    color: #fff;
+
+    font-size: 21px;
+}
+
+.uiux-card-content p {
+    min-height: 48px;
+
+    color: #9da5a8;
+
+    font-size: 13px;
+
+    line-height: 1.7;
+}
+
+/* EXPLORE BUTTON */
+
+.uiux-explore-button {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    margin-top: 20px;
+
+    padding: 11px 16px;
+
+    border: 1px solid
+        rgba(79, 209, 197, 0.4);
+
+    border-radius: 6px;
+
+    background:
+        rgba(79, 209, 197, 0.08);
+
+    color: #4fd1c5;
+
+    font-family: inherit;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        all 0.2s ease;
+}
+
+.uiux-explore-button:hover {
+    background: #4fd1c5;
+
+    color: #071414;
+}
+
+
+/* =====================================================
+   UI/UX FIGMA VIEWER
+===================================================== */
+
+#uiux-viewer {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 1000;
+
+    display: flex;
+
+    flex-direction: column;
+
+    padding: 22px 30px;
+
+    background: #080b0d;
+
+    color: white;
+}
+
+#uiux-viewer.hidden {
+    display: none !important;
+}
+
+/* VIEWER HEADER */
+
+.uiux-viewer-header {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-bottom: 18px;
+}
+
+.uiux-viewer-header .eyebrow {
+    margin-bottom: 5px;
+}
+
+.uiux-viewer-header h2 {
+    color: #fff;
+
+    font-size: 25px;
+}
+
+/* VIEWER ACTIONS */
+
+.uiux-viewer-actions {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+}
+
+.uiux-viewer-actions a,
+#uiux-viewer-close {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 42px;
+
+    padding: 0 15px;
+
+    border: 1px solid
+        rgba(255, 255, 255, 0.16);
+
+    border-radius: 7px;
+
+    background:
+        rgba(255, 255, 255, 0.05);
+
+    color: #fff;
+
+    font-family: inherit;
+
+    font-size: 12px;
+
+    text-decoration: none;
+
+    cursor: pointer;
+}
+
+.uiux-viewer-actions a:hover,
+#uiux-viewer-close:hover {
+    border-color: #4fd1c5;
+
+    color: #4fd1c5;
+}
+
+/* FIGMA IFRAME */
+
+.uiux-iframe-container {
+    flex: 1;
+
+    min-height: 0;
+
+    overflow: hidden;
+
+    border: 1px solid
+        rgba(255, 255, 255, 0.12);
+
+    border-radius: 10px;
+
+    background: #111;
+}
+
+.uiux-iframe-container iframe {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    border: 0;
+
+    background: #111;
+}
+
+/* VIEWER DESCRIPTION */
+
+.uiux-viewer-hint {
+    padding-top: 12px;
+
+    color: #7f898d;
+
+    font-size: 11px;
+
+    text-align: center;
+}
+
+
+/* =====================================================
+   UI/UX RESPONSIVE
+===================================================== */
+
+@media (max-width: 800px) {
+
+    .uiux-project-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .uiux-window {
+        width: 92%;
+
+        padding-bottom: 80px;
+    }
+
+    #uiux-viewer {
+        padding: 15px;
+    }
+
+    .uiux-viewer-header h2 {
+        font-size: 19px;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .uiux-viewer-header {
+        align-items: flex-start;
+    }
+
+    .uiux-viewer-actions {
+        gap: 6px;
+    }
+
+    .uiux-viewer-actions a,
+    #uiux-viewer-close {
+        min-height: 36px;
+
+        padding: 0 10px;
+
+        font-size: 10px;
+    }
+
+    .uiux-card-content {
+        padding: 18px;
+    }
+
+    .uiux-card-content h3 {
+        font-size: 18px;
+    }
+}
+
+
+/* =====================================================
+   UI/UX ACCESSIBILITY
+===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .uiux-project-card,
+    .uiux-project-card:hover,
+    .uiux-card-cover img,
+    .uiux-project-card:hover .uiux-card-cover img,
+    .uiux-explore-button {
+        transition: none !important;
+
+        transform: none !important;
+    }
+}
+
