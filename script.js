@@ -1123,7 +1123,7 @@ if (typeof THREE === "undefined") {
                     {
                         title: "Jersey Werewolf",
                         category: "mockup",
-                        image: "images/jersey-werewolf-design.png"
+                        image: "images/jersey-werewolf-design.jpg"
                     },
                                         {
                         title: "Mockup Jersey Werewolf",
@@ -1138,12 +1138,12 @@ if (typeof THREE === "undefined") {
                     {
                         title: "Sticker AWN",
                         category: "branding",
-                        image: "images/sticker-awn.png"
+                        image: "images/sticker-awn.jpg"
                     },
                     {
                         title: "Twibbon Diksar",
                         category: "branding",
-                        image: "images/twibbon-diksar.png"
+                        image: "images/twibbon-diksar.jpg"
                     },
                     {
                         title: "Logo SAVIE.ID",
