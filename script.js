@@ -1159,29 +1159,76 @@ if (typeof THREE === "undefined") {
                 id: "road-monitoring",
                 title: "Road Monitoring",
                 category: "Monitoring System",
+                
                 description:
-                    "Road monitoring interface design focused on presenting road conditions and monitoring information.",
+                    "A monitoring system interface designed to present road conditions and monitoring information in a clear and organized way.",
+                
+                overview:
+                    "Road Monitoring is a UI/UX design project focused on presenting road monitoring information through a structured digital interface. The design explores how monitoring information can be arranged so users can understand the information more easily.",
+                
+                designFocus:
+                    "Dashboard layout, information hierarchy, interface consistency, and monitoring-oriented user experience.",
+                
+                objective:
+                    "To create an interface concept that makes road monitoring information easier to view and navigate.",
+                
                 cover: "images/uiux/road-monitoring.png",
+                
+                designUrl:
+                    "https://www.figma.com/design/0zbnbupHJdKBAltZJQAJyA/Road-Monitoring?node-id=0-1&t=8rWYyvEsjIkSplpB-1",
+                
                 figmaUrl:
                     "https://www.figma.com/proto/0zbnbupHJdKBAltZJQAJyA/Road-Monitoring?node-id=107-2&viewport=462%2C34%2C0.05&t=BMZyPnOIoZdcqDFh-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=107%3A2&page-id=0%3A1"
             },
+            
             {
                 id: "pasar-ikan",
                 title: "Website Pasar Ikan",
                 category: "Website Design",
+                
                 description:
-                    "Website interface concept for an online fish market platform.",
+                    "An online fish market website concept designed to present products and create an accessible shopping experience.",
+                
+                overview:
+                    "Website Pasar Ikan is a website interface design project that explores an online marketplace concept for fish products. The project focuses on presenting marketplace content through a structured website layout.",
+                
+                designFocus:
+                    "Website layout, product presentation, visual hierarchy, and user navigation.",
+                
+                objective:
+                    "To develop a website interface concept that helps users explore an online fish marketplace.",
+                
                 cover: "images/uiux/pasar-ikan.png",
+                
+                designUrl:
+                    "https://www.figma.com/design/2efuijKTRiOixMWDKMpmPV/Prototype-Website-Pasar-Ikan?node-id=0-1&t=uYjRzbnlun8dDZVJ-1",
+                
                 figmaUrl:
                     "https://www.figma.com/proto/2efuijKTRiOixMWDKMpmPV/Prototype-Website-Pasar-Ikan?node-id=8-41&p=f&viewport=2274%2C1007%2C0.06&t=t8qAa0iUpmAmyNrr-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=8%3A41&page-id=0%3A1"
             },
+            
             {
                 id: "valentine-moto",
                 title: "Valentine Moto",
                 category: "Website Design",
+                
                 description:
-                    "Creative website interface with a Valentine-themed visual concept.",
+                    "A creative website interface concept combining a Valentine-themed visual direction with motorcycle-related presentation.",
+                
+                overview:
+                    "Valentine Moto is a creative website design project with a Valentine-themed visual concept. The project explores how a specific visual direction can be translated into a website interface and browsing experience.",
+                
+                designFocus:
+                    "Visual concept, website composition, interface styling, and user experience.",
+                
+                objective:
+                    "To create a distinctive website interface through a themed visual design approach.",
+                
                 cover: "images/uiux/valentine-moto.png",
+                
+                designUrl:
+                    "https://www.figma.com/design/fGetYqjtp6Kf3OnEkslBVf/Prototype-valentine-moto?node-id=122-643&t=MnvBI5N4UxVZ05WF-1",
+                
                 figmaUrl:
                     "https://www.figma.com/proto/fGetYqjtp6Kf3OnEkslBVf/Prototype-valentine-moto?node-id=1-2&viewport=797%2C766%2C0.09&t=w6IBqRYzOJDJIJXD-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=1%3A2&page-id=0%3A1"
             }
