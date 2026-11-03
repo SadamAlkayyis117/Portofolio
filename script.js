@@ -1652,120 +1652,189 @@ if (typeof THREE === "undefined") {
         }
         function renderUIUXProjects() {
             const container = document.getElementById("uiux-project-grid");
-
+            
             if (!container) return;
-
+            
             container.innerHTML = "";
-
+            
             uiuxWorks.forEach((project) => {
                 const card = document.createElement("article");
                 card.className = "uiux-project-card";
-
+                
+                // Project cover
                 const cover = document.createElement("div");
                 cover.className = "uiux-card-cover";
-
+                
                 const image = document.createElement("img");
                 image.src = project.cover;
                 image.alt = project.title;
                 image.loading = "lazy";
-
+                
                 image.onerror = () => {
                     console.warn("Cover UI/UX tidak ditemukan:", project.cover);
                 };
-
+                
+                cover.appendChild(image);
+                
+                // Project information
                 const content = document.createElement("div");
                 content.className = "uiux-card-content";
-
+                
                 const category = document.createElement("div");
                 category.className = "uiux-card-category";
                 category.textContent = project.category;
-
+                
                 const title = document.createElement("h3");
                 title.textContent = project.title;
-
+                
                 const description = document.createElement("p");
                 description.textContent = project.description;
-
-                const button = document.createElement("button");
-                button.className = "uiux-explore-button";
-                button.type = "button";
-                button.textContent = "Explore Prototype ↗";
-
-                button.addEventListener("click", () => {
-                    openUIUXViewer(project);
+                
+                // Additional project information
+                const details = document.createElement("div");
+                details.className = "uiux-project-details";
+                
+                const overview = document.createElement("p");
+                overview.textContent = project.overview;
+                
+                const focus = document.createElement("p");
+                focus.innerHTML = `<strong>Design Focus:</strong> ${project.designFocus}`;
+                
+                const objective = document.createElement("p");
+                objective.innerHTML = `<strong>Objective:</strong> ${project.objective}`;
+                
+                details.append(
+                    overview,
+                    focus,
+                    objective
+                );
+                
+                // Action buttons
+                const actions = document.createElement("div");
+                actions.className = "uiux-card-actions";
+                
+                const designButton = document.createElement("button");
+                designButton.className = "uiux-design-button";
+                designButton.type = "button";
+                designButton.textContent = "View Design Canvas ↗";
+                
+                designButton.addEventListener("click", () => {
+                    openUIUXViewer(project, "design");
                 });
-
-                cover.appendChild(image);
-
+                
+                const prototypeButton = document.createElement("button");
+                prototypeButton.className = "uiux-explore-button";
+                prototypeButton.type = "button";
+                prototypeButton.textContent = "Explore Prototype ↗";
+                
+                prototypeButton.addEventListener("click", () => {
+                    openUIUXViewer(project, "prototype");
+                });
+                
+                actions.append(
+                    designButton,
+                    prototypeButton
+                );
+                
                 content.append(
                     category,
                     title,
                     description,
-                    button
+                    details,
+                    actions
                 );
-
-                card.append(cover, content);
+                
+                card.append(
+                    cover,
+                    content
+                );
+                
                 container.appendChild(card);
             });
         }
-
         function getFigmaEmbedUrl(figmaUrl) {
             const url = new URL(figmaUrl);
-
+            
             if (
                 url.hostname !== "figma.com" &&
                 !url.hostname.endsWith(".figma.com")
             ) {
                 throw new Error("Invalid Figma URL");
             }
-
-            if (!url.pathname.startsWith("/proto/")) {
-                throw new Error("Figma URL must be a prototype link");
+            
+            const isDesign = url.pathname.startsWith("/design/");
+            const isPrototype = url.pathname.startsWith("/proto/");
+            
+            if (!isDesign && !isPrototype) {
+                throw new Error("Unsupported Figma URL");
             }
-
+            
             url.hostname = "embed.figma.com";
-
             url.searchParams.set("embed-host", "sadam-portfolio");
             url.searchParams.set("footer", "false");
             url.searchParams.set("viewport-controls", "true");
-
+            
             return url.toString();
         }
 
-        function openUIUXViewer(project) {
+        function openUIUXViewer(project, mode = "prototype") {
             const viewer = document.getElementById("uiux-viewer");
             const iframe = document.getElementById("uiux-figma-frame");
             const title = document.getElementById("uiux-viewer-title");
             const externalLink = document.getElementById("uiux-open-figma");
-
+            const viewerLabel = document.getElementById("uiux-viewer-label");
+            const viewerHint = document.getElementById("uiux-viewer-hint");
+            
             if (!viewer || !iframe || !title || !externalLink) {
                 console.error("UI/UX viewer HTML tidak ditemukan.");
                 return;
             }
-
+            
+            const isDesign = mode === "design";
+            
+            const figmaUrl = isDesign
+                ? project.designUrl
+                : project.figmaUrl;
+            
+            if (!figmaUrl) {
+                console.error("URL Figma tidak tersedia:", project.title);
+                return;
+            }
+            
             title.textContent = project.title;
-            externalLink.href = project.figmaUrl;
-
+            
+            externalLink.href = figmaUrl;
+            externalLink.textContent = "Open in Figma ↗";
+            
+            if (viewerLabel) {
+                viewerLabel.textContent = isDesign
+                    ? "DESIGN CANVAS"
+                    : "INTERACTIVE PROTOTYPE";
+            }
+            
+            if (viewerHint) {
+                viewerHint.textContent = isDesign
+                    ? "Explore the original Figma design. Use the Figma viewport controls to zoom and pan around the canvas."
+                    : "Explore the interactive prototype and experience the interface flow.";
+            
+            }
+            
             try {
-                iframe.src = getFigmaEmbedUrl(project.figmaUrl);
+                iframe.src = getFigmaEmbedUrl(figmaUrl);
             } catch (error) {
                 console.error("Figma embed error:", error);
                 return;
             }
-
             viewer.classList.remove("hidden");
         }
-
+        
         function closeUIUXViewer() {
             const viewer = document.getElementById("uiux-viewer");
             const iframe = document.getElementById("uiux-figma-frame");
-
             if (!viewer || !iframe) return;
-
             viewer.classList.add("hidden");
-            iframe.src = "";
+            iframe.src = "about:blank";
         }
-
         function openUIUXShowcase() {
             const panel = document.getElementById("uiux-showcase-panel");
 
