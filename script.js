@@ -814,7 +814,6 @@ if (typeof THREE === "undefined") {
                 deltaY *= scale;
             }
 
-            // X positif = kanan, X negatif = kiri
             mobileMoveX = deltaX / joystickRadius;
             mobileMoveY = deltaY / joystickRadius;
 
@@ -885,7 +884,6 @@ if (typeof THREE === "undefined") {
             });
         }
 
-        // Action Buttons Mobile
         if (mobileInteractButton) {
             mobileInteractButton.addEventListener("click", (e) => {
                 e.preventDefault();
@@ -937,29 +935,23 @@ if (typeof THREE === "undefined") {
 
             moveDirection.set(0, 0, 0);
 
-            // 1. Arah Maju Kamera: (sin(yaw), 0, cos(yaw))
             cameraForward.set(
                 Math.sin(cameraYaw), 
                 0, 
                 Math.cos(cameraYaw)
             ).normalize();
 
-            // 2. Arah Kanan Kamera yang BENAR: (-cos(yaw), 0, sin(yaw))
             cameraRight.set(
                 -Math.cos(cameraYaw), 
                 0, 
                 Math.sin(cameraYaw)
             ).normalize();
 
-            // 3. Keyboard Input
             if (keys["KeyW"] || keys["ArrowUp"]) moveDirection.add(cameraForward);
             if (keys["KeyS"] || keys["ArrowDown"]) moveDirection.sub(cameraForward);
-            if (keys["KeyA"] || keys["ArrowLeft"]) moveDirection.sub(cameraRight); // Ke Kiri
-            if (keys["KeyD"] || keys["ArrowRight"]) moveDirection.add(cameraRight); // Ke Kanan
+            if (keys["KeyA"] || keys["ArrowLeft"]) moveDirection.sub(cameraRight);
+            if (keys["KeyD"] || keys["ArrowRight"]) moveDirection.add(cameraRight);
 
-            // 4. Mobile Joystick Input
-            // -mobileMoveY = Maju (karena tarik analog ke atas deltaY-nya negatif)
-            // +mobileMoveX = Kanan (tarik analog ke kanan deltaX-nya positif)
             if (isTouchDevice && (Math.abs(mobileMoveX) > 0.05 || Math.abs(mobileMoveY) > 0.05)) {
                 moveDirection.addScaledVector(cameraForward, -mobileMoveY);
                 moveDirection.addScaledVector(cameraRight, mobileMoveX);
@@ -985,7 +977,6 @@ if (typeof THREE === "undefined") {
                 player.rotation.y += diff * Math.min(1, delta * 10);
             }
 
-            // CIRCULAR WORLD LIMIT
             const distanceFromCenter = Math.sqrt(
                 player.position.x * player.position.x +
                 player.position.z * player.position.z
@@ -1043,9 +1034,7 @@ if (typeof THREE === "undefined") {
                 contribution: "Game design, gameplay programming, UI implementation.",
                 github: "https://github.com/SadamAlkayyis117/SMARTVOC-",
                 demo: "https://edutree.itch.io/smartvoc",
-
                 video: "https://www.youtube-nocookie.com/embed/vLz0PdW_uFM",
-
                 screenshots: [
                     "assets/smartvoc/smartvoc-01.png",
                     "assets/smartvoc/smartvoc-02.png",
@@ -1057,23 +1046,12 @@ if (typeof THREE === "undefined") {
             blockfight: {
                 title: "3D Modeling",
                 category: "3D ASSET SHOWCASE",
-                
-                description:
-                    "A collection of interactive 3D models and game assets created for digital environments and game development.",
-                
-                about:
-                    "This showcase presents a collection of 3D assets, including environments, architectural designs, furniture, and character models. Each model can be explored directly through an interactive 3D viewer, allowing visitors to inspect its appearance from different angles, zoom in on details, and navigate around the model. The collection demonstrates my work in 3D modeling and asset creation for game-related projects.",
-                
-                technologies:
-                    "Blender • 3D Modeling • Sketchfab",
-                
-                contribution:
-                    "3D modeling, asset creation, and visual presentation.",
-                
+                description: "A collection of interactive 3D models and game assets created for digital environments and game development.",
+                about: "This showcase presents a collection of 3D assets, including environments, architectural designs, furniture, and character models. Each model can be explored directly through an interactive 3D viewer, allowing visitors to inspect its appearance from different angles, zoom in on details, and navigate around the model. The collection demonstrates my work in 3D modeling and asset creation for game-related projects.",
+                technologies: "Blender • 3D Modeling • Sketchfab",
+                contribution: "3D modeling, asset creation, and visual presentation.",
                 github: "https://github.com/SadamAlkayyis117",
-                
                 demo: "#",
-                
                 models: [
                     {
                         id: "0a535039832545e3afe64040ccc51d8d",
@@ -1145,7 +1123,6 @@ if (typeof THREE === "undefined") {
                 contribution: "Graphic design, illustration, composition, layout.",
                 github: "#",
                 demo: "#",
-
                 graphicWorks: [
                     {
                         title: "Banner Diklatsar",
@@ -1187,7 +1164,7 @@ if (typeof THREE === "undefined") {
                         category: "mockup",
                         image: "images/jersey-werewolf-design.jpg"
                     },
-                                        {
+                    {
                         title: "Mockup Jersey Werewolf",
                         category: "mockup",
                         image: "images/jersey-werewolf-mockup.png"
@@ -1221,78 +1198,37 @@ if (typeof THREE === "undefined") {
                 id: "road-monitoring",
                 title: "Road Monitoring",
                 category: "Monitoring System",
-                
-                description:
-                    "A monitoring system interface designed to present road conditions and monitoring information in a clear and organized way.",
-                
-                overview:
-                    "Road Monitoring is a UI/UX design project focused on presenting road monitoring information through a structured digital interface. The design explores how monitoring information can be arranged so users can understand the information more easily.",
-                
-                designFocus:
-                    "Dashboard layout, information hierarchy, interface consistency, and monitoring-oriented user experience.",
-                
-                objective:
-                    "To create an interface concept that makes road monitoring information easier to view and navigate.",
-                
+                description: "A monitoring system interface designed to present road conditions and monitoring information in a clear and organized way.",
+                overview: "Road Monitoring is a UI/UX design project focused on presenting road monitoring information through a structured digital interface. The design explores how monitoring information can be arranged so users can understand the information more easily.",
+                designFocus: "Dashboard layout, information hierarchy, interface consistency, and monitoring-oriented user experience.",
+                objective: "To create an interface concept that makes road monitoring information easier to view and navigate.",
                 cover: "images/uiux/road-monitoring.png",
-                
-                designUrl:
-                    "https://www.figma.com/design/0zbnbupHJdKBAltZJQAJyA/Road-Monitoring?node-id=0-1&t=8rWYyvEsjIkSplpB-1",
-                
-                figmaUrl:
-                    "https://www.figma.com/proto/0zbnbupHJdKBAltZJQAJyA/Road-Monitoring?node-id=107-2&viewport=462%2C34%2C0.05&t=BMZyPnOIoZdcqDFh-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=107%3A2&page-id=0%3A1"
+                designUrl: "https://www.figma.com/design/0zbnbupHJdKBAltZJQAJyA/Road-Monitoring?node-id=0-1&t=8rWYyvEsjIkSplpB-1",
+                figmaUrl: "https://www.figma.com/proto/0zbnbupHJdKBAltZJQAJyA/Road-Monitoring?node-id=107-2&viewport=462%2C34%2C0.05&t=BMZyPnOIoZdcqDFh-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=107%3A2&page-id=0%3A1"
             },
-            
             {
                 id: "pasar-ikan",
                 title: "Website Pasar Ikan",
                 category: "Website Design",
-                
-                description:
-                    "An online fish market website concept designed to present products and create an accessible shopping experience.",
-                
-                overview:
-                    "Website Pasar Ikan is a website interface design project that explores an online marketplace concept for fish products. The project focuses on presenting marketplace content through a structured website layout.",
-                
-                designFocus:
-                    "Website layout, product presentation, visual hierarchy, and user navigation.",
-                
-                objective:
-                    "To develop a website interface concept that helps users explore an online fish marketplace.",
-                
+                description: "An online fish market website concept designed to present products and create an accessible shopping experience.",
+                overview: "Website Pasar Ikan is a website interface design project that explores an online marketplace concept for fish products. The project focuses on presenting marketplace content through a structured website layout.",
+                designFocus: "Website layout, product presentation, visual hierarchy, and user navigation.",
+                objective: "To develop a website interface concept that helps users explore an online fish marketplace.",
                 cover: "images/uiux/pasar-ikan.png",
-                
-                designUrl:
-                    "https://www.figma.com/design/2efuijKTRiOixMWDKMpmPV/Prototype-Website-Pasar-Ikan?node-id=0-1&t=uYjRzbnlun8dDZVJ-1",
-                
-                figmaUrl:
-                    "https://www.figma.com/proto/2efuijKTRiOixMWDKMpmPV/Prototype-Website-Pasar-Ikan?node-id=8-41&p=f&viewport=2274%2C1007%2C0.06&t=t8qAa0iUpmAmyNrr-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=8%3A41&page-id=0%3A1"
+                designUrl: "https://www.figma.com/design/2efuijKTRiOixMWDKMpmPV/Prototype-Website-Pasar-Ikan?node-id=0-1&t=uYjRzbnlun8dDZVJ-1",
+                figmaUrl: "https://www.figma.com/proto/2efuijKTRiOixMWDKMpmPV/Prototype-Website-Pasar-Ikan?node-id=8-41&p=f&viewport=2274%2C1007%2C0.06&t=t8qAa0iUpmAmyNrr-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=8%3A41&page-id=0%3A1"
             },
-            
             {
                 id: "valentine-moto",
                 title: "Valentine Moto",
                 category: "Website Design",
-                
-                description:
-                    "A creative website interface concept combining a Valentine-themed visual direction with motorcycle-related presentation.",
-                
-                overview:
-                    "Valentine Moto is a creative website design project with a Valentine-themed visual concept. The project explores how a specific visual direction can be translated into a website interface and browsing experience.",
-                
-                designFocus:
-                    "Visual concept, website composition, interface styling, and user experience.",
-                
-                objective:
-                    "To create a distinctive website interface through a themed visual design approach.",
-                
+                description: "A creative website interface concept combining a Valentine-themed visual direction with motorcycle-related presentation.",
+                overview: "Valentine Moto is a creative website design project with a Valentine-themed visual concept. The project explores how a specific visual direction can be translated into a website interface and browsing experience.",
+                designFocus: "Visual concept, website composition, interface styling, and user experience.",
+                objective: "To create a distinctive website interface through a themed visual design approach.",
                 cover: "images/uiux/valentine-moto.png",
-                
-                designUrl:
-                    "https://www.figma.com/design/fGetYqjtp6Kf3OnEkslBVf/Prototype-valentine-moto?node-id=122-643&t=MnvBI5N4UxVZ05WF-1",
-                
-                figmaUrl:
-                    "https://www.figma.com/proto/fGetYqjtp6Kf3OnEkslBVf/Prototype-valentine-moto?node-id=1-2&viewport=797%2C766%2C0.09&t=w6IBqRYzOJDJIJXD-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=1%3A2&page-id=0%3A1"
+                designUrl: "https://www.figma.com/design/fGetYqjtp6Kf3OnEkslBVf/Prototype-valentine-moto?node-id=122-643&t=MnvBI5N4UxVZ05WF-1",
+                figmaUrl: "https://www.figma.com/proto/fGetYqjtp6Kf3OnEkslBVf/Prototype-valentine-moto?node-id=1-2&viewport=797%2C766%2C0.09&t=w6IBqRYzOJDJIJXD-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=1%3A2&page-id=0%3A1"
             }
         ];
 
@@ -1579,23 +1515,21 @@ if (typeof THREE === "undefined") {
 
         let currentGraphicIndex = 0;
         let currentGraphicWorks = [];
+
         function renderGraphicDesignGallery(works) {
             const gallery = document.getElementById("graphic-design-gallery");
             if (!gallery) return;
             gallery.innerHTML = "";
             works.forEach((work, index) => {
-                // 1. Buat kontainer kartu dengan class .design-card yang sesuai dengan CSS
                 const card = document.createElement("div");
                 card.className = "design-card";
                 card.dataset.category = work.category;
                 card.dataset.title = work.title;
                 
-                // 2. Badge Kategori di pojok kartu
                 const badge = document.createElement("div");
                 badge.className = "design-card-badge";
                 badge.textContent = work.category;
                 
-                // 3. Kontainer Media Gambar (mengunci ukuran & aspect ratio)
                 const mediaContainer = document.createElement("div");
                 mediaContainer.className = "design-card-media";
                 
@@ -1606,11 +1540,9 @@ if (typeof THREE === "undefined") {
                 
                 mediaContainer.appendChild(image);
                 
-                // 4. Gradient Overlay
                 const overlay = document.createElement("div");
                 overlay.className = "design-card-overlay";
                 
-                // 5. Informasi Judul Desain
                 const info = document.createElement("div");
                 info.className = "design-card-info";
                 
@@ -1625,26 +1557,24 @@ if (typeof THREE === "undefined") {
                 info.appendChild(category);
                 info.appendChild(title);
                 
-                // Gabungkan elemen ke dalam kartu
                 card.appendChild(badge);
                 card.appendChild(mediaContainer);
                 card.appendChild(overlay);
                 card.appendChild(info);
                 
-                // Event klik untuk membuka lightbox gambar penuh
                 card.addEventListener("click", () => {
                     openGraphicDesignViewer(index, works);
                 });
                 gallery.appendChild(card);
             });
         }
+
         function initializeGraphicDesignFilters(works) {
             const filterButtons = document.querySelectorAll("#graphic-design-filters button");
             if (!filterButtons.length) return;
             
             filterButtons.forEach((button) => {
                 button.onclick = () => {
-                    // Perbaikan: gunakan dataset.category yang sesuai dengan HTML
                     const selectedCategory = button.dataset.category || button.dataset.filter || "all";
                     
                     filterButtons.forEach((btn) => {
@@ -1712,18 +1642,16 @@ if (typeof THREE === "undefined") {
             }
             updateGraphicDesignViewer();
         }
+
         function renderUIUXProjects() {
             const container = document.getElementById("uiux-project-grid");
-            
             if (!container) return;
-            
             container.innerHTML = "";
             
             uiuxWorks.forEach((project) => {
                 const card = document.createElement("article");
                 card.className = "uiux-project-card";
                 
-                // Project cover
                 const cover = document.createElement("div");
                 cover.className = "uiux-card-cover";
                 
@@ -1738,7 +1666,6 @@ if (typeof THREE === "undefined") {
                 
                 cover.appendChild(image);
                 
-                // Project information
                 const content = document.createElement("div");
                 content.className = "uiux-card-content";
                 
@@ -1752,7 +1679,6 @@ if (typeof THREE === "undefined") {
                 const description = document.createElement("p");
                 description.textContent = project.description;
                 
-                // Additional project information
                 const details = document.createElement("div");
                 details.className = "uiux-project-details";
                 
@@ -1765,13 +1691,8 @@ if (typeof THREE === "undefined") {
                 const objective = document.createElement("p");
                 objective.innerHTML = `<strong>Objective:</strong> ${project.objective}`;
                 
-                details.append(
-                    overview,
-                    focus,
-                    objective
-                );
+                details.append(overview, focus, objective);
                 
-                // Action buttons
                 const actions = document.createElement("div");
                 actions.className = "uiux-card-actions";
                 
@@ -1793,27 +1714,14 @@ if (typeof THREE === "undefined") {
                     openUIUXViewer(project, "prototype");
                 });
                 
-                actions.append(
-                    designButton,
-                    prototypeButton
-                );
-                
-                content.append(
-                    category,
-                    title,
-                    description,
-                    details,
-                    actions
-                );
-                
-                card.append(
-                    cover,
-                    content
-                );
+                actions.append(designButton, prototypeButton);
+                content.append(category, title, description, details, actions);
+                card.append(cover, content);
                 
                 container.appendChild(card);
             });
         }
+
         function getFigmaEmbedUrl(figmaUrl) {
             const url = new URL(figmaUrl);
             
@@ -1864,7 +1772,6 @@ if (typeof THREE === "undefined") {
             }
             
             title.textContent = project.title;
-            
             externalLink.href = figmaUrl;
             externalLink.textContent = "Open in Figma ↗";
             
@@ -1878,7 +1785,6 @@ if (typeof THREE === "undefined") {
                 viewerHint.textContent = isDesign
                     ? "Explore the original Figma design. Use the Figma viewport controls to zoom and pan around the canvas."
                     : "Explore the interactive prototype and experience the interface flow.";
-            
             }
             
             try {
@@ -1897,6 +1803,7 @@ if (typeof THREE === "undefined") {
             viewer.classList.add("hidden");
             iframe.src = "about:blank";
         }
+
         function openUIUXShowcase() {
             const panel = document.getElementById("uiux-showcase-panel");
 
@@ -1921,10 +1828,7 @@ if (typeof THREE === "undefined") {
             }
         }
 
-        // UI/UX VIEWER EVENT LISTENERS
-
         const uiuxViewerClose = document.getElementById("uiux-viewer-close");
-
         if (uiuxViewerClose) {
             uiuxViewerClose.addEventListener("click", (event) => {
                 event.preventDefault();
@@ -1935,7 +1839,6 @@ if (typeof THREE === "undefined") {
 
         document.addEventListener("keydown", (event) => {
             const viewer = document.getElementById("uiux-viewer");
-
             if (
                 event.key === "Escape" &&
                 viewer &&
@@ -1963,7 +1866,6 @@ if (typeof THREE === "undefined") {
                 return;
             }
 
-            // 1. CEK FINISH AREA
             nearestFinish = false;
             const finishDX = player.position.x - finishPoint.x;
             const finishDZ = player.position.z - finishPoint.z;
@@ -1984,7 +1886,6 @@ if (typeof THREE === "undefined") {
                 return;
             }
 
-            // 2. CEK ABOUT ME
             nearestAboutBoard = false;
             if (aboutBoard.group) {
                 const dx = player.position.x - aboutBoard.group.position.x;
@@ -2006,7 +1907,6 @@ if (typeof THREE === "undefined") {
                 }
             }
 
-            // 3. CEK PROJECT SIGNS
             let closest = null;
             let closestDistance = Infinity;
 
@@ -2041,8 +1941,8 @@ if (typeof THREE === "undefined") {
                 throw new Error("Invalid Sketchfab model ID.");
             }
             const embedUrl = new URL(
-                https://sketchfab.com/models/${modelId}/embed`
-                );
+                `https://sketchfab.com/models/${modelId}/embed`
+            );
             
             embedUrl.searchParams.set("autostart", "0");
             embedUrl.searchParams.set("ui_controls", "1");
@@ -2072,14 +1972,12 @@ if (typeof THREE === "undefined") {
             }
             
             let activeModelIndex = 0;
-            
             videoContainer.innerHTML = "";
             
             const stage = document.createElement("div");
             stage.className = "sketchfab-stage";
             
             const iframe = document.createElement("iframe");
-            
             iframe.title = `${projectTitle} - Interactive 3D Viewer`;
             iframe.allow = "autoplay; fullscreen; xr-spatial-tracking";
             iframe.allowFullscreen = true;
@@ -2087,7 +1985,6 @@ if (typeof THREE === "undefined") {
             iframe.referrerPolicy = "strict-origin-when-cross-origin";
             
             const externalLink = document.createElement("a");
-            
             externalLink.className = "sketchfab-open-link";
             externalLink.target = "_blank";
             externalLink.rel = "noopener noreferrer";
@@ -2106,15 +2003,13 @@ if (typeof THREE === "undefined") {
             
             if (galleryHeading) {
                 if (!galleryHeading.dataset.originalText) {
-                    galleryHeading.dataset.originalText =
-                        galleryHeading.textContent;
+                    galleryHeading.dataset.originalText = galleryHeading.textContent;
                 }
                 galleryHeading.textContent = "Explore 3D Assets";
             }
             
             function selectSketchfabModel(index) {
                 const model = models[index];
-                
                 if (!model) return;
                 activeModelIndex = index;
                 
@@ -2128,61 +2023,45 @@ if (typeof THREE === "undefined") {
                 iframe.title = `${model.title} - Interactive 3D Model`;
                 externalLink.href = model.url;
                 
-                const cards = screenshotContainer.querySelectorAll(
-                    ".sketchfab-asset-card"
-                );
+                const cards = screenshotContainer.querySelectorAll(".sketchfab-asset-card");
                 cards.forEach((card, cardIndex) => {
                     const isActive = cardIndex === activeModelIndex;
                     card.classList.toggle("active", isActive);
-                    card.setAttribute(
-                        "aria-pressed",
-                        isActive ? "true" : "false"
-                    );
+                    card.setAttribute("aria-pressed", isActive ? "true" : "false");
                 });
             }
 
+            models.forEach((model, index) => {
+                const card = document.createElement("button");
+                card.type = "button";
+                card.className = "sketchfab-asset-card";
+                card.setAttribute("aria-pressed", "false");
 
-    // -------------------------------------------------
-    // CREATE MODEL CARDS
-    // -------------------------------------------------
+                const number = document.createElement("span");
+                number.className = "sketchfab-asset-number";
+                number.textContent = String(index + 1).padStart(2, "0");
 
-    models.forEach((model, index) => {
-        const card = document.createElement("button");
+                const information = document.createElement("span");
+                information.className = "sketchfab-asset-information";
 
-        card.type = "button";
-        card.className = "sketchfab-asset-card";
-        card.setAttribute("aria-pressed", "false");
+                const title = document.createElement("strong");
+                title.textContent = model.title;
 
-        const number = document.createElement("span");
-        number.className = "sketchfab-asset-number";
-        number.textContent = String(index + 1).padStart(2, "0");
+                const category = document.createElement("small");
+                category.textContent = model.category;
 
-        const information = document.createElement("span");
-        information.className = "sketchfab-asset-information";
+                information.append(title, category);
+                card.append(number, information);
 
-        const title = document.createElement("strong");
-        title.textContent = model.title;
+                card.addEventListener("click", () => {
+                    selectSketchfabModel(index);
+                });
 
-        const category = document.createElement("small");
-        category.textContent = model.category;
+                screenshotContainer.appendChild(card);
+            });
 
-        information.append(title, category);
-        card.append(number, information);
-
-        card.addEventListener("click", () => {
-            selectSketchfabModel(index);
-        });
-
-        screenshotContainer.appendChild(card);
-    });
-
-
-    // -------------------------------------------------
-    // INITIAL MODEL
-    // -------------------------------------------------
-
-    selectSketchfabModel(0);
-}
+            selectSketchfabModel(0);
+        }
 
         // BUKA PROJECT MODAL
         function openProject(projectId) {
@@ -2198,19 +2077,16 @@ if (typeof THREE === "undefined") {
                 aboutPanel.classList.add("hidden");
                 aboutPanel.style.display = "none";
             }
-            if (projectId === "uiux") {
-                const uiuxPanel = document.getElementById("uiux-showcase-panel");
 
+            if (projectId === "uiux") {
                 if (projectPanel) {
                     projectPanel.classList.add("hidden");
                     projectPanel.style.display = "none";
                 }
-
                 if (graphicPanel) {
                     graphicPanel.classList.add("hidden");
                     graphicPanel.style.display = "none";
                 }
-
                 openUIUXShowcase();
                 return;
             }
@@ -2255,13 +2131,8 @@ if (typeof THREE === "undefined") {
             if (tech) tech.textContent = data.technologies;
             if (cont) cont.textContent = data.contribution;
 
-            const videoContainer = document.getElementById(
-                "project-video-placeholder"
-            );
-            
-            const screenshotContainer = document.getElementById(
-                "project-screenshots"
-            );
+            const videoContainer = document.getElementById("project-video-placeholder");
+            const screenshotContainer = document.getElementById("project-screenshots");
             
             if (Array.isArray(data.models) && data.models.length > 0) {
                 renderSketchfabShowcase(
@@ -2273,19 +2144,13 @@ if (typeof THREE === "undefined") {
             } else {
                 if (videoContainer) {
                     videoContainer.innerHTML = "";
-                    
                     if (data.video) {
                         const iframe = document.createElement("iframe");
-                        
                         iframe.src = data.video;
                         iframe.title = `${data.title} Project Video`;
-                        
-                        iframe.allow =
-                            "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
-                        
+                        iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
                         iframe.allowFullscreen = true;
                         iframe.loading = "lazy";
-                        
                         videoContainer.appendChild(iframe);
                     } else {
                         videoContainer.textContent = "VIDEO COMING SOON";
@@ -2294,34 +2159,25 @@ if (typeof THREE === "undefined") {
                 
                 if (screenshotContainer) {
                     screenshotContainer.innerHTML = "";
-                    
-                    screenshotContainer.classList.remove(
-                        "sketchfab-asset-grid"
-                    );
+                    screenshotContainer.classList.remove("sketchfab-asset-grid");
                     
                     const galleryHeading = screenshotContainer
                         .closest(".project-gallery")
                         ?.querySelector("h3");
                     
-                    if (
-                        galleryHeading &&
-                        galleryHeading.dataset.originalText
-                    ) {
-                        galleryHeading.textContent =
-                            galleryHeading.dataset.originalText;
+                    if (galleryHeading && galleryHeading.dataset.originalText) {
+                        galleryHeading.textContent = galleryHeading.dataset.originalText;
                     }
                     
                     if (Array.isArray(data.screenshots)) {
                         data.screenshots.forEach((imagePath, index) => {
                             const link = document.createElement("a");
                             const image = document.createElement("img");
-                            
                             link.href = imagePath;
                             link.target = "_blank";
                             link.rel = "noopener noreferrer";
                             image.src = imagePath;
-                            image.alt =
-                                `${data.title} Screenshot ${index + 1}`;
+                            image.alt = `${data.title} Screenshot ${index + 1}`;
                             image.loading = "lazy";
                             link.appendChild(image);
                             screenshotContainer.appendChild(link);
@@ -2329,17 +2185,24 @@ if (typeof THREE === "undefined") {
                     }
                 }
             }
+
+            if (projectPanel) {
+                projectPanel.classList.toggle("is-3d-showcase", projectId === "blockfight");
+                projectPanel.classList.remove("hidden");
+                projectPanel.style.display = "block";
+            }
+
+            if (interactionPrompt) interactionPrompt.classList.add("hidden");
+            if (document.exitPointerLock) document.exitPointerLock();
+        }
+
         // BUKA ABOUT ME MODAL
         function openAbout() {
             const projectPanel = document.getElementById("project-panel");
             const aboutPanel = document.getElementById("about-panel");
             const graphicPanel = document.getElementById("graphic-design-panel");
-            if (projectPanel) {
-                projectPanel.classList.toggle(
-                    "is-3d-showcase",
-                    projectId === "blockfight"
-                );
-            }
+            const uiuxPanel = document.getElementById("uiux-showcase-panel");
+
             if (!aboutPanel) return;
 
             projectOpen = true;
@@ -2354,6 +2217,12 @@ if (typeof THREE === "undefined") {
                 graphicPanel.style.display = "none";
             }
 
+            if (uiuxPanel) {
+                uiuxPanel.classList.add("hidden");
+                uiuxPanel.style.display = "none";
+            }
+
+            closeUIUXViewer();
             closeGraphicDesignViewer();
 
             canvas.style.cursor = "default";
@@ -2377,6 +2246,7 @@ if (typeof THREE === "undefined") {
             const projectPanel = document.getElementById("project-panel");
             const aboutPanel = document.getElementById("about-panel");
             const graphicPanel = document.getElementById("graphic-design-panel");
+            const uiuxPanel = document.getElementById("uiux-showcase-panel");
 
             if (projectPanel) {
                 projectPanel.classList.add("hidden");
@@ -2390,7 +2260,12 @@ if (typeof THREE === "undefined") {
                 graphicPanel.classList.add("hidden");
                 graphicPanel.style.display = "none";
             }
+            if (uiuxPanel) {
+                uiuxPanel.classList.add("hidden");
+                uiuxPanel.style.display = "none";
+            }
 
+            closeUIUXViewer();
             closeGraphicDesignViewer();
 
             const finishScreen = document.getElementById("finish-screen");
@@ -2462,7 +2337,6 @@ if (typeof THREE === "undefined") {
             }
 
             closeUIUXViewer();
-
             closeGraphicDesignViewer();
 
             canvas.style.cursor = "crosshair";
