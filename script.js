@@ -2659,43 +2659,46 @@ if (typeof THREE === "undefined") {
                     sketchfabCache.galleryGrid.style.display = "none";
                 }
 
-                // Buat atau gunakan kembali area media biasa.
+                // Buat atau gunakan kembali area media biasa (Cegah Duplikasi Video).
                 if (videoContainer) {
+                    // Bersihkan jika ada iframe nyasar langsung di videoContainer
+                    videoContainer.querySelectorAll(":scope > iframe").forEach((f) => f.remove());
+
                     let standardMedia = videoContainer.querySelector(
                         ".project-standard-media"
                     );
 
                     if (!standardMedia) {
                         standardMedia = document.createElement("div");
-
                         standardMedia.className = "project-standard-media";
-
                         videoContainer.appendChild(standardMedia);
                     }
-
-                    standardMedia.innerHTML = "";
 
                     standardMedia.style.display = "block";
 
                     if (data.video) {
-                        const iframe = document.createElement("iframe");
+                        let iframe = standardMedia.querySelector("iframe");
 
-                        iframe.src = data.video;
-                        iframe.title = `${data.title} Project Video`;
+                        if (!iframe) {
+                            standardMedia.innerHTML = "";
+                            iframe = document.createElement("iframe");
+                            iframe.title = `${data.title} Project Video`;
+                            iframe.allow =
+                                "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+                            iframe.allowFullscreen = true;
+                            iframe.loading = "lazy";
+                            standardMedia.appendChild(iframe);
+                        }
 
-                        iframe.allow =
-                            "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
-
-                        iframe.allowFullscreen = true;
-                        iframe.loading = "lazy";
-
-                        videoContainer.appendChild(iframe);
+                        if (iframe.src !== data.video) {
+                            iframe.src = data.video;
+                        }
                     } else {
-                        standardMedia.textContent = "VIDEO COMING SOON";
+                        standardMedia.innerHTML = "<span>VIDEO COMING SOON</span>";
                     }
                 }
 
-                // Buat atau gunakan kembali gallery proyek biasa.
+                // Buat atau gunakan kembali gallery proyek biasa tanpa reload berulang.
                 if (screenshotContainer) {
                     let standardGallery = screenshotContainer.querySelector(
                         ".project-standard-gallery"
@@ -2703,35 +2706,35 @@ if (typeof THREE === "undefined") {
 
                     if (!standardGallery) {
                         standardGallery = document.createElement("div");
-
-                        standardGallery.className =
-                            "project-standard-gallery";
-
+                        standardGallery.className = "project-standard-gallery";
                         screenshotContainer.appendChild(standardGallery);
                     }
 
-                    standardGallery.innerHTML = "";
                     standardGallery.style.display = "grid";
 
-                    if (Array.isArray(data.screenshots)) {
-                        data.screenshots.forEach((imagePath, index) => {
-                            const link = document.createElement("a");
-                            const image = document.createElement("img");
+                    if (standardGallery.dataset.activeProject !== projectId) {
+                        standardGallery.dataset.activeProject = projectId;
+                        standardGallery.innerHTML = "";
 
-                            link.href = imagePath;
-                            link.target = "_blank";
-                            link.rel = "noopener noreferrer";
+                        if (Array.isArray(data.screenshots)) {
+                            data.screenshots.forEach((imagePath, index) => {
+                                const link = document.createElement("a");
+                                const image = document.createElement("img");
 
-                            preparePortfolioImage(
-                                image,
-                                imagePath,
-                                `${data.title} Screenshot ${index + 1}`
-                            );
+                                link.href = imagePath;
+                                link.target = "_blank";
+                                link.rel = "noopener noreferrer";
 
-                            link.appendChild(image);
+                                preparePortfolioImage(
+                                    image,
+                                    imagePath,
+                                    `${data.title} Screenshot ${index + 1}`
+                                );
 
-                            standardGallery.appendChild(link);
-                        });
+                                link.appendChild(image);
+                                standardGallery.appendChild(link);
+                            });
+                        }
                     }
 
                     screenshotContainer.classList.remove(
@@ -2760,7 +2763,6 @@ if (typeof THREE === "undefined") {
                     detailPanel.classList.add("hidden");
                 }
             }
-
             if (projectPanel) {
                 projectPanel.classList.toggle("is-3d-showcase", projectId === "blockfight");
                 projectPanel.classList.remove("hidden");
