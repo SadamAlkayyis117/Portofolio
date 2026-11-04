@@ -3216,3 +3216,43 @@ body {
     height: auto;
     object-fit: cover;
 }
+
+
+/* =============================================
+   IMAGE LOADING OPTIMIZATION
+============================================= */
+
+.design-card-media,
+.uiux-card-cover {
+    overflow: hidden;
+}
+
+/* Membantu browser memprioritaskan decoding gambar. */
+.design-card-media img,
+.uiux-card-cover img,
+.project-standard-gallery img,
+#graphic-design-viewer-image {
+    max-width: 100%;
+}
+
+/* Hindari animasi berlebihan saat gambar selesai dimuat. */
+.image-loaded {
+    animation: portfolio-image-reveal 0.2s ease-out;
+}
+
+@keyframes portfolio-image-reveal {
+    from {
+        opacity: 0.85;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .image-loaded {
+        animation: none;
+    }
+}
+
