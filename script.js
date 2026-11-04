@@ -1,7 +1,7 @@
 // =====================================================
 // SADAM ALKAYYIS - INTERACTIVE 3D PORTFOLIO
 // CIRCULAR OPEN WORLD + LET'S CONNECT + MOBILE PORTRAIT
-// FULL FIXED & TESTED (GRAPHIC DESIGN SHOWCASE & LIGHTBOX)
+// FULL FIXED & TESTED (NO-FREEZE & OPTIMIZED)
 // =====================================================
 
 console.log("=== PORTFOLIO SCRIPT START ===");
@@ -56,7 +56,7 @@ if (typeof THREE === "undefined") {
         const PLAYER_BOUNDARY = MAP_RADIUS - 1.2;
 
         // =============================================
-        // 3. LIGHTING & ATMOSPHERE
+        // 3. LIGHTING & ATMOSPHERE (OPTIMIZED FOR NO FREEZE)
         // =============================================
 
         const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x557755, 2);
@@ -65,8 +65,8 @@ if (typeof THREE === "undefined") {
         const sunLight = new THREE.DirectionalLight(0xffffff, 3);
         sunLight.position.set(20, 40, 20);
         sunLight.castShadow = true;
-        sunLight.shadow.mapSize.width = 2048;
-        sunLight.shadow.mapSize.height = 2048;
+        sunLight.shadow.mapSize.width = 1024;
+        sunLight.shadow.mapSize.height = 1024;
         sunLight.shadow.camera.left = -60;
         sunLight.shadow.camera.right = 60;
         sunLight.shadow.camera.top = 60;
@@ -1932,7 +1932,7 @@ if (typeof THREE === "undefined") {
         });
 
         // =============================================
-        // 17. MODAL & INTERACTION SYSTEM
+        // 17. MODAL & INTERACTION SYSTEM (FIXED DIST BUG)
         // =============================================
 
         const interactionPrompt = document.getElementById("interaction-prompt");
@@ -1996,7 +1996,8 @@ if (typeof THREE === "undefined") {
             for (const sign of projectSigns) {
                 const dx = player.position.x - sign.position.x;
                 const dz = player.position.z - sign.position.z;
-                const dist = Math.sqrt(dx * dx + dz * dist);
+                // FIXED: Perbaikan rumus jarak dari dz * dist menjadi dz * dz
+                const dist = Math.sqrt(dx * dx + dz * dz);
 
                 if (dist < sign.userData.interactionRadius && dist < closestDistance) {
                     closest = sign;
@@ -2027,6 +2028,7 @@ if (typeof THREE === "undefined") {
                 `https://sketchfab.com/models/${modelId}/embed`
             );
             
+            // autostart=0 mencegah GPU overheat & stutter saat model dimuat
             embedUrl.searchParams.set("autostart", "0");
             embedUrl.searchParams.set("ui_controls", "1");
             embedUrl.searchParams.set("ui_infos", "0");
@@ -3065,7 +3067,7 @@ if (typeof THREE === "undefined") {
         });
 
         // =============================================
-        // 20. ANIMATION LOOP
+        // 20. ANIMATION LOOP (OPTIMIZED)
         // =============================================
 
         const clock = new THREE.Clock();
@@ -3073,6 +3075,12 @@ if (typeof THREE === "undefined") {
 
         function animate() {
             requestAnimationFrame(animate);
+
+            // Jika modal sedang terbuka, jeda update game agar tidak rebutan GPU dengan Sketchfab/Figma
+            if (projectOpen || finishOpen) {
+                return;
+            }
+
             const delta = Math.min(clock.getDelta(), 0.05);
 
             updatePlayer(delta);
