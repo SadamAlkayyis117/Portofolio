@@ -1732,7 +1732,11 @@ if (typeof THREE === "undefined") {
         function renderGraphicDesignGallery(works) {
             const gallery = document.getElementById("graphic-design-gallery");
             if (!gallery) return;
+            
             gallery.innerHTML = "";
+            // Gunakan DocumentFragment untuk batching render ke GPU dalam 1 kali operasi
+            const fragment = document.createDocumentFragment();
+            
             works.forEach((work, index) => {
                 const card = document.createElement("div");
                 card.className = "design-card";
@@ -1747,7 +1751,8 @@ if (typeof THREE === "undefined") {
                 mediaContainer.className = "design-card-media";
                 
                 const image = document.createElement("img");
-
+                image.decoding = "async"; // Decode gambar di background thread
+                
                 preparePortfolioImage(
                     image,
                     work.image,
@@ -1781,9 +1786,14 @@ if (typeof THREE === "undefined") {
                 card.addEventListener("click", () => {
                     openGraphicDesignViewer(index, works);
                 });
-                gallery.appendChild(card);
+                
+                fragment.appendChild(card);
             });
+            // 1 kali append langsung memasang semua kartu tanpa jank
+            
+            gallery.appendChild(fragment);
         }
+    }
 
         function initializeGraphicDesignFilters(works) {
             const filterButtons = document.querySelectorAll("#graphic-design-filters button");
