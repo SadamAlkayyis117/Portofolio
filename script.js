@@ -1055,14 +1055,76 @@ if (typeof THREE === "undefined") {
                 ]
             },
             blockfight: {
-                title: "BlockFight",
-                category: "GAME DEVELOPMENT",
-                description: "Interactive game project focused on gameplay systems and player interaction.",
-                about: "A gameplay-focused project developed to explore mechanics and real-time interaction.",
-                technologies: "Godot Engine • GDScript • Blender",
-                contribution: "Gameplay programming, mechanics implementation, level design.",
+                title: "3D Modeling",
+                category: "3D ASSET SHOWCASE",
+                
+                description:
+                    "A collection of interactive 3D models and game assets created for digital environments and game development.",
+                
+                about:
+                    "This showcase presents a collection of 3D assets, including environments, architectural designs, furniture, and character models. Each model can be explored directly through an interactive 3D viewer, allowing visitors to inspect its appearance from different angles, zoom in on details, and navigate around the model. The collection demonstrates my work in 3D modeling and asset creation for game-related projects.",
+                
+                technologies:
+                    "Blender • 3D Modeling • Sketchfab",
+                
+                contribution:
+                    "3D modeling, asset creation, and visual presentation.",
+                
                 github: "https://github.com/SadamAlkayyis117",
-                demo: "#"
+                
+                demo: "#",
+                
+                models: [
+                    {
+                        id: "0a535039832545e3afe64040ccc51d8d",
+                        title: "Swimming Pool",
+                        category: "Environment",
+                        description: "3D swimming pool environment.",
+                        url: "https://sketchfab.com/3d-models/kolam-renang-swimming-pool-0a535039832545e3afe64040ccc51d8d"
+                    },
+                    {
+                        id: "2717efef3bc6438fa5f052d0242b5aea",
+                        title: "Home Design",
+                        category: "Architecture",
+                        description: "3D architectural and home design model.",
+                        url: "https://sketchfab.com/3d-models/home-design-2717efef3bc6438fa5f052d0242b5aea"
+                    },
+                    {
+                        id: "008ab042f481455faa615c91e03e4db1",
+                        title: "School Gymnastic",
+                        category: "Environment",
+                        description: "3D school gymnastic environment.",
+                        url: "https://sketchfab.com/3d-models/school-gymnastic-008ab042f481455faa615c91e03e4db1"
+                    },
+                    {
+                        id: "f414e4c9ed394119a6207ccd48bea07d",
+                        title: "Martial Arts Training Furniture",
+                        category: "Props & Furniture",
+                        description: "3D furniture and props for a martial arts setting.",
+                        url: "https://sketchfab.com/3d-models/martial-arts-tranining-furniture-f414e4c9ed394119a6207ccd48bea07d"
+                    },
+                    {
+                        id: "71c6178db8f44e3ea3ed13e63c91bf7c",
+                        title: "Minimarket",
+                        category: "Environment",
+                        description: "3D minimarket environment.",
+                        url: "https://sketchfab.com/3d-models/minimarket-71c6178db8f44e3ea3ed13e63c91bf7c"
+                    },
+                    {
+                        id: "01542eb661de4689a25de72d2717bcce",
+                        title: "Soccer Field",
+                        category: "Environment",
+                        description: "3D soccer field environment.",
+                        url: "https://sketchfab.com/3d-models/soccer-field-01542eb661de4689a25de72d2717bcce"
+                    },
+                    {
+                        id: "4d964550c54e44b0abc784ed3683d2f3",
+                        title: "NPC Pack",
+                        category: "Characters",
+                        description: "A collection of 3D non-player character models.",
+                        url: "https://sketchfab.com/3d-models/npc-pack-4d964550c54e44b0abc784ed3683d2f3"
+                    }
+                ]
             },
             uiux: {
                 title: "UI / UX DESIGN",
@@ -1974,6 +2036,154 @@ if (typeof THREE === "undefined") {
             }
         }
 
+        function getSketchfabEmbedUrl(modelId) {
+            if (!/^[a-f0-9]{32}$/i.test(modelId)) {
+                throw new Error("Invalid Sketchfab model ID.");
+            }
+            const embedUrl = new URL(
+                https://sketchfab.com/models/${modelId}/embed`
+                );
+            
+            embedUrl.searchParams.set("autostart", "0");
+            embedUrl.searchParams.set("ui_controls", "1");
+            embedUrl.searchParams.set("ui_infos", "0");
+            embedUrl.searchParams.set("ui_inspector", "0");
+            embedUrl.searchParams.set("ui_stop", "0");
+            embedUrl.searchParams.set("ui_watermark", "1");
+            embedUrl.searchParams.set("ui_watermark_link", "1");
+            
+            return embedUrl.toString();
+        }
+        
+        function renderSketchfabShowcase(
+            videoContainer,
+            screenshotContainer,
+            models,
+            projectTitle
+        ) {
+            if (
+                !videoContainer ||
+                !screenshotContainer ||
+                !Array.isArray(models) ||
+                models.length === 0
+            ) {
+                console.error("Sketchfab showcase elements are incomplete.");
+                return;
+            }
+            
+            let activeModelIndex = 0;
+            
+            videoContainer.innerHTML = "";
+            
+            const stage = document.createElement("div");
+            stage.className = "sketchfab-stage";
+            
+            const iframe = document.createElement("iframe");
+            
+            iframe.title = `${projectTitle} - Interactive 3D Viewer`;
+            iframe.allow = "autoplay; fullscreen; xr-spatial-tracking";
+            iframe.allowFullscreen = true;
+            iframe.loading = "lazy";
+            iframe.referrerPolicy = "strict-origin-when-cross-origin";
+            
+            const externalLink = document.createElement("a");
+            
+            externalLink.className = "sketchfab-open-link";
+            externalLink.target = "_blank";
+            externalLink.rel = "noopener noreferrer";
+            externalLink.textContent = "Open on Sketchfab ↗";
+            
+            stage.appendChild(iframe);
+            stage.appendChild(externalLink);
+            videoContainer.appendChild(stage);
+            
+            screenshotContainer.innerHTML = "";
+            screenshotContainer.classList.add("sketchfab-asset-grid");
+            
+            const galleryHeading = screenshotContainer
+                .closest(".project-gallery")
+                ?.querySelector("h3");
+            
+            if (galleryHeading) {
+                if (!galleryHeading.dataset.originalText) {
+                    galleryHeading.dataset.originalText =
+                        galleryHeading.textContent;
+                }
+                galleryHeading.textContent = "Explore 3D Assets";
+            }
+            
+            function selectSketchfabModel(index) {
+                const model = models[index];
+                
+                if (!model) return;
+                activeModelIndex = index;
+                
+                try {
+                    iframe.src = getSketchfabEmbedUrl(model.id);
+                } catch (error) {
+                    console.error("Sketchfab embed error:", error);
+                    return;
+                }
+                
+                iframe.title = `${model.title} - Interactive 3D Model`;
+                externalLink.href = model.url;
+                
+                const cards = screenshotContainer.querySelectorAll(
+                    ".sketchfab-asset-card"
+                );
+                cards.forEach((card, cardIndex) => {
+                    const isActive = cardIndex === activeModelIndex;
+                    card.classList.toggle("active", isActive);
+                    card.setAttribute(
+                        "aria-pressed",
+                        isActive ? "true" : "false"
+                    );
+                });
+            }
+
+
+    // -------------------------------------------------
+    // CREATE MODEL CARDS
+    // -------------------------------------------------
+
+    models.forEach((model, index) => {
+        const card = document.createElement("button");
+
+        card.type = "button";
+        card.className = "sketchfab-asset-card";
+        card.setAttribute("aria-pressed", "false");
+
+        const number = document.createElement("span");
+        number.className = "sketchfab-asset-number";
+        number.textContent = String(index + 1).padStart(2, "0");
+
+        const information = document.createElement("span");
+        information.className = "sketchfab-asset-information";
+
+        const title = document.createElement("strong");
+        title.textContent = model.title;
+
+        const category = document.createElement("small");
+        category.textContent = model.category;
+
+        information.append(title, category);
+        card.append(number, information);
+
+        card.addEventListener("click", () => {
+            selectSketchfabModel(index);
+        });
+
+        screenshotContainer.appendChild(card);
+    });
+
+
+    // -------------------------------------------------
+    // INITIAL MODEL
+    // -------------------------------------------------
+
+    selectSketchfabModel(0);
+}
+
         // BUKA PROJECT MODAL
         function openProject(projectId) {
             const data = projects[projectId];
@@ -2045,75 +2255,91 @@ if (typeof THREE === "undefined") {
             if (tech) tech.textContent = data.technologies;
             if (cont) cont.textContent = data.contribution;
 
-            const videoContainer = document.getElementById("project-video-placeholder");
-            if (videoContainer) {
-                videoContainer.innerHTML = "";
-
-                if (data.video) {
-                    const iframe = document.createElement("iframe");
-                    iframe.src = data.video;
-                    iframe.title = `${data.title} Gameplay Trailer`;
-                    iframe.allow =
-                        "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
-                    iframe.allowFullscreen = true;
-                    iframe.loading = "lazy";
-                    videoContainer.appendChild(iframe);
-                } else {
-                    videoContainer.textContent = "VIDEO COMING SOON";
+            const videoContainer = document.getElementById(
+                "project-video-placeholder"
+            );
+            
+            const screenshotContainer = document.getElementById(
+                "project-screenshots"
+            );
+            
+            if (Array.isArray(data.models) && data.models.length > 0) {
+                renderSketchfabShowcase(
+                    videoContainer,
+                    screenshotContainer,
+                    data.models,
+                    data.title
+                );
+            } else {
+                if (videoContainer) {
+                    videoContainer.innerHTML = "";
+                    
+                    if (data.video) {
+                        const iframe = document.createElement("iframe");
+                        
+                        iframe.src = data.video;
+                        iframe.title = `${data.title} Project Video`;
+                        
+                        iframe.allow =
+                            "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+                        
+                        iframe.allowFullscreen = true;
+                        iframe.loading = "lazy";
+                        
+                        videoContainer.appendChild(iframe);
+                    } else {
+                        videoContainer.textContent = "VIDEO COMING SOON";
+                    }
+                }
+                
+                if (screenshotContainer) {
+                    screenshotContainer.innerHTML = "";
+                    
+                    screenshotContainer.classList.remove(
+                        "sketchfab-asset-grid"
+                    );
+                    
+                    const galleryHeading = screenshotContainer
+                        .closest(".project-gallery")
+                        ?.querySelector("h3");
+                    
+                    if (
+                        galleryHeading &&
+                        galleryHeading.dataset.originalText
+                    ) {
+                        galleryHeading.textContent =
+                            galleryHeading.dataset.originalText;
+                    }
+                    
+                    if (Array.isArray(data.screenshots)) {
+                        data.screenshots.forEach((imagePath, index) => {
+                            const link = document.createElement("a");
+                            const image = document.createElement("img");
+                            
+                            link.href = imagePath;
+                            link.target = "_blank";
+                            link.rel = "noopener noreferrer";
+                            image.src = imagePath;
+                            image.alt =
+                                `${data.title} Screenshot ${index + 1}`;
+                            image.loading = "lazy";
+                            link.appendChild(image);
+                            screenshotContainer.appendChild(link);
+                        });
+                    }
                 }
             }
-
-            // SCREENSHOT GALLERY CONTAINER
-            const screenshotContainer = document.getElementById("project-screenshots");
-            if (screenshotContainer) {
-                screenshotContainer.innerHTML = "";
-
-                if (Array.isArray(data.screenshots)) {
-                    data.screenshots.forEach((imagePath, index) => {
-                        const link = document.createElement("a");
-                        const image = document.createElement("img");
-
-                        link.href = imagePath;
-                        link.target = "_blank";
-                        link.rel = "noopener noreferrer";
-
-                        image.src = imagePath;
-                        image.alt = `${data.title} Gameplay Screenshot ${index + 1}`;
-                        image.loading = "lazy";
-
-                        link.appendChild(image);
-                        screenshotContainer.appendChild(link);
-                    });
-                }
-            }
-
-            const gh = document.getElementById("project-github");
-            const dm = document.getElementById("project-demo");
-            if (gh) {
-                gh.href = data.github || "#";
-                gh.textContent = "View GitHub →";
-            }
-            if (dm) {
-                dm.href = data.demo || "#";
-                dm.textContent = projectId === "smartvoc"
-                    ? "Go to Download →"
-                    : "View Demo →";
-            }
-
-            if (projectPanel) {
-                projectPanel.classList.remove("hidden");
-                projectPanel.style.display = "block";
-            }
-
-            if (interactionPrompt) interactionPrompt.classList.add("hidden");
-            if (document.exitPointerLock) document.exitPointerLock();
-        }
-
         // BUKA ABOUT ME MODAL
         function openAbout() {
             const projectPanel = document.getElementById("project-panel");
             const aboutPanel = document.getElementById("about-panel");
             const graphicPanel = document.getElementById("graphic-design-panel");
+            if (projectPanel) {
+                projectPanel.classList.toggle(
+                    "is-3d-showcase",
+                    projectId === "blockfight"
+                );
+            }
             if (!aboutPanel) return;
 
             projectOpen = true;
