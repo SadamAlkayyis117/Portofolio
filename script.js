@@ -1793,7 +1793,6 @@ if (typeof THREE === "undefined") {
             
             gallery.appendChild(fragment);
         }
-    }
 
         function initializeGraphicDesignFilters(works) {
             const filterButtons = document.querySelectorAll("#graphic-design-filters button");
