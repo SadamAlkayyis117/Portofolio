@@ -1056,50 +1056,133 @@ if (typeof THREE === "undefined") {
                     {
                         id: "0a535039832545e3afe64040ccc51d8d",
                         title: "Swimming Pool",
-                        category: "Environment",
-                        description: "3D swimming pool environment.",
+                        category: "Environment Design",
+
+                        description:
+                            "This 3D swimming pool project presents an outdoor recreational environment designed around a swimming pool space. The model showcases an environment-focused approach to 3D creation, where the overall composition and arrangement of the space help communicate its intended use. Visitors can explore the model from different angles to examine the visual structure and spatial presentation. This project represents my work in creating three-dimensional environment assets for digital visualization and interactive experiences.",
+
+                        tags: [
+                            "3D Environment",
+                            "Environment Modeling",
+                            "Outdoor Space",
+                            "Recreational Area",
+                            "3D Visualization"
+                        ],
+
                         url: "https://sketchfab.com/3d-models/kolam-renang-swimming-pool-0a535039832545e3afe64040ccc51d8d"
                     },
+
                     {
                         id: "2717efef3bc6438fa5f052d0242b5aea",
                         title: "Home Design",
-                        category: "Architecture",
-                        description: "3D architectural and home design model.",
+                        category: "Architectural Visualization",
+
+                        description:
+                            "This residential design project explores the representation of a home through a three-dimensional architectural model. It focuses on translating a residential concept into a visual space that can be inspected from multiple perspectives. The model provides an opportunity to explore the relationship between architectural elements, spatial composition, and overall visual presentation. It demonstrates my interest in architectural modeling and the use of 3D visualization to communicate design concepts more clearly.",
+
+                        tags: [
+                            "Architecture",
+                            "Residential Design",
+                            "3D Modeling",
+                            "Architectural Visualization",
+                            "Spatial Design"
+                        ],
+
                         url: "https://sketchfab.com/3d-models/home-design-2717efef3bc6438fa5f052d0242b5aea"
                     },
+
                     {
                         id: "008ab042f481455faa615c91e03e4db1",
                         title: "School Gymnastic",
-                        category: "Environment",
-                        description: "3D school gymnastic environment.",
+                        category: "Environment Design",
+
+                        description:
+                            "This project presents a school-based sports environment in a three-dimensional format. The model focuses on visualizing a gymnasium or gymnastics-related facility as an organized space for physical activities. Through its environment composition, the project explores how a functional indoor facility can be represented as a navigable 3D scene. It highlights my experience in creating environment-oriented models that communicate a specific location and its intended purpose.",
+
+                        tags: [
+                            "School Environment",
+                            "Sports Facility",
+                            "Gymnasium",
+                            "Interior Environment",
+                            "3D Environment"
+                        ],
+
                         url: "https://sketchfab.com/3d-models/school-gymnastic-008ab042f481455faa615c91e03e4db1"
                     },
+
                     {
                         id: "f414e4c9ed394119a6207ccd48bea07d",
                         title: "Martial Arts Training Furniture",
-                        category: "Props & Furniture",
-                        description: "3D furniture and props for a martial arts setting.",
+                        category: "Furniture & Props",
+
+                        description:
+                            "This asset collection focuses on furniture and supporting objects associated with a martial arts training environment. The project represents the creation of functional 3D props that can contribute to the visual identity of a specialized activity space. Rather than treating individual objects as isolated assets, the model can be viewed in the context of an environment where furniture and equipment help communicate the purpose of the location. It demonstrates my work with object-based modeling and 3D asset presentation.",
+
+                        tags: [
+                            "3D Props",
+                            "Furniture Modeling",
+                            "Sports Equipment",
+                            "Martial Arts",
+                            "Game Assets"
+                        ],
+
                         url: "https://sketchfab.com/3d-models/martial-arts-tranining-furniture-f414e4c9ed394119a6207ccd48bea07d"
                     },
+
                     {
                         id: "71c6178db8f44e3ea3ed13e63c91bf7c",
                         title: "Minimarket",
-                        category: "Environment",
-                        description: "3D minimarket environment.",
+                        category: "Commercial Environment",
+
+                        description:
+                            "This minimarket project represents a small retail environment through a three-dimensional scene. The concept focuses on presenting a commercial space that visitors can inspect as an environment rather than viewing it as a single isolated object. A retail setting provides an opportunity to explore spatial arrangement and the visual presentation of a familiar everyday location. This work demonstrates my approach to building recognizable environment assets for visualization and potential interactive use.",
+
+                        tags: [
+                            "Retail Environment",
+                            "Commercial Space",
+                            "Environment Modeling",
+                            "3D Scene",
+                            "Game Environment"
+                        ],
+
                         url: "https://sketchfab.com/3d-models/minimarket-71c6178db8f44e3ea3ed13e63c91bf7c"
                     },
+
                     {
                         id: "01542eb661de4689a25de72d2717bcce",
                         title: "Soccer Field",
-                        category: "Environment",
-                        description: "3D soccer field environment.",
+                        category: "Sports Environment",
+
+                        description:
+                            "This 3D project presents a soccer field as an outdoor sports environment. The model focuses on communicating the layout and visual identity of a football playing area through a three-dimensional presentation. It can be explored from different viewpoints to understand the overall composition of the space. The project represents my experience in creating environment-based 3D assets that can support sports-related visualization, digital scenes, and interactive environments.",
+
+                        tags: [
+                            "Sports Environment",
+                            "Soccer Field",
+                            "Outdoor Modeling",
+                            "Landscape",
+                            "3D Environment"
+                        ],
+
                         url: "https://sketchfab.com/3d-models/soccer-field-01542eb661de4689a25de72d2717bcce"
                     },
+
                     {
                         id: "4d964550c54e44b0abc784ed3683d2f3",
                         title: "NPC Pack",
-                        category: "Characters",
-                        description: "A collection of 3D non-player character models.",
+                        category: "Character Assets",
+
+                        description:
+                            "This project presents a collection of non-player character assets intended for use in digital environments and interactive experiences. NPCs play an important role in making virtual worlds feel populated and engaging, supporting the atmosphere and context of a game environment. This collection focuses on character-based assets that can represent different inhabitants or supporting characters within a virtual scene. It demonstrates my interest in character assets and their role in game environment development.",
+
+                        tags: [
+                            "3D Characters",
+                            "NPC",
+                            "Character Assets",
+                            "Game Development",
+                            "Character Modeling"
+                        ],
+
                         url: "https://sketchfab.com/3d-models/npc-pack-4d964550c54e44b0abc784ed3683d2f3"
                     }
                 ]
@@ -1970,84 +2053,185 @@ if (typeof THREE === "undefined") {
                 console.error("Sketchfab showcase elements are incomplete.");
                 return;
             }
-            
+
+            const detailPanel = document.getElementById(
+                "sketchfab-model-details"
+            );
+
+            const detailTitle = document.getElementById(
+                "sketchfab-model-title"
+            );
+
+            const detailCategory = document.getElementById(
+                "sketchfab-model-category"
+            );
+
+            const detailDescription = document.getElementById(
+                "sketchfab-model-description"
+            );
+
+            const detailTags = document.getElementById(
+                "sketchfab-model-tags"
+            );
+
             let activeModelIndex = 0;
+
+            // =============================================
+            // 1. PREPARE SKETCHFAB VIEWER
+            // =============================================
+
             videoContainer.innerHTML = "";
-            
+
             const stage = document.createElement("div");
             stage.className = "sketchfab-stage";
-            
+
             const iframe = document.createElement("iframe");
+
             iframe.title = `${projectTitle} - Interactive 3D Viewer`;
             iframe.allow = "autoplay; fullscreen; xr-spatial-tracking";
             iframe.allowFullscreen = true;
             iframe.loading = "lazy";
             iframe.referrerPolicy = "strict-origin-when-cross-origin";
-            
+
             const externalLink = document.createElement("a");
+
             externalLink.className = "sketchfab-open-link";
             externalLink.target = "_blank";
             externalLink.rel = "noopener noreferrer";
             externalLink.textContent = "Open on Sketchfab ↗";
-            
-            stage.appendChild(iframe);
-            stage.appendChild(externalLink);
+
+            stage.append(iframe, externalLink);
             videoContainer.appendChild(stage);
-            
+
+            // =============================================
+            // 2. PREPARE ASSET GALLERY
+            // =============================================
+
             screenshotContainer.innerHTML = "";
             screenshotContainer.classList.add("sketchfab-asset-grid");
-            
+
             const galleryHeading = screenshotContainer
                 .closest(".project-gallery")
                 ?.querySelector("h3");
-            
+
             if (galleryHeading) {
                 if (!galleryHeading.dataset.originalText) {
-                    galleryHeading.dataset.originalText = galleryHeading.textContent;
+                    galleryHeading.dataset.originalText =
+                        galleryHeading.textContent.trim();
                 }
+
                 galleryHeading.textContent = "Explore 3D Assets";
             }
-            
+
+            // =============================================
+            // 3. UPDATE MODEL INFORMATION
+            // =============================================
+
+            function updateModelInformation(model) {
+                if (!model) return;
+
+                if (detailPanel) {
+                    detailPanel.classList.remove("hidden");
+                }
+
+                if (detailTitle) {
+                    detailTitle.textContent = model.title;
+                }
+
+                if (detailCategory) {
+                    detailCategory.textContent = model.category;
+                }
+
+                if (detailDescription) {
+                    detailDescription.textContent = model.description;
+                }
+
+                if (detailTags) {
+                    detailTags.innerHTML = "";
+
+                    const tags = Array.isArray(model.tags)
+                        ? model.tags
+                        : [];
+
+                    tags.forEach((tag) => {
+                        const tagElement = document.createElement("span");
+
+                        tagElement.className = "sketchfab-tag";
+                        tagElement.textContent = tag;
+
+                        detailTags.appendChild(tagElement);
+                    });
+                }
+            }
+
+            // =============================================
+            // 4. SELECT ACTIVE MODEL
+            // =============================================
+
             function selectSketchfabModel(index) {
                 const model = models[index];
+
                 if (!model) return;
+
                 activeModelIndex = index;
-                
+
                 try {
                     iframe.src = getSketchfabEmbedUrl(model.id);
                 } catch (error) {
                     console.error("Sketchfab embed error:", error);
                     return;
                 }
-                
+
                 iframe.title = `${model.title} - Interactive 3D Model`;
+
                 externalLink.href = model.url;
-                
-                const cards = screenshotContainer.querySelectorAll(".sketchfab-asset-card");
+
+                // Update category, description and tags
+                updateModelInformation(model);
+
+                // Update active gallery card
+                const cards = screenshotContainer.querySelectorAll(
+                    ".sketchfab-asset-card"
+                );
+
                 cards.forEach((card, cardIndex) => {
                     const isActive = cardIndex === activeModelIndex;
+
                     card.classList.toggle("active", isActive);
-                    card.setAttribute("aria-pressed", isActive ? "true" : "false");
+
+                    card.setAttribute(
+                        "aria-pressed",
+                        isActive ? "true" : "false"
+                    );
                 });
             }
 
+            // =============================================
+            // 5. CREATE MODEL CARDS
+            // =============================================
+
             models.forEach((model, index) => {
                 const card = document.createElement("button");
+
                 card.type = "button";
                 card.className = "sketchfab-asset-card";
                 card.setAttribute("aria-pressed", "false");
 
                 const number = document.createElement("span");
+
                 number.className = "sketchfab-asset-number";
                 number.textContent = String(index + 1).padStart(2, "0");
 
                 const information = document.createElement("span");
+
                 information.className = "sketchfab-asset-information";
 
                 const title = document.createElement("strong");
+
                 title.textContent = model.title;
 
                 const category = document.createElement("small");
+
                 category.textContent = model.category;
 
                 information.append(title, category);
@@ -2059,6 +2243,10 @@ if (typeof THREE === "undefined") {
 
                 screenshotContainer.appendChild(card);
             });
+
+            // =============================================
+            // 6. LOAD FIRST MODEL
+            // =============================================
 
             selectSketchfabModel(0);
         }
