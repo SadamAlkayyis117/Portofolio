@@ -2705,3 +2705,317 @@ body {
         font-size: 0.85rem;
     }
 }
+
+/* =====================================================
+   3D MODELING SHOWCASE - SKETCHFAB VIEWER
+===================================================== */
+
+/* PROJECT PANEL LABEL */
+
+#project-panel.is-3d-showcase .project-media::after {
+    content: "INTERACTIVE 3D VIEWER";
+}
+
+
+/* =====================================================
+   SKETCHFAB VIEWER STAGE
+===================================================== */
+
+.sketchfab-stage {
+    position: relative;
+
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+
+    overflow: hidden;
+
+    background: #050708;
+}
+
+.sketchfab-stage iframe {
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 1;
+
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    border: 0;
+
+    background: #050708;
+}
+
+
+/* =====================================================
+   OPEN ON SKETCHFAB LINK
+===================================================== */
+
+.sketchfab-open-link {
+    position: absolute;
+
+    top: 16px;
+    right: 18px;
+
+    z-index: 5;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 9px 13px;
+
+    border: 1px solid
+        rgba(79, 209, 197, 0.45);
+
+    border-radius: 6px;
+
+    background:
+        rgba(5, 12, 15, 0.85);
+
+    color: #4fd1c5;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    text-decoration: none;
+
+    backdrop-filter: blur(10px);
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.sketchfab-open-link:hover {
+    transform: translateY(-2px);
+
+    background:
+        rgba(79, 209, 197, 0.18);
+
+    border-color: #4fd1c5;
+
+    color: #ffffff;
+}
+
+
+/* =====================================================
+   3D ASSET SELECTOR GRID
+===================================================== */
+
+#project-screenshots.sketchfab-asset-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 13px;
+
+    margin-top: 20px;
+}
+
+
+/* =====================================================
+   3D ASSET CARD
+===================================================== */
+
+.sketchfab-asset-card {
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    min-width: 0;
+    min-height: 82px;
+
+    padding: 15px;
+
+    border: 1px solid
+        rgba(255, 255, 255, 0.10);
+
+    border-radius: 9px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.055),
+            rgba(255, 255, 255, 0.018)
+        );
+
+    color: #ffffff;
+
+    font-family: inherit;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.sketchfab-asset-card:hover {
+    transform: translateY(-3px);
+
+    border-color:
+        rgba(79, 209, 197, 0.45);
+
+    background:
+        rgba(79, 209, 197, 0.07);
+}
+
+.sketchfab-asset-card.active {
+    border-color: #4fd1c5;
+
+    background:
+        rgba(79, 209, 197, 0.12);
+
+    box-shadow:
+        0 0 20px
+        rgba(79, 209, 197, 0.08);
+}
+
+
+/* ASSET NUMBER */
+
+.sketchfab-asset-number {
+    display: flex;
+
+    flex-shrink: 0;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 34px;
+    height: 34px;
+
+    border: 1px solid
+        rgba(79, 209, 197, 0.3);
+
+    border-radius: 7px;
+
+    color: #4fd1c5;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    background:
+        rgba(79, 209, 197, 0.07);
+}
+
+
+/* ASSET INFORMATION */
+
+.sketchfab-asset-information {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+
+    min-width: 0;
+}
+
+.sketchfab-asset-information strong {
+    overflow-wrap: anywhere;
+
+    color: #ffffff;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    line-height: 1.4;
+}
+
+.sketchfab-asset-information small {
+    color: #899497;
+
+    font-size: 10px;
+
+    letter-spacing: 0.8px;
+
+    text-transform: uppercase;
+}
+
+
+/* =====================================================
+   3D SHOWCASE RESPONSIVE
+===================================================== */
+
+@media (max-width: 800px) {
+
+    #project-screenshots.sketchfab-asset-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 10px;
+    }
+
+    .sketchfab-asset-card {
+        min-height: 75px;
+
+        padding: 12px;
+    }
+
+    .sketchfab-asset-information strong {
+        font-size: 11px;
+    }
+}
+
+
+@media (max-width: 600px) {
+
+    #project-screenshots.sketchfab-asset-grid {
+        grid-template-columns: 1fr;
+
+        gap: 9px;
+    }
+
+    .sketchfab-asset-card {
+        min-height: 68px;
+
+        padding: 12px;
+    }
+
+    .sketchfab-open-link {
+        top: 10px;
+        right: 10px;
+
+        padding: 7px 9px;
+
+        font-size: 9px;
+    }
+
+    #project-panel.is-3d-showcase .project-media {
+        aspect-ratio: 16 / 10;
+    }
+}
+
+
+/* =====================================================
+   REDUCED MOTION
+===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .sketchfab-asset-card,
+    .sketchfab-asset-card:hover,
+    .sketchfab-open-link,
+    .sketchfab-open-link:hover {
+        transition: none !important;
+
+        transform: none !important;
+    }
+}
