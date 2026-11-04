@@ -1,7 +1,7 @@
 // =====================================================
 // SADAM ALKAYYIS - INTERACTIVE 3D PORTFOLIO
 // CIRCULAR OPEN WORLD + LET'S CONNECT + MOBILE PORTRAIT
-// FULL FIXED & TESTED (NO-FREEZE & OPTIMIZED)
+// FULL FIXED & TESTED (NO-FREEZE + IMAGE CACHING ENGINE)
 // =====================================================
 
 console.log("=== PORTFOLIO SCRIPT START ===");
@@ -1592,6 +1592,136 @@ if (typeof THREE === "undefined") {
 
         createFinishArea();
 
+        // =====================================================
+        // PORTFOLIO IMAGE CACHE + SMART LAZY LOADING
+        // =====================================================
+
+        // URL gambar yang sudah berhasil dimuat.
+        const loadedPortfolioImages = new Set();
+
+        // Observer untuk memuat gambar saat mendekati viewport.
+        const portfolioImageObserver =
+            "IntersectionObserver" in window
+                ? new IntersectionObserver(
+                    (entries, observer) => {
+                        entries.forEach((entry) => {
+                            if (!entry.isIntersecting) return;
+
+                            const image = entry.target;
+
+                            observer.unobserve(image);
+
+                            loadPortfolioImageSource(image);
+                        });
+                    },
+                    {
+                        root: null,
+                        rootMargin: "300px 0px",
+                        threshold: 0.01
+                    }
+                )
+                : null;
+
+        // Memulai pemuatan gambar.
+        function loadPortfolioImageSource(image) {
+            if (!image) return;
+
+            const source = image.dataset.src;
+
+            if (!source) return;
+
+            // Hindari request ulang pada elemen yang sama.
+            if (
+                image.dataset.requestedSrc === source &&
+                image.getAttribute("src")
+            ) {
+                return;
+            }
+
+            image.dataset.requestedSrc = source;
+
+            image.onload = () => {
+                loadedPortfolioImages.add(source);
+
+                image.classList.add("image-loaded");
+            };
+
+            image.onerror = () => {
+                loadedPortfolioImages.delete(source);
+
+                if (image.dataset.requestedSrc === source) {
+                    image.dataset.requestedSrc = "";
+                    image.removeAttribute("src");
+                }
+
+                console.warn(
+                    "[Image Cache] Gagal memuat gambar:",
+                    source
+                );
+            };
+
+            image.src = source;
+        }
+
+        // Fungsi utama untuk menyiapkan gambar.
+        function preparePortfolioImage(
+            image,
+            source,
+            alt = "",
+            options = {}
+        ) {
+            if (!image || !source) return;
+
+            const eager = options.eager === true;
+
+            image.alt = alt;
+            image.decoding = "async";
+            image.loading = eager ? "eager" : "lazy";
+
+            image.dataset.src = source;
+
+            // URL sama dan elemen sudah memiliki sumber.
+            if (
+                image.dataset.requestedSrc === source &&
+                image.getAttribute("src")
+            ) {
+                return;
+            }
+
+            // Gambar prioritas atau URL yang sudah pernah berhasil dimuat.
+            if (
+                eager ||
+                loadedPortfolioImages.has(source) ||
+                !portfolioImageObserver
+            ) {
+                portfolioImageObserver?.unobserve(image);
+
+                loadPortfolioImageSource(image);
+
+                return;
+            }
+
+            // Tunggu sampai gambar mendekati viewport.
+            portfolioImageObserver.observe(image);
+        }
+
+        // Preload gambar tetangga untuk navigasi lightbox.
+        function preloadPortfolioImage(source) {
+            if (!source || loadedPortfolioImages.has(source)) {
+                return;
+            }
+
+            const preloadImage = new Image();
+
+            preloadImage.decoding = "async";
+
+            preloadImage.onload = () => {
+                loadedPortfolioImages.add(source);
+            };
+
+            preloadImage.src = source;
+        }
+
         // =============================================
         // 16. GRAPHIC DESIGN GALLERY & LIGHTBOX SYSTEM
         // =============================================
@@ -1617,9 +1747,12 @@ if (typeof THREE === "undefined") {
                 mediaContainer.className = "design-card-media";
                 
                 const image = document.createElement("img");
-                image.src = work.image;
-                image.alt = work.title;
-                image.loading = "lazy";
+
+                preparePortfolioImage(
+                    image,
+                    work.image,
+                    work.title
+                );
                 
                 mediaContainer.appendChild(image);
                 
@@ -1695,9 +1828,39 @@ if (typeof THREE === "undefined") {
             const viewerCategory = document.getElementById("graphic-design-viewer-category");
             
             if (viewerImage) {
-                viewerImage.src = activeWork.image;
-                viewerImage.alt = activeWork.title;
+                preparePortfolioImage(
+                    viewerImage,
+                    activeWork.image,
+                    activeWork.title,
+                    {
+                        eager: true
+                    }
+                );
             }
+
+            // Siapkan gambar berikutnya untuk navigasi lebih cepat.
+            if (currentGraphicWorks.length > 1) {
+                const nextIndex =
+                    (currentGraphicIndex + 1) %
+                    currentGraphicWorks.length;
+
+                const previousIndex =
+                    (
+                        currentGraphicIndex -
+                        1 +
+                        currentGraphicWorks.length
+                    ) %
+                    currentGraphicWorks.length;
+
+                preloadPortfolioImage(
+                    currentGraphicWorks[nextIndex].image
+                );
+
+                preloadPortfolioImage(
+                    currentGraphicWorks[previousIndex].image
+                );
+            }
+
             if (viewerTitle) {
                 viewerTitle.textContent = activeWork.title;
             }
@@ -1739,13 +1902,19 @@ if (typeof THREE === "undefined") {
                 cover.className = "uiux-card-cover";
                 
                 const image = document.createElement("img");
-                image.src = project.cover;
-                image.alt = project.title;
-                image.loading = "lazy";
+
+                preparePortfolioImage(
+                    image,
+                    project.cover,
+                    project.title
+                );
                 
-                image.onerror = () => {
-                    console.warn("Cover UI/UX tidak ditemukan:", project.cover);
-                };
+                image.addEventListener("error", () => {
+                    console.warn(
+                        "Cover UI/UX tidak ditemukan:",
+                        project.cover
+                    );
+                });
                 
                 cover.appendChild(image);
                 
@@ -1996,7 +2165,6 @@ if (typeof THREE === "undefined") {
             for (const sign of projectSigns) {
                 const dx = player.position.x - sign.position.x;
                 const dz = player.position.z - sign.position.z;
-                // FIXED: Perbaikan rumus jarak dari dz * dist menjadi dz * dz
                 const dist = Math.sqrt(dx * dx + dz * dz);
 
                 if (dist < sign.userData.interactionRadius && dist < closestDistance) {
@@ -2545,9 +2713,11 @@ if (typeof THREE === "undefined") {
                             link.target = "_blank";
                             link.rel = "noopener noreferrer";
 
-                            image.src = imagePath;
-                            image.alt = `${data.title} Screenshot ${index + 1}`;
-                            image.loading = "lazy";
+                            preparePortfolioImage(
+                                image,
+                                imagePath,
+                                `${data.title} Screenshot ${index + 1}`
+                            );
 
                             link.appendChild(image);
 
