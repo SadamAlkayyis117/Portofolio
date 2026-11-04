@@ -1318,13 +1318,10 @@ body {
 ===================================================== */
 
 #graphic-design-panel {
-    background:
-        radial-gradient(
-            ellipse at 50% -15%,
-            rgba(79, 209, 197, 0.09),
-            transparent 45%
-        ),
-        #080b0d;
+    background: #080b0d !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    contain: paint;
 }
 
 /* =====================================================
@@ -1452,7 +1449,6 @@ body {
 
 #graphic-design-gallery {
     display: grid;
-    /* Grid 3 kolom responsif yang otomatis menyesuaikan lebar layar */
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 24px;
     align-items: stretch;
@@ -1463,7 +1459,7 @@ body {
 .graphic-design-item {
     position: relative;
     width: 100%;
-    height: 300px; /* Tinggi seragam untuk semua kartu showcase */
+    height: 300px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -1471,17 +1467,24 @@ body {
     border-radius: 14px;
     background: #0d1216;
     cursor: pointer;
-    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    
+    /* KUNCI SMOOTH 60 FPS */
+    content-visibility: auto;
+    contain-intrinsic-size: 300px;
+    transform: translateZ(0);
+    will-change: transform;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .design-card:hover,
 .graphic-design-item:hover {
-    transform: translateY(-6px);
+    transform: translateY(-6px) translateZ(0);
     border-color: rgba(79, 209, 197, 0.55);
     box-shadow:
         0 18px 40px rgba(0, 0, 0, 0.55),
         0 0 24px rgba(79, 209, 197, 0.15);
 }
+
 
 /* Kontainer pembungkus media gambar */
 .design-card-media {
@@ -1503,15 +1506,15 @@ body {
 #graphic-design-gallery img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Resize & crop proporsional untuk showcase rapi */
+    object-fit: cover;
     object-position: center;
     display: block;
-    transition: transform 0.45s ease;
+    transition: transform 0.35s ease;
 }
 
 .design-card:hover .design-card-media img,
 .graphic-design-item:hover img {
-    transform: scale(1.05);
+    transform: scale(1.04);
 }
 
 /* Overlay gradient gelap di bawah teks */
@@ -1537,14 +1540,13 @@ body {
     z-index: 2;
     padding: 4px 10px;
     border-radius: 6px;
-    background: rgba(8, 14, 18, 0.78);
+    background: rgba(8, 14, 18, 0.92);
     border: 1px solid rgba(79, 209, 197, 0.4);
     color: #4fd1c5;
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 1.5px;
     text-transform: uppercase;
-    backdrop-filter: blur(6px);
 }
 
 /* Informasi teks judul di bagian bawah card */
@@ -3237,7 +3239,8 @@ body {
 
 /* Hindari animasi berlebihan saat gambar selesai dimuat. */
 .image-loaded {
-    animation: portfolio-image-reveal 0.2s ease-out;
+    animation: none !important;
+    opacity: 1 !important;
 }
 
 @keyframes portfolio-image-reveal {
