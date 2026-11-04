@@ -1996,7 +1996,7 @@ if (typeof THREE === "undefined") {
             for (const sign of projectSigns) {
                 const dx = player.position.x - sign.position.x;
                 const dz = player.position.z - sign.position.z;
-                const dist = Math.sqrt(dx * dx + dz * dz);
+                const dist = Math.sqrt(dx * dx + dz * dist);
 
                 if (dist < sign.userData.interactionRadius && dist < closestDistance) {
                     closest = sign;
@@ -2074,15 +2074,67 @@ if (typeof THREE === "undefined") {
                 "sketchfab-model-tags"
             );
 
-            let activeModelIndex = 0;
+            const galleryHeading = screenshotContainer
+                .closest(".project-gallery")
+                ?.querySelector("h3");
 
             // =============================================
-            // 1. PREPARE SKETCHFAB VIEWER
+            // 1. CEK CACHE YANG SUDAH ADA
             // =============================================
 
-            videoContainer.innerHTML = "";
+            let cache = videoContainer._sketchfabCache;
+
+            if (cache) {
+                cache.models = models;
+                cache.projectTitle = projectTitle;
+
+                cache.stage.style.display = "block";
+                cache.stage.style.visibility = "visible";
+
+                cache.galleryGrid.style.display = "grid";
+
+                const standardGallery = screenshotContainer.querySelector(
+                    ".project-standard-gallery"
+                );
+
+                if (standardGallery) {
+                    standardGallery.style.display = "none";
+                }
+
+                // Sembunyikan konten video proyek biasa.
+                const standardMedia = videoContainer.querySelector(
+                    ".project-standard-media"
+                );
+
+                if (standardMedia) {
+                    standardMedia.style.display = "none";
+                }
+
+                screenshotContainer.classList.add(
+                    "sketchfab-asset-grid"
+                );
+
+                if (galleryHeading) {
+                    galleryHeading.textContent = "Explore 3D Assets";
+                }
+
+                // Pulihkan model terakhir tanpa reload iframe.
+                const lastIndex = Math.min(
+                    cache.activeModelIndex,
+                    models.length - 1
+                );
+
+                cache.selectModel(lastIndex);
+
+                return;
+            }
+
+            // =============================================
+            // 2. BUAT VIEWER PERTAMA KALI
+            // =============================================
 
             const stage = document.createElement("div");
+
             stage.className = "sketchfab-stage";
 
             const iframe = document.createElement("iframe");
@@ -2101,18 +2153,24 @@ if (typeof THREE === "undefined") {
             externalLink.textContent = "Open on Sketchfab ↗";
 
             stage.append(iframe, externalLink);
+
             videoContainer.appendChild(stage);
 
             // =============================================
-            // 2. PREPARE ASSET GALLERY
+            // 3. SIAPKAN GALLERY
             // =============================================
 
             screenshotContainer.innerHTML = "";
-            screenshotContainer.classList.add("sketchfab-asset-grid");
 
-            const galleryHeading = screenshotContainer
-                .closest(".project-gallery")
-                ?.querySelector("h3");
+            const galleryGrid = document.createElement("div");
+            galleryGrid.className = "sketchfab-cache-grid sketchfab-asset-grid";
+            galleryGrid.style.display = "grid";
+
+            screenshotContainer.appendChild(galleryGrid);
+
+            screenshotContainer.classList.add(
+                "sketchfab-asset-grid"
+            );
 
             if (galleryHeading) {
                 if (!galleryHeading.dataset.originalText) {
@@ -2124,7 +2182,25 @@ if (typeof THREE === "undefined") {
             }
 
             // =============================================
-            // 3. UPDATE MODEL INFORMATION
+            // 4. SIMPAN STATE CACHE
+            // =============================================
+
+            cache = {
+                stage,
+                iframe,
+                externalLink,
+                galleryGrid,
+                models,
+                projectTitle,
+                activeModelIndex: 0,
+                activeModelId: null,
+                selectModel: null
+            };
+
+            videoContainer._sketchfabCache = cache;
+
+            // =============================================
+            // 5. UPDATE INFORMASI MODEL
             // =============================================
 
             function updateModelInformation(model) {
@@ -2135,15 +2211,16 @@ if (typeof THREE === "undefined") {
                 }
 
                 if (detailTitle) {
-                    detailTitle.textContent = model.title;
+                    detailTitle.textContent = model.title || "";
                 }
 
                 if (detailCategory) {
-                    detailCategory.textContent = model.category;
+                    detailCategory.textContent = model.category || "";
                 }
 
                 if (detailDescription) {
-                    detailDescription.textContent = model.description;
+                    detailDescription.textContent =
+                        model.description || "";
                 }
 
                 if (detailTags) {
@@ -2165,37 +2242,46 @@ if (typeof THREE === "undefined") {
             }
 
             // =============================================
-            // 4. SELECT ACTIVE MODEL
+            // 6. PILIH MODEL
             // =============================================
 
             function selectSketchfabModel(index) {
-                const model = models[index];
+                const model = cache.models[index];
 
                 if (!model) return;
 
-                activeModelIndex = index;
+                cache.activeModelIndex = index;
 
-                try {
-                    iframe.src = getSketchfabEmbedUrl(model.id);
-                } catch (error) {
-                    console.error("Sketchfab embed error:", error);
-                    return;
+                // Hanya ubah URL jika model benar-benar berbeda.
+                // Model yang sama tidak akan memuat ulang iframe.
+                if (cache.activeModelId !== model.id) {
+                    try {
+                        iframe.src = getSketchfabEmbedUrl(model.id);
+
+                        cache.activeModelId = model.id;
+                    } catch (error) {
+                        console.error(
+                            "Sketchfab embed error:",
+                            error
+                        );
+
+                        return;
+                    }
                 }
 
                 iframe.title = `${model.title} - Interactive 3D Model`;
 
                 externalLink.href = model.url;
 
-                // Update category, description and tags
                 updateModelInformation(model);
 
-                // Update active gallery card
-                const cards = screenshotContainer.querySelectorAll(
+                // Update kartu aktif.
+                const cards = galleryGrid.querySelectorAll(
                     ".sketchfab-asset-card"
                 );
 
                 cards.forEach((card, cardIndex) => {
-                    const isActive = cardIndex === activeModelIndex;
+                    const isActive = cardIndex === index;
 
                     card.classList.toggle("active", isActive);
 
@@ -2206,9 +2292,13 @@ if (typeof THREE === "undefined") {
                 });
             }
 
+            cache.selectModel = selectSketchfabModel;
+
             // =============================================
-            // 5. CREATE MODEL CARDS
+            // 7. BUAT KARTU MODEL SATU KALI
             // =============================================
+
+            const fragment = document.createDocumentFragment();
 
             models.forEach((model, index) => {
                 const card = document.createElement("button");
@@ -2235,20 +2325,29 @@ if (typeof THREE === "undefined") {
                 category.textContent = model.category;
 
                 information.append(title, category);
+
                 card.append(number, information);
 
                 card.addEventListener("click", () => {
-                    selectSketchfabModel(index);
+                    cache.selectModel(index);
                 });
 
-                screenshotContainer.appendChild(card);
+                fragment.appendChild(card);
             });
 
+            galleryGrid.appendChild(fragment);
+
             // =============================================
-            // 6. LOAD FIRST MODEL
+            // 8. LOAD MODEL PERTAMA
             // =============================================
 
-            selectSketchfabModel(0);
+            cache.selectModel(0);
+
+            console.log(
+                "[Sketchfab Cache] Showcase initialized:",
+                models.length,
+                "models"
+            );
         }
 
         // BUKA PROJECT MODAL
@@ -2319,9 +2418,20 @@ if (typeof THREE === "undefined") {
             if (tech) tech.textContent = data.technologies;
             if (cont) cont.textContent = data.contribution;
 
-            const videoContainer = document.getElementById("project-video-placeholder");
-            const screenshotContainer = document.getElementById("project-screenshots");
-            
+            const videoContainer = document.getElementById(
+                "project-video-placeholder"
+            );
+
+            const screenshotContainer = document.getElementById(
+                "project-screenshots"
+            );
+
+            const sketchfabCache = videoContainer?._sketchfabCache;
+
+            // =============================================
+            // PROJECT WITH 3D MODELS
+            // =============================================
+
             if (Array.isArray(data.models) && data.models.length > 0) {
                 renderSketchfabShowcase(
                     videoContainer,
@@ -2329,48 +2439,144 @@ if (typeof THREE === "undefined") {
                     data.models,
                     data.title
                 );
+
+                // Tampilkan kembali gallery Sketchfab.
+                const cache = videoContainer._sketchfabCache;
+
+                if (cache) {
+                    cache.stage.style.display = "block";
+                    cache.galleryGrid.style.display = "grid";
+                }
+
+                // Sembunyikan media proyek biasa.
+                const standardMedia = videoContainer.querySelector(
+                    ".project-standard-media"
+                );
+
+                if (standardMedia) {
+                    standardMedia.style.display = "none";
+                }
+
+                const standardGallery = screenshotContainer.querySelector(
+                    ".project-standard-gallery"
+                );
+
+                if (standardGallery) {
+                    standardGallery.style.display = "none";
+                }
+
+                screenshotContainer.classList.add(
+                    "sketchfab-asset-grid"
+                );
+
+            // =============================================
+            // NORMAL PROJECT WITHOUT 3D MODELS
+            // =============================================
+
             } else {
+                // Sembunyikan viewer Sketchfab tanpa menghapusnya.
+                if (sketchfabCache) {
+                    sketchfabCache.stage.style.display = "none";
+                    sketchfabCache.galleryGrid.style.display = "none";
+                }
+
+                // Buat atau gunakan kembali area media biasa.
                 if (videoContainer) {
-                    videoContainer.innerHTML = "";
+                    let standardMedia = videoContainer.querySelector(
+                        ".project-standard-media"
+                    );
+
+                    if (!standardMedia) {
+                        standardMedia = document.createElement("div");
+
+                        standardMedia.className = "project-standard-media";
+
+                        videoContainer.appendChild(standardMedia);
+                    }
+
+                    standardMedia.innerHTML = "";
+
+                    standardMedia.style.display = "block";
+
                     if (data.video) {
                         const iframe = document.createElement("iframe");
+
                         iframe.src = data.video;
                         iframe.title = `${data.title} Project Video`;
-                        iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+
+                        iframe.allow =
+                            "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+
                         iframe.allowFullscreen = true;
                         iframe.loading = "lazy";
+
                         videoContainer.appendChild(iframe);
                     } else {
-                        videoContainer.textContent = "VIDEO COMING SOON";
+                        standardMedia.textContent = "VIDEO COMING SOON";
                     }
                 }
-                
+
+                // Buat atau gunakan kembali gallery proyek biasa.
                 if (screenshotContainer) {
-                    screenshotContainer.innerHTML = "";
-                    screenshotContainer.classList.remove("sketchfab-asset-grid");
-                    
-                    const galleryHeading = screenshotContainer
-                        .closest(".project-gallery")
-                        ?.querySelector("h3");
-                    
-                    if (galleryHeading && galleryHeading.dataset.originalText) {
-                        galleryHeading.textContent = galleryHeading.dataset.originalText;
+                    let standardGallery = screenshotContainer.querySelector(
+                        ".project-standard-gallery"
+                    );
+
+                    if (!standardGallery) {
+                        standardGallery = document.createElement("div");
+
+                        standardGallery.className =
+                            "project-standard-gallery";
+
+                        screenshotContainer.appendChild(standardGallery);
                     }
-                    
+
+                    standardGallery.innerHTML = "";
+                    standardGallery.style.display = "grid";
+
                     if (Array.isArray(data.screenshots)) {
                         data.screenshots.forEach((imagePath, index) => {
                             const link = document.createElement("a");
                             const image = document.createElement("img");
+
                             link.href = imagePath;
                             link.target = "_blank";
                             link.rel = "noopener noreferrer";
+
                             image.src = imagePath;
                             image.alt = `${data.title} Screenshot ${index + 1}`;
                             image.loading = "lazy";
+
                             link.appendChild(image);
-                            screenshotContainer.appendChild(link);
+
+                            standardGallery.appendChild(link);
                         });
                     }
+
+                    screenshotContainer.classList.remove(
+                        "sketchfab-asset-grid"
+                    );
+
+                    const galleryHeading = screenshotContainer
+                        .closest(".project-gallery")
+                        ?.querySelector("h3");
+
+                    if (
+                        galleryHeading &&
+                        galleryHeading.dataset.originalText
+                    ) {
+                        galleryHeading.textContent =
+                            galleryHeading.dataset.originalText;
+                    }
+                }
+
+                // Sembunyikan informasi khusus model 3D.
+                const detailPanel = document.getElementById(
+                    "sketchfab-model-details"
+                );
+
+                if (detailPanel) {
+                    detailPanel.classList.add("hidden");
                 }
             }
 
